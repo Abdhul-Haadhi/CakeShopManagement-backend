@@ -29,6 +29,9 @@ public class ProductEntity {
     @Column(columnDefinition = "longblob")
     private byte[] image;
 
+    private String imageName;
+    private String imageType;
+
     @ManyToMany
     @JoinTable(
             name = "Product_category",
@@ -42,7 +45,7 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
-    public ProductEntity(long productId, String productName, Long price, String description, int size, int quantity, LocalDateTime createdAt, byte[] image, List<CategoryEntity> categories) {
+    public ProductEntity(long productId, String productName, Long price, String description, int size, int quantity, LocalDateTime createdAt, byte[] image, String imageName, String imageType, List<CategoryEntity> categories) {
         this.productId = productId;
         this.productName = productName;
         this.price = price;
@@ -51,9 +54,10 @@ public class ProductEntity {
         this.quantity = quantity;
         this.createdAt = createdAt;
         this.image = image;
+        this.imageName = imageName;
+        this.imageType = imageType;
         this.categories = categories;
     }
-
 
     public long getProductId() {
         return productId;
@@ -117,6 +121,22 @@ public class ProductEntity {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public String getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
     }
 
     public List<CategoryEntity> getCategories() {
