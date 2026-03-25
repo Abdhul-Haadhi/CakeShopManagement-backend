@@ -50,6 +50,7 @@ public class WebSecurityConfiguration {
                 .cors(cors -> {})
                 .authorizeHttpRequests((authorize)->authorize.requestMatchers("/authenticate","/sign-up","/order/**").permitAll())
                 .authorizeHttpRequests((authorize)->authorize.requestMatchers("/api/**").authenticated())
+                .authorizeHttpRequests((authorize)->authorize.requestMatchers("/product-registration/**").authenticated())
                 .sessionManagement((sessionManagement)->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

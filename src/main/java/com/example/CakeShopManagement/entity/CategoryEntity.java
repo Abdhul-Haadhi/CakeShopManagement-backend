@@ -17,18 +17,17 @@ public class CategoryEntity {
     @Lob
     private String description;
 
-    @ManyToMany(mappedBy = "categories")
-    private List<ProductEntity> products;
+//    @ManyToMany(mappedBy = "categories")
+//    private List<ProductEntity> products;
 
 
     public CategoryEntity() {
     }
 
-    public CategoryEntity(int categoryId, String categoryName, String description, List<ProductEntity> products) {
+    public CategoryEntity(int categoryId, String categoryName, String description) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.description = description;
-        this.products = products;
     }
 
     public int getCategoryId() {
@@ -55,11 +54,11 @@ public class CategoryEntity {
         this.description = description;
     }
 
-    public List<ProductEntity> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<ProductEntity> products) {
-        this.products = products;
-    }
+//    public List<ProductEntity> getProducts() {
+//        return products;
+//    }
+//
+//    public void setProducts(List<ProductEntity> products) {
+//        this.products = products;
+//    }
 }

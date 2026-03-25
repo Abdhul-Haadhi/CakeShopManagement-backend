@@ -1,49 +1,33 @@
-package com.example.CakeShopManagement.entity;
+package com.example.CakeShopManagement.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-@Entity
-@Table(name = "product")
-public class ProductEntity {
+public class ProductsDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long productId;
+
+    private Long productId;
     private String productName;
-    @Lob
     private String description;
     private int size;
     private int quantity;
     private Long price;
-//    private LocalDateTime createdAt;
 
-//    @Lob
+//    private LocalDateTime createdAt;
 //    @Column(columnDefinition = "longblob")
 //    private byte[] image;
 //
 //    private String imageName;
 //    private String imageType;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "Product_category",
-//            joinColumns = @JoinColumn(name = "productId"),
-//            inverseJoinColumns = @JoinColumn(name = "categoryId")
-//    )
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @JsonIgnore
-//    private List<CategoryEntity> categories;
 
-    public ProductEntity() {
+    public ProductsDto() {
     }
 
-    public ProductEntity(long productId, String productName, String description, int size, int quantity, Long price) {
+    public ProductsDto(Long productId, String productName, String description, int size, int quantity, Long price) {
         this.productId = productId;
         this.productName = productName;
         this.description = description;
@@ -52,11 +36,11 @@ public class ProductEntity {
         this.price = price;
     }
 
-    public long getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(long productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
