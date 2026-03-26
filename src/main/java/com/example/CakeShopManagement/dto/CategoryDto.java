@@ -1,5 +1,8 @@
 package com.example.CakeShopManagement.dto;
 
+import lombok.Data;
+
+@Data
 public class CategoryDto {
 
     private Long categoryId;

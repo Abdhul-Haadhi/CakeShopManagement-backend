@@ -25,10 +25,12 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
     @Override
     public ProductsDto addProductEntity(ProductsDto productsDto) {
         try {
+            System.out.println("*******hits********");
             ProductEntity productEntity = productRegistrationMapper.toProductEntity(productsDto);
             ProductEntity savedItem = productRegistrationRepository.save(productEntity);
             ProductsDto savedDto = productRegistrationMapper.toProductDto(savedItem);
             return savedDto;
+
         }
         catch (Exception e) {
             throw new AppException("Request failed with error: "+ e, HttpStatus.INTERNAL_SERVER_ERROR);

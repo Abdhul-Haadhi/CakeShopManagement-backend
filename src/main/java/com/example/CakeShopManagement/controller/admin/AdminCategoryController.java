@@ -1,5 +1,6 @@
 package com.example.CakeShopManagement.controller.admin;
 
+
 import com.example.CakeShopManagement.dto.CategoryDto;
 import com.example.CakeShopManagement.entity.CategoryEntity;
 import com.example.CakeShopManagement.service.admin.category.CategoryService;
@@ -20,14 +21,14 @@ public class AdminCategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping("/admin/category")
+    @PostMapping("category")
     public ResponseEntity<CategoryEntity> createCategory(@RequestBody CategoryDto categoryDto) {
         CategoryEntity categoryEntity = categoryService.createCategory(categoryDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryEntity);
     }
 
-//    @GetMapping("")
-//    public ResponseEntity<List<CategoryEntity>> getAllCategories() {
-//        return ResponseEntity.ok(categoryService.getAllCategories());
-//    }
+    @GetMapping("")
+    public ResponseEntity<List<CategoryEntity>> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
 }

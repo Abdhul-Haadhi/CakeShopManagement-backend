@@ -14,18 +14,18 @@ public class ProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long productId;
+    private Long productId;
     private String productName;
     @Lob
     private String description;
     private int size;
     private int quantity;
-    private Long price;
+    private int price;
 //    private LocalDateTime createdAt;
 
-//    @Lob
-//    @Column(columnDefinition = "longblob")
-//    private byte[] image;
+    @Lob
+    @Column(columnDefinition = "longblob")
+    private byte[] image;
 //
 //    private String imageName;
 //    private String imageType;
@@ -40,23 +40,30 @@ public class ProductEntity {
 //    @JsonIgnore
 //    private List<CategoryEntity> categories;
 
+//    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+//    @JoinColumn(name = "category_id", nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @JsonIgnore
+//    private CategoryEntity categoryEntity;
+
     public ProductEntity() {
     }
 
-    public ProductEntity(long productId, String productName, String description, int size, int quantity, Long price) {
+    public ProductEntity(Long productId, String productName, String description, int size, int quantity, int price, byte[] image) {
         this.productId = productId;
         this.productName = productName;
         this.description = description;
         this.size = size;
         this.quantity = quantity;
         this.price = price;
+        this.image = image;
     }
 
-    public long getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(long productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
@@ -92,11 +99,19 @@ public class ProductEntity {
         this.quantity = quantity;
     }
 
-    public Long getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(int price) {
         this.price = price;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }

@@ -21,14 +21,24 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserEntity> optionalUser = userRepository.findFirstByEmail(username);
+//        if (optionalUser.isEmpty()){
+//            throw new UsernameNotFoundException("User not found");
+//        }
+//        UserEntity user = optionalUser.get();
+//        return new org.springframework.security.core.userdetails.User(
+//                user.getEmail(),
+//                user.getPassword(),
+//                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+//        );
         if (optionalUser.isEmpty()){
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("User not found", null);
         }
-        UserEntity user = optionalUser.get();
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
+        else {
+            return new org.springframework.security.core.userdetails.User(
+                    optionalUser.get().getEmail(),
+                    optionalUser.get().getPassword(),
+                    new ArrayList<>()
+            );
+        }
     }
 }

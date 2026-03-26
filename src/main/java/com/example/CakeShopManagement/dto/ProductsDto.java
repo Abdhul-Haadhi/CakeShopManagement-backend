@@ -3,9 +3,12 @@ package com.example.CakeShopManagement.dto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Lob;
+import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
+@Data
 public class ProductsDto {
 
 
@@ -14,26 +17,26 @@ public class ProductsDto {
     private String description;
     private int size;
     private int quantity;
-    private Long price;
-
+    private int price;
 //    private LocalDateTime createdAt;
-//    @Column(columnDefinition = "longblob")
-//    private byte[] image;
-//
-//    private String imageName;
-//    private String imageType;
+    private byte[] byteImage;
+    private MultipartFile image;
+
+//    private Long categoryId;
 
 
     public ProductsDto() {
     }
 
-    public ProductsDto(Long productId, String productName, String description, int size, int quantity, Long price) {
+    public ProductsDto(Long productId, String productName, String description, int size, int quantity, int price, byte[] byteImage, MultipartFile image) {
         this.productId = productId;
         this.productName = productName;
         this.description = description;
         this.size = size;
         this.quantity = quantity;
         this.price = price;
+        this.byteImage = byteImage;
+        this.image = image;
     }
 
     public Long getProductId() {
@@ -76,11 +79,27 @@ public class ProductsDto {
         this.quantity = quantity;
     }
 
-    public Long getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(int price) {
         this.price = price;
+    }
+
+    public byte[] getByteImage() {
+        return byteImage;
+    }
+
+    public void setByteImage(byte[] byteImage) {
+        this.byteImage = byteImage;
+    }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
     }
 }

@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService{
             userEntity.setEmail("admin@test.com");
             userEntity.setUsername("admin");
             userEntity.setRole(UserRole.ADMIN);
-            userEntity.setPassword(bCryptPasswordEncoder.encode("Admin"));
+            userEntity.setPassword(new BCryptPasswordEncoder().encode("Admin"));
             userRepository.save(userEntity);
         }
 

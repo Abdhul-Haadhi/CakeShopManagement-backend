@@ -48,28 +48,32 @@ public class WebSecurityConfiguration {
         return http
                 .csrf((csrf)->csrf.disable())
                 .cors(cors -> {})
-                .authorizeHttpRequests((authorize)->authorize.requestMatchers("/authenticate","/sign-up","/order/**").permitAll())
-                .authorizeHttpRequests((authorize)->authorize.requestMatchers("/api/**").authenticated())
-                .authorizeHttpRequests((authorize)->authorize.requestMatchers("/product-registration/**").authenticated())
-                .sessionManagement((sessionManagement)->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests((auth)->auth
+                        .requestMatchers("/authenticate","/sign-up","/order/**").permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement((session)->session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
     }
 
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public BCryptPasswordEncoder bCryptPasswordEncoder(){
+//        return new BCryptPasswordEncoder();
+//    }
 }

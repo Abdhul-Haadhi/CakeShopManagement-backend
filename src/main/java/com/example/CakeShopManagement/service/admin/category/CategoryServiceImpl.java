@@ -12,9 +12,13 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    public final CategoryEntity createCategory(CategoryDto categoryDto) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
+
+    public CategoryEntity createCategory(CategoryDto categoryDto) {
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setCategoryName(categoryDto.getCategoryName());
         categoryEntity.setDescription(categoryDto.getDescription());
