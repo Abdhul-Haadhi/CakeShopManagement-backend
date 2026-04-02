@@ -2,11 +2,13 @@ package com.example.CakeShopManagement.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.List;
 
 @Entity
 @Table(name = "category")
+@Data
 public class CategoryEntity {
 
     @Id
