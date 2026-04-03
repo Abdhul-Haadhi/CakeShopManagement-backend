@@ -13,6 +13,7 @@ public interface ProductRegistrationService {
 
 //    ProductsDto addImage(ProductsDto productsDto) throws IOException;
 
+//    List<ProductsDto> getAllProducts();
     List<ProductsDto> getAllProducts();
 
     List<ProductsDto> getAllProductsByName(String productName);

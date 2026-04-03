@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -58,6 +59,7 @@ public class ProductEntity {
         productsDto.setProductName(productName);
         productsDto.setDescription(description);
         productsDto.setPrice(price);
+        productsDto.setSize(size);
         productsDto.setQuantity(quantity);
         productsDto.setByteImage(image);
         productsDto.setCategoryId(categoryEntity.getCategoryId());
@@ -68,6 +70,7 @@ public class ProductEntity {
 
     public ProductEntity() {
     }
+
 
     public ProductEntity(Long productId, String productName, String description, int size, int quantity, int price, byte[] image, CategoryEntity categoryEntity) {
         this.productId = productId;

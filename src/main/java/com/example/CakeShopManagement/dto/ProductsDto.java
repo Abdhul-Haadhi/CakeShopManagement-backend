@@ -1,12 +1,10 @@
 package com.example.CakeShopManagement.dto;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ProductsDto {
@@ -15,6 +13,7 @@ public class ProductsDto {
     private Long productId;
     private String productName;
     private String description;
+//    private List<String> colors;
     private int size;
     private int quantity;
     private int price;

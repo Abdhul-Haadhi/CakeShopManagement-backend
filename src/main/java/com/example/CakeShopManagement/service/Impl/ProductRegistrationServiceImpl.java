@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 public class ProductRegistrationServiceImpl implements ProductRegistrationService {
 
     private final ProductRegistrationRepository productRegistrationRepository;
-    private final ProductRegistrationMapper productRegistrationMapper;
+//    private final ProductRegistrationMapper productRegistrationMapper;
     private final CategoryRepository categoryRepository;
 
     public ProductRegistrationServiceImpl(ProductRegistrationRepository productRegistrationRepository, ProductRegistrationMapper productRegistrationMapper, CategoryRepository categoryRepository) {
         this.productRegistrationRepository = productRegistrationRepository;
-        this.productRegistrationMapper = productRegistrationMapper;
+//        this.productRegistrationMapper = productRegistrationMapper;
         this.categoryRepository = categoryRepository;
     }
 
@@ -67,6 +67,7 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
 
     public List<ProductsDto> getAllProducts() {
         List<ProductEntity> productEntities = productRegistrationRepository.findAll();
+//        System.out.println("*********************"+ productEntities.get(1).getSize());
         return productEntities.stream().map(ProductEntity::getDto).collect(Collectors.toList());
     }
 

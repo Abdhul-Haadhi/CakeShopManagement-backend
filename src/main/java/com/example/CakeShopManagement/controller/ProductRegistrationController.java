@@ -41,6 +41,7 @@ public class ProductRegistrationController {
     @GetMapping("/products")
     public ResponseEntity<List<ProductsDto>> getAllProducts() {
         List<ProductsDto> productsDtos = productRegistrationService.getAllProducts();
+//        System.out.println("*********************"+productRegistrationService.getAllProducts().get(1).getSize());
         return ResponseEntity.ok(productsDtos);
     }
 
