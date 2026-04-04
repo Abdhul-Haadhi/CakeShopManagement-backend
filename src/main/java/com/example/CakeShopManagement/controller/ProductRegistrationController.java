@@ -51,6 +51,28 @@ public class ProductRegistrationController {
         return ResponseEntity.ok(productsDtos);
     }
 
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<ProductsDto> getProductById(@PathVariable long productId) {
+        ProductsDto productsDto = productRegistrationService.getProductById(productId);
+        if(productsDto != null) {
+            return ResponseEntity.ok(productsDto);
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/product/{productId}")
+    public ResponseEntity<ProductsDto> updateProduct(@PathVariable Long productId, @ModelAttribute ProductsDto productsDto) throws IOException {
+        ProductsDto updateProduct = productRegistrationService.updateProduct(productId, productsDto);
+        if(updateProduct != null) {
+            return ResponseEntity.ok(updateProduct);
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("product/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         boolean deleted = productRegistrationService.deleteProduct(productId);

@@ -76,6 +76,39 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         return productEntities.stream().map(ProductEntity::getDto).collect(Collectors.toList());
     }
 
+    public ProductsDto getProductById(Long productId) {
+        Optional<ProductEntity> optionalProductEntity = productRegistrationRepository.findById(productId);
+        if(optionalProductEntity.isPresent()){
+            return optionalProductEntity.get().getDto();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public ProductsDto updateProduct(Long productId, ProductsDto productsDto) throws IOException {
+        Optional<ProductEntity> optionalProductEntity = productRegistrationRepository.findById(productId);
+        Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(productsDto.getCategoryId());
+
+        if(optionalProductEntity.isPresent() && optionalCategoryEntity.isPresent()){
+            ProductEntity productEntity = optionalProductEntity.get();
+
+            productEntity.setProductName(productsDto.getProductName());
+            productEntity.setDescription(productsDto.getDescription());
+            productEntity.setSize(productsDto.getSize());
+            productEntity.setQuantity(productsDto.getQuantity());
+            productEntity.setPrice(productsDto.getPrice());
+            productEntity.setCategoryEntity(optionalCategoryEntity.get());
+            if(productsDto.getImage() != null){
+                productEntity.setImage(productsDto.getImage().getBytes());
+            }
+            return productRegistrationRepository.save(productEntity).getDto();
+        }
+        else {
+            return null;
+        }
+    }
+
     public boolean deleteProduct(Long productId) {
         Optional<ProductEntity> optionalProduct = productRegistrationRepository.findById(productId);
         if(optionalProduct.isPresent()) {

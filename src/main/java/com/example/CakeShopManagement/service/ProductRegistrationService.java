@@ -18,5 +18,9 @@ public interface ProductRegistrationService {
 
     List<ProductsDto> getAllProductsByName(String productName);
 
+    ProductsDto getProductById(Long productId);
+
+    ProductsDto updateProduct(Long productId, ProductsDto productsDto) throws IOException;
+
     boolean deleteProduct(Long productId);
 }
