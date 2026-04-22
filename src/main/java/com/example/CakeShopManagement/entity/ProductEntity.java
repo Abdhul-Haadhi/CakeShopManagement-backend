@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -17,13 +18,15 @@ public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
+    @Column(nullable = false, unique = true)
+    private String productSku;
     private String productName;
     @Lob
     private String description;
     private int size;
     private int quantity;
     private int price;
-//    private LocalDateTime createdAt;
+    private LocalDateTime addedDate;
     @Lob
     @Column(columnDefinition = "longblob")
     private byte[] image;
@@ -56,9 +59,11 @@ public class ProductEntity {
     public ProductsDto getDto(){
         ProductsDto productsDto = new ProductsDto();
         productsDto.setProductId(productId);
+        productsDto.setProductSku(productSku);
         productsDto.setProductName(productName);
         productsDto.setDescription(description);
         productsDto.setPrice(price);
+        productsDto.setAddedDate(addedDate);
         productsDto.setSize(size);
         productsDto.setQuantity(quantity);
         productsDto.setByteImage(image);
@@ -72,13 +77,15 @@ public class ProductEntity {
     }
 
 
-    public ProductEntity(Long productId, String productName, String description, int size, int quantity, int price, byte[] image, CategoryEntity categoryEntity) {
+    public ProductEntity(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDateTime addedDate, byte[] image, CategoryEntity categoryEntity) {
         this.productId = productId;
+        this.productSku = productSku;
         this.productName = productName;
         this.description = description;
         this.size = size;
         this.quantity = quantity;
         this.price = price;
+        this.addedDate = addedDate;
         this.image = image;
         this.categoryEntity = categoryEntity;
     }
@@ -89,6 +96,14 @@ public class ProductEntity {
 
     public void setProductId(Long productId) {
         this.productId = productId;
+    }
+
+    public String getProductSku() {
+        return productSku;
+    }
+
+    public void setProductSku(String productSku) {
+        this.productSku = productSku;
     }
 
     public String getProductName() {
@@ -129,6 +144,14 @@ public class ProductEntity {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public LocalDateTime getAddedDate() {
+        return addedDate;
+    }
+
+    public void setAddedDate(LocalDateTime addedDate) {
+        this.addedDate = addedDate;
     }
 
     public byte[] getImage() {

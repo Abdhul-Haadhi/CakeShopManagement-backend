@@ -23,4 +23,6 @@ public interface ProductRegistrationService {
     ProductsDto updateProduct(Long productId, ProductsDto productsDto) throws IOException;
 
     boolean deleteProduct(Long productId);
+
+    boolean getProductBySku(String productSku);
 }

@@ -51,12 +51,19 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
 //    }
 
     public ProductsDto addProduct(ProductsDto productsDto) throws IOException {
+
+        if(productRegistrationRepository.existsByProductSku(productsDto.getProductSku())){
+            throw new AppException("Product SKU already exists!",HttpStatus.BAD_REQUEST);
+        }
+
         ProductEntity productEntity = new ProductEntity();
+        productEntity.setProductSku(productsDto.getProductSku());
         productEntity.setProductName(productsDto.getProductName());
         productEntity.setDescription(productsDto.getDescription());
         productEntity.setSize(productsDto.getSize());
         productEntity.setQuantity(productsDto.getQuantity());
         productEntity.setPrice(productsDto.getPrice());
+        productEntity.setAddedDate(productsDto.getAddedDate());
         productEntity.setImage(productsDto.getImage().getBytes());
 
         CategoryEntity categoryEntity = categoryRepository.findById(productsDto.getCategoryId()).orElseThrow();
@@ -86,6 +93,12 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         }
     }
 
+    public boolean getProductBySku(String productSku) {
+//        System.out.println("********************"+productSku);
+        return productRegistrationRepository.existsByProductSku(productSku);
+
+    }
+
     public ProductsDto updateProduct(Long productId, ProductsDto productsDto) throws IOException {
         Optional<ProductEntity> optionalProductEntity = productRegistrationRepository.findById(productId);
         Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(productsDto.getCategoryId());
@@ -98,6 +111,7 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
             productEntity.setSize(productsDto.getSize());
             productEntity.setQuantity(productsDto.getQuantity());
             productEntity.setPrice(productsDto.getPrice());
+            productEntity.setAddedDate(productsDto.getAddedDate());
             productEntity.setCategoryEntity(optionalCategoryEntity.get());
             if(productsDto.getImage() != null){
                 productEntity.setImage(productsDto.getImage().getBytes());

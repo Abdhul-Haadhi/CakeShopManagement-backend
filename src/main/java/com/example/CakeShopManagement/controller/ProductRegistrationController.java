@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.controller;
 
 import com.example.CakeShopManagement.dto.ProductsDto;
+import com.example.CakeShopManagement.repository.ProductRegistrationRepository;
 import com.example.CakeShopManagement.service.ProductRegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 public class ProductRegistrationController {
 
     ProductRegistrationService productRegistrationService;
+    ProductRegistrationRepository productRegistrationRepository;
 
     public ProductRegistrationController(ProductRegistrationService productRegistrationService) {
         this.productRegistrationService = productRegistrationService;
@@ -60,6 +62,24 @@ public class ProductRegistrationController {
         else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+//    @GetMapping("/check-sku")
+//    public ResponseEntity<Boolean> checkSkuExists(@RequestParam String productSku) {
+//        boolean exists = productRegistrationRepository.existsByProductSku(productSku);
+//        return ResponseEntity.ok(exists);
+//    }
+
+
+//    @GetMapping("/product/{productSku}")
+//    public ResponseEntity<ProductsDto> getProductBySku(@PathVariable String productSku) {
+//        boolean getSku = productRegistrationService.getProductBySku(productSku);
+//        return ResponseEntity.ok();
+//    }
+
+    @GetMapping("/check-sku/{productSku}")
+    public ResponseEntity<Boolean> checkSkuExists( @PathVariable String productSku) {
+        return ResponseEntity.ok(productRegistrationService.getProductBySku(productSku));
     }
 
     @PutMapping("/product/{productId}")

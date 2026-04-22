@@ -50,7 +50,8 @@ public class WebSecurityConfiguration {
                 .cors(cors -> {})
                 .authorizeHttpRequests((auth)->auth
                         .requestMatchers("/authenticate","/sign-up","/order/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+//                        .requestMatchers("/profile").authenticated()
+//                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement((session)->session

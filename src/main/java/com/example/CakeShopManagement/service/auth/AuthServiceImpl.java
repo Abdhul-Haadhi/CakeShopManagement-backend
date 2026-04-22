@@ -2,6 +2,7 @@ package com.example.CakeShopManagement.service.auth;
 
 
 import com.example.CakeShopManagement.dto.SignupRequest;
+import com.example.CakeShopManagement.dto.UpdateProfileDto;
 import com.example.CakeShopManagement.dto.UserDto;
 import com.example.CakeShopManagement.entity.UserEntity;
 import com.example.CakeShopManagement.enums.UserRole;
@@ -18,7 +19,7 @@ public class AuthServiceImpl implements AuthService{
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public UserDto createUser(SignupRequest signupRequest) {
@@ -52,6 +53,24 @@ public class AuthServiceImpl implements AuthService{
             userRepository.save(userEntity);
         }
 
+    }
+
+    public void updateAdminProfile(UpdateProfileDto updateProfileDto){
+        UserEntity admin = userRepository.findByRole(UserRole.ADMIN);
+
+        if(admin != null){
+            if(new BCryptPasswordEncoder().matches(updateProfileDto.getCurrentPassword(), admin.getPassword())){
+                admin.setEmail(updateProfileDto.getEmail());
+
+                if(updateProfileDto.getNewPassword() != null && !updateProfileDto.getNewPassword().isEmpty()){
+                    admin.setPassword(new BCryptPasswordEncoder().encode(updateProfileDto.getNewPassword()));
+                }
+                userRepository.save(admin);
+            }
+            else {
+                throw new RuntimeException("Current password incorrect");
+            }
+        }
     }
 
 }

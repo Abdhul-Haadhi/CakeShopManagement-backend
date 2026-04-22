@@ -2,10 +2,12 @@ package com.example.CakeShopManagement.controller;
 
 import com.example.CakeShopManagement.dto.AuthenticationRequest;
 import com.example.CakeShopManagement.dto.SignupRequest;
+import com.example.CakeShopManagement.dto.UpdateProfileDto;
 import com.example.CakeShopManagement.dto.UserDto;
 import com.example.CakeShopManagement.entity.UserEntity;
 import com.example.CakeShopManagement.repository.UserRepository;
 import com.example.CakeShopManagement.service.auth.AuthService;
+import com.example.CakeShopManagement.service.auth.AuthServiceImpl;
 import com.example.CakeShopManagement.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONException;
@@ -17,7 +19,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,13 +39,16 @@ public class AuthController {
     public static final String HEADER_STRING = "Authorization";
     
     private final AuthService authService;
+    private final AuthServiceImpl authServiceImpl;
+    private PasswordEncoder passwordEncoder;
 
-    public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, UserRepository userRepository, JwtUtil jwtUtil, AuthService authService) {
+    public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, UserRepository userRepository, JwtUtil jwtUtil, AuthService authService, AuthServiceImpl authServiceImpl) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.authService = authService;
+        this.authServiceImpl = authServiceImpl;
     }
 
 
@@ -81,5 +88,15 @@ public class AuthController {
 
         UserDto userDto = authService.createUser(signupRequest);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateAdminProfile(@RequestBody UpdateProfileDto updateProfileDto) {
+
+        System.out.println("****************Controller hit*****************");
+        authServiceImpl.updateAdminProfile(updateProfileDto);
+        return ResponseEntity.ok("Profile updated successfully");
+
+
     }
 }

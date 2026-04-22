@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ProductRegistrationRepository extends JpaRepository<ProductEntity, Long> {
 
+    Boolean existsByProductSku(String productSku);
     List<ProductEntity> findAllByProductNameContaining(String title);
 }
