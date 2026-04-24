@@ -13,21 +13,20 @@ public class UserEntity {
     private long userId;
     private String username;
     private String password;
+    @Column(nullable = false, unique = true)
     private String email;
-    private int contactNumber;
-    private String address;
+//    private int contactNumber;
+//    private String address;
     private UserRole role;
 
     public UserEntity() {
     }
 
-    public UserEntity(long userId, String username, String password, String email, int contactNumber, String address, UserRole role) {
+    public UserEntity(long userId, String username, String password, String email, UserRole role) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.contactNumber = contactNumber;
-        this.address = address;
         this.role = role;
     }
 
@@ -61,22 +60,6 @@ public class UserEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public int getContactNumber() {
-        return contactNumber;
-    }
-
-    public void setContactNumber(int contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public UserRole getRole() {

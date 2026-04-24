@@ -4,6 +4,7 @@ package com.example.CakeShopManagement.service.auth;
 import com.example.CakeShopManagement.dto.SignupRequest;
 import com.example.CakeShopManagement.dto.UpdateProfileDto;
 import com.example.CakeShopManagement.dto.UserDto;
+import com.example.CakeShopManagement.entity.EmployeeEntity;
 import com.example.CakeShopManagement.entity.UserEntity;
 import com.example.CakeShopManagement.enums.UserRole;
 import com.example.CakeShopManagement.repository.UserRepository;
@@ -72,5 +73,14 @@ public class AuthServiceImpl implements AuthService{
             }
         }
     }
+
+//    public boolean deleteEmployeeLogin(Long userId) {
+//        Optional<UserEntity> optionalUser = userRepository.findById(userId);
+//        if(optionalUser.isPresent()) {
+//            userRepository.deleteById(userId);
+//            return true;
+//        }
+//        return false;
+//    }
 
 }

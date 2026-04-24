@@ -15,19 +15,23 @@ public class EmployeeEntity {
     private String phone;
     private String address;
     private LocalDateTime joinDate;
-    private String password;
+
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+//    private String password;
 
     public EmployeeEntity() {
     }
 
-    public EmployeeEntity(Long employeeId, String employeeName, String email, String phone, String address, LocalDateTime joinDate, String password) {
+    public EmployeeEntity(Long employeeId, String employeeName, String email, String phone, String address, LocalDateTime joinDate, UserEntity user) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.email = email;
         this.phone = phone;
         this.address = address;
         this.joinDate = joinDate;
-        this.password = password;
+        this.user = user;
     }
 
     public Long getEmployeeId() {
@@ -78,11 +82,11 @@ public class EmployeeEntity {
         this.joinDate = joinDate;
     }
 
-    public String getPassword() {
-        return password;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 }

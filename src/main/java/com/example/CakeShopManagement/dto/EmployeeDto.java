@@ -1,15 +1,8 @@
 package com.example.CakeShopManagement.dto;
 
-
-import com.example.CakeShopManagement.enums.UserRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,6 +10,7 @@ public class EmployeeDto {
 
     private Long employeeId;
     private String employeeName;
+    private String userName;
     private String email;
     private String phone;
     private String address;
@@ -27,9 +21,10 @@ public class EmployeeDto {
     public EmployeeDto() {
     }
 
-    public EmployeeDto(Long employeeId, String employeeName, String email, String phone, String address, LocalDateTime joinDate, String password) {
+    public EmployeeDto(Long employeeId, String employeeName, String userName, String email, String phone, String address, LocalDateTime joinDate, String password) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
+        this.userName = userName;
         this.email = email;
         this.phone = phone;
         this.address = address;
@@ -51,6 +46,14 @@ public class EmployeeDto {
 
     public void setEmployeeName(String employeeName) {
         this.employeeName = employeeName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getEmail() {

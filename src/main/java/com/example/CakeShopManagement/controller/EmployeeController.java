@@ -3,6 +3,7 @@ package com.example.CakeShopManagement.controller;
 import com.example.CakeShopManagement.dto.EmployeeDto;
 import com.example.CakeShopManagement.exceptions.AppException;
 import com.example.CakeShopManagement.service.EmployeeService;
+import com.example.CakeShopManagement.service.Impl.EmployeeServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,11 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final EmployeeServiceImpl employeeServiceImpl;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, EmployeeServiceImpl employeeServiceImpl) {
         this.employeeService = employeeService;
+        this.employeeServiceImpl = employeeServiceImpl;
     }
 
 //    @PostMapping("/employee")
@@ -41,6 +44,18 @@ public class EmployeeController {
         catch (Exception e) {
             throw new AppException("Request failed with error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/employee-login")
+    public ResponseEntity<?> createEmployeeLogin(@RequestBody EmployeeDto employeeDto) {
+        try {
+            employeeServiceImpl.createEmployeeLogin(employeeDto);
+            return ResponseEntity.ok("Employee account already exists");
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @GetMapping("/employee")

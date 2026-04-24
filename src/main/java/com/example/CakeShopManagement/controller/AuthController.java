@@ -20,10 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -99,4 +96,13 @@ public class AuthController {
 
 
     }
+
+//    @DeleteMapping("api/admin/employee-login/{userId}")
+//    public ResponseEntity<Void> deleteEmployeeLogin(@PathVariable Long userId) {
+//        boolean deleted = authService.deleteEmployeeLogin(userId);
+//        if (deleted) {
+//            return ResponseEntity.noContent().build();
+//        }
+//        return ResponseEntity.notFound().build();
+//    }
 }

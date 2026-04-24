@@ -11,4 +11,6 @@ public interface AuthService {
     Boolean hasUserWithEmail(String email);
 
 //    UpdateProfileDto updateAdminProfile(UpdateProfileDto updateProfileDto);
+
+//    boolean deleteEmployeeLogin(Long userId);
 }
