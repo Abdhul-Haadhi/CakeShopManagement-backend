@@ -50,8 +50,15 @@ public class WebSecurityConfiguration {
                 .cors(cors -> {})
                 .authorizeHttpRequests((auth)->auth
                         .requestMatchers("/authenticate","/sign-up","/order/**").permitAll()
-//                        .requestMatchers("/profile").authenticated()
-//                        .requestMatchers("/api/**").authenticated()
+
+//                        Admin only
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+//                        Admin + Employee
+                        .requestMatchers("/api/employee**").hasAnyRole("ADMIN","EMPLOYEE")
+//                        .requestMatchers("/customer/**").hasAnyRole("ADMIN","EMPLOYEE")
+
+//                        any logged user
                         .anyRequest().authenticated()
                 )
                 .sessionManagement((session)->session

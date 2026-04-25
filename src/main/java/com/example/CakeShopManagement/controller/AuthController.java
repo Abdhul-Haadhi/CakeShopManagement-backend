@@ -87,7 +87,7 @@ public class AuthController {
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
-    @PutMapping("/profile")
+    @PutMapping("/api/admin/profile")
     public ResponseEntity<?> updateAdminProfile(@RequestBody UpdateProfileDto updateProfileDto) {
 
         System.out.println("****************Controller hit*****************");

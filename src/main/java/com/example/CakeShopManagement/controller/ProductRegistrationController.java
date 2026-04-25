@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/employee")
 public class ProductRegistrationController {
 
     ProductRegistrationService productRegistrationService;
@@ -93,7 +93,7 @@ public class ProductRegistrationController {
         }
     }
 
-    @DeleteMapping("product/{productId}")
+    @DeleteMapping("/product/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         boolean deleted = productRegistrationService.deleteProduct(productId);
         if (deleted) {
