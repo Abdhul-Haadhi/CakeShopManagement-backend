@@ -1,11 +1,12 @@
 package com.example.CakeShopManagement.controller;
 
-import com.example.CakeShopManagement.dto.AuthenticationRequest;
-import com.example.CakeShopManagement.dto.SignupRequest;
-import com.example.CakeShopManagement.dto.UpdateProfileDto;
-import com.example.CakeShopManagement.dto.UserDto;
+import com.example.CakeShopManagement.dto.*;
+import com.example.CakeShopManagement.entity.EmployeeEntity;
 import com.example.CakeShopManagement.entity.UserEntity;
+import com.example.CakeShopManagement.repository.EmployeeRepository;
 import com.example.CakeShopManagement.repository.UserRepository;
+import com.example.CakeShopManagement.service.EmployeeService;
+import com.example.CakeShopManagement.service.Impl.EmployeeServiceImpl;
 import com.example.CakeShopManagement.service.auth.AuthService;
 import com.example.CakeShopManagement.service.auth.AuthServiceImpl;
 import com.example.CakeShopManagement.utils.JwtUtil;
@@ -31,21 +32,28 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final EmployeeRepository employeeRepository;
 
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
     
     private final AuthService authService;
     private final AuthServiceImpl authServiceImpl;
+    private final EmployeeService employeeService;
+    private final EmployeeServiceImpl employeeServiceImpl;
     private PasswordEncoder passwordEncoder;
 
-    public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, UserRepository userRepository, JwtUtil jwtUtil, AuthService authService, AuthServiceImpl authServiceImpl) {
+
+    public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, UserRepository userRepository, JwtUtil jwtUtil, EmployeeRepository employeeRepository, AuthService authService, AuthServiceImpl authServiceImpl, EmployeeService employeeService, EmployeeServiceImpl employeeServiceImpl) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
+        this.employeeRepository = employeeRepository;
         this.authService = authService;
         this.authServiceImpl = authServiceImpl;
+        this.employeeService = employeeService;
+        this.employeeServiceImpl = employeeServiceImpl;
     }
 
 
@@ -60,11 +68,15 @@ public class AuthController {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         Optional<UserEntity> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
+        Optional<EmployeeEntity> employee = employeeRepository.findByEmail(optionalUser.get().getEmail());
+
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
         if(optionalUser.isPresent()){
             response.getWriter().write(new JSONObject()
                     .put("userId", optionalUser.get().getUserId())
+                    .put("employeeId",employee.isPresent() ? employee.get().getEmployeeId() : null)
+                    .put("email", optionalUser.get().getEmail())
                     .put("role", optionalUser.get().getRole())
                     .toString()
             );
@@ -93,8 +105,22 @@ public class AuthController {
         System.out.println("****************Controller hit*****************");
         authServiceImpl.updateAdminProfile(updateProfileDto);
         return ResponseEntity.ok("Profile updated successfully");
+    }
 
+    @GetMapping("/api/employee/{employeeId}")
+    public ResponseEntity<?> getEmployeeById(@PathVariable("employeeId") Long employeeId){
 
+        return ResponseEntity.ok(employeeService.getEmployeeById(employeeId));
+    }
+
+    @PutMapping("/api/employee/change-password")
+    public ResponseEntity<?> changeEmployeePassword(@RequestBody UpdateEmployeeAccDto updateProfileDto){
+        try {
+            employeeServiceImpl.updateEmployeePassword(updateProfileDto);
+            return ResponseEntity.ok("Password updated successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 //    @DeleteMapping("api/admin/employee-login/{userId}")

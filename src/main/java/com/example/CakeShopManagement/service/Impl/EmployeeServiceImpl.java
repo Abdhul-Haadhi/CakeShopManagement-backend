@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.dto.EmployeeDto;
+import com.example.CakeShopManagement.dto.UpdateEmployeeAccDto;
 import com.example.CakeShopManagement.entity.EmployeeEntity;
 import com.example.CakeShopManagement.entity.ProductEntity;
 import com.example.CakeShopManagement.entity.UserEntity;
@@ -12,6 +13,7 @@ import com.example.CakeShopManagement.repository.UserRepository;
 import com.example.CakeShopManagement.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,12 +26,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -80,6 +84,33 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
+//    public EmployeeDto getEmployeeById(Long employeeId) {
+//        try {
+//            Optional<EmployeeEntity> optionalEmployee = employeeRepository.findById(employeeId);
+//
+//            if(!optionalEmployee.isPresent()) {
+//                throw new RuntimeException("Employee not found");
+//            }
+//            return employeeMapper.toEmployeeDto(optionalEmployee.get());
+//        }
+//        catch (Exception e){
+//            throw new AppException("Request failed with error: "+e, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    public EmployeeDto getEmployeeById(Long employeeId){
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeId).orElseThrow(()->new RuntimeException("Employee not found"));
+
+        EmployeeDto dto = employeeMapper.toEmployeeDto(employeeEntity);
+
+        if(employeeEntity.getUser()!=null){
+            dto.setEmail(employeeEntity.getUser().getEmail());
+            dto.setUserName(employeeEntity.getUser().getUsername());
+        }
+        dto.setPassword(null);
+        return dto;
+    }
+
     public EmployeeDto updateEmployee(Long employeeId, EmployeeDto employeeDto) {
         try {
             Optional<EmployeeEntity> optionalEmployeeEntity=employeeRepository.findById(employeeId);
@@ -96,6 +127,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         catch (Exception e) {
             throw new AppException("Request failed with error: "+e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public void updateEmployeePassword(UpdateEmployeeAccDto updateEmployeeAccDto){
+        UserEntity userEntity = userRepository.findFirstByEmail(updateEmployeeAccDto.getEmail()).orElseThrow(()->new RuntimeException("User not found"));
+
+        if(!passwordEncoder.matches(updateEmployeeAccDto.getCurrentPassword(),userEntity.getPassword())){
+            throw new RuntimeException("Current password is incorrect");
+        }
+        userEntity.setPassword(passwordEncoder.encode(updateEmployeeAccDto.getNewPassword()));
+        userRepository.save(userEntity);
     }
 
 //    public EmployeeDto deleteEmployee(long employeeId) {
