@@ -26,7 +26,7 @@ public class ProductEntity {
     private int size;
     private int quantity;
     private int price;
-    private LocalDateTime addedDate;
+    private LocalDate addedDate;
     @Lob
     @Column(columnDefinition = "longblob")
     private byte[] image;
@@ -77,7 +77,7 @@ public class ProductEntity {
     }
 
 
-    public ProductEntity(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDateTime addedDate, byte[] image, CategoryEntity categoryEntity) {
+    public ProductEntity(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDate addedDate, byte[] image, CategoryEntity categoryEntity) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
@@ -146,11 +146,11 @@ public class ProductEntity {
         this.price = price;
     }
 
-    public LocalDateTime getAddedDate() {
+    public LocalDate getAddedDate() {
         return addedDate;
     }
 
-    public void setAddedDate(LocalDateTime addedDate) {
+    public void setAddedDate(LocalDate addedDate) {
         this.addedDate = addedDate;
     }
 

@@ -20,8 +20,7 @@ public class ProductsDto {
     private int size;
     private int quantity;
     private int price;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime addedDate;
+    private LocalDate addedDate;
     private byte[] byteImage;
     private MultipartFile image;
 
@@ -32,7 +31,7 @@ public class ProductsDto {
     public ProductsDto() {
     }
 
-    public ProductsDto(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDateTime addedDate, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName) {
+    public ProductsDto(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDate addedDate, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
@@ -103,11 +102,11 @@ public class ProductsDto {
         this.price = price;
     }
 
-    public LocalDateTime getAddedDate() {
+    public LocalDate getAddedDate() {
         return addedDate;
     }
 
-    public void setAddedDate(LocalDateTime addedDate) {
+    public void setAddedDate(LocalDate addedDate) {
         this.addedDate = addedDate;
     }
 

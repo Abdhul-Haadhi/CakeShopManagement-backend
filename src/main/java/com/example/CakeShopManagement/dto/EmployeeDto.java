@@ -3,6 +3,7 @@ package com.example.CakeShopManagement.dto;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,14 +15,13 @@ public class EmployeeDto {
     private String email;
     private String phone;
     private String address;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime joinDate;
+    private LocalDate joinDate;
     private String password;
 
     public EmployeeDto() {
     }
 
-    public EmployeeDto(Long employeeId, String employeeName, String userName, String email, String phone, String address, LocalDateTime joinDate, String password) {
+    public EmployeeDto(Long employeeId, String employeeName, String userName, String email, String phone, String address, LocalDate joinDate, String password) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.userName = userName;
@@ -80,11 +80,11 @@ public class EmployeeDto {
         this.address = address;
     }
 
-    public LocalDateTime getJoinDate() {
+    public LocalDate getJoinDate() {
         return joinDate;
     }
 
-    public void setJoinDate(LocalDateTime joinDate) {
+    public void setJoinDate(LocalDate joinDate) {
         this.joinDate = joinDate;
     }
 

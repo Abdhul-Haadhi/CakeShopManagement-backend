@@ -55,7 +55,7 @@ public class WebSecurityConfiguration {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
 //                        Admin + Employee
-                        .requestMatchers("/api/employee**").hasAnyRole("ADMIN","EMPLOYEE")
+                        .requestMatchers("/api/employee/**").hasAnyRole("ADMIN","EMPLOYEE")
 //                        .requestMatchers("/customer/**").hasAnyRole("ADMIN","EMPLOYEE")
 
 //                        any logged user

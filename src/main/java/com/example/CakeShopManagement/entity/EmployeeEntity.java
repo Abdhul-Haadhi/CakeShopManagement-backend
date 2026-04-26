@@ -1,6 +1,8 @@
 package com.example.CakeShopManagement.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,7 +16,7 @@ public class EmployeeEntity {
     private String email;
     private String phone;
     private String address;
-    private LocalDateTime joinDate;
+    private LocalDate joinDate;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id")
@@ -24,7 +26,7 @@ public class EmployeeEntity {
     public EmployeeEntity() {
     }
 
-    public EmployeeEntity(Long employeeId, String employeeName, String email, String phone, String address, LocalDateTime joinDate, UserEntity user) {
+    public EmployeeEntity(Long employeeId, String employeeName, String email, String phone, String address, LocalDate joinDate, UserEntity user) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.email = email;
@@ -74,11 +76,11 @@ public class EmployeeEntity {
         this.address = address;
     }
 
-    public LocalDateTime getJoinDate() {
+    public LocalDate getJoinDate() {
         return joinDate;
     }
 
-    public void setJoinDate(LocalDateTime joinDate) {
+    public void setJoinDate(LocalDate joinDate) {
         this.joinDate = joinDate;
     }
 

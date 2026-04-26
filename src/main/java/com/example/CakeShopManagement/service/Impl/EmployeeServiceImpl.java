@@ -115,7 +115,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         try {
             Optional<EmployeeEntity> optionalEmployeeEntity=employeeRepository.findById(employeeId);
             if(!optionalEmployeeEntity.isPresent()){
-                throw new AppException("Employee Registration does not Exists", HttpStatus.BAD_REQUEST);
+                throw new AppException("Employee does not Exists", HttpStatus.BAD_REQUEST);
             }
             EmployeeEntity newEmployeeEntity = employeeMapper.toEmployeeEntity(employeeDto);
             newEmployeeEntity.setEmployeeId(employeeId);

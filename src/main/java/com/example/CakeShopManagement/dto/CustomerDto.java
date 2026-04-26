@@ -1,27 +1,25 @@
-package com.example.CakeShopManagement.entity;
+package com.example.CakeShopManagement.dto;
 
-
-import jakarta.persistence.*;
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "customer")
-public class CustomerEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Data
+public class CustomerDto {
     private Long customerId;
     private String customerName;
     private String email;
     private String phone;
     private String address;
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDate joinDate;
 
-    public CustomerEntity() {
+    public CustomerDto() {
     }
 
-    public CustomerEntity(Long customerId, String customerName, String email, String phone, String address, LocalDate joinDate) {
+    public CustomerDto(Long customerId, String customerName, String email, String phone, String address, LocalDate joinDate) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.email = email;
