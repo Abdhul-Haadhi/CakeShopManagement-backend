@@ -1,0 +1,40 @@
+package com.example.CakeShopManagement.controller;
+
+
+import com.example.CakeShopManagement.dto.AddToCartDto;
+import com.example.CakeShopManagement.service.AddToCartService;
+import com.example.CakeShopManagement.service.Impl.AddToCartServiceImpl;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RequestMapping("/api/public")
+@RestController
+public class CartController {
+
+    private final AddToCartServiceImpl addToCartServiceImpl;
+    private final AddToCartService addToCartService;
+
+    public CartController(AddToCartServiceImpl addToCartServiceImpl, AddToCartService addToCartService) {
+        this.addToCartServiceImpl = addToCartServiceImpl;
+        this.addToCartService = addToCartService;
+    }
+
+    @PostMapping("/cart")
+    public ResponseEntity<?> addToCart(@RequestBody AddToCartDto addToCartDto) {
+        return ResponseEntity.ok(addToCartService.addToCart(addToCartDto));
+    }
+
+
+    @GetMapping("/cart/{sessionId}")
+    public ResponseEntity<?> getCart(@PathVariable String sessionId) {
+        return ResponseEntity.ok(addToCartService.getCart(sessionId));
+    }
+
+    @DeleteMapping("/cart/{cartId}")
+    public ResponseEntity<?> deleteCartItem(@PathVariable Long cartId){
+        addToCartService.deleteCartItem(cartId);
+        return ResponseEntity.ok().build();
+    }
+
+
+}

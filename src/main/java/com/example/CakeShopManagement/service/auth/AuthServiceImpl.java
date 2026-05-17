@@ -6,6 +6,7 @@ import com.example.CakeShopManagement.dto.UpdateProfileDto;
 import com.example.CakeShopManagement.dto.UserDto;
 import com.example.CakeShopManagement.entity.EmployeeEntity;
 import com.example.CakeShopManagement.entity.UserEntity;
+import com.example.CakeShopManagement.enums.OrderStatus;
 import com.example.CakeShopManagement.enums.UserRole;
 import com.example.CakeShopManagement.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -23,6 +24,11 @@ public class AuthServiceImpl implements AuthService{
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
+//    @Autowired
+//    private OrderRepository orderRepository;
+
+
     public UserDto createUser(SignupRequest signupRequest) {
         UserEntity userEntity = new UserEntity();
 
@@ -31,6 +37,18 @@ public class AuthServiceImpl implements AuthService{
         userEntity.setPassword(new BCryptPasswordEncoder().encode(signupRequest.getPassword()));
         userEntity.setRole(UserRole.CUSTOMER);
         UserEntity createdUser = userRepository.save(userEntity);
+
+
+
+//        OrderEntity orderEntity = new OrderEntity();
+//        orderEntity.setAmount(0L);
+//        orderEntity.setTotalAmount(0L);
+//        orderEntity.setDiscount(0L);
+//        orderEntity.setUserEntity(createdUser);
+//        orderEntity.setOrderStatus(OrderStatus.PENDING);
+//        orderRepository.save(orderEntity);
+
+
 
         UserDto userDto = new UserDto();
         userDto.setUserId(createdUser.getUserId());
