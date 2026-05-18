@@ -1,0 +1,128 @@
+package com.example.CakeShopManagement.dto;
+
+import lombok.Data;
+
+import java.util.Date;
+import java.util.List;
+
+@Data
+public class PlaceOrderDto {
+    private String customerName;
+    private String phone;
+    private String email;
+    private String address;
+    private String city;
+    private Date deliveryDate;
+    private String notes;
+    private String paymentMethod;
+
+    private Long totalAmount;
+    private Long quantity;
+
+    private List<Long> cartItemIds;
+
+    public PlaceOrderDto() {
+    }
+
+    public PlaceOrderDto(String customerName, String phone, String email, String address, String city, Date deliveryDate, String notes, String paymentMethod, Long totalAmount, Long quantity, List<Long> cartItemIds) {
+        this.customerName = customerName;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.city = city;
+        this.deliveryDate = deliveryDate;
+        this.notes = notes;
+        this.paymentMethod = paymentMethod;
+        this.totalAmount = totalAmount;
+        this.quantity = quantity;
+        this.cartItemIds = cartItemIds;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Date getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public Long getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Long totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
+
+    public List<Long> getCartItemIds() {
+        return cartItemIds;
+    }
+
+    public void setCartItemIds(List<Long> cartItemIds) {
+        this.cartItemIds = cartItemIds;
+    }
+}

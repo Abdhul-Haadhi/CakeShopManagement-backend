@@ -1,153 +1,184 @@
-//package com.example.CakeShopManagement.entity;
-//
-//
-//import com.example.CakeShopManagement.enums.OrderStatus;
-//import jakarta.persistence.*;
-//import lombok.Data;
-//
-//import java.util.Date;
-//import java.util.List;
-//import java.util.UUID;
-//
-//@Entity
-//@Data
-//@Table(name = "order_table")
-//public class OrderEntity {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private long orderId;
-//    private String orderDescription;
-//    private Date orderDate;
-//    private Long amount;
-//    private String address;
-//    private String payment;
-//    private OrderStatus orderStatus;
-//    private Long totalAmount;
-//    private Long discount;
-//    private UUID trackingId;
-//
-////    @OneToOne(cascade = CascadeType.MERGE)
-////    @JoinColumn(name = "user_id",referencedColumnName = "userId")
-////    private UserEntity userEntity;
-////
-////
-////    @OneToMany(fetch = FetchType.LAZY,mappedBy = "orderEntity")
-////    private List<CartItemsEntity> cartItemsEntities;
-////
-////
-////    public OrderEntity() {
-////    }
-////
-////    public OrderEntity(long orderId, String orderDescription, Date orderDate, Long amount, String address, String payment, OrderStatus orderStatus, Long totalAmount, Long discount, UUID trackingId, UserEntity userEntity, List<CartItemsEntity> cartItemsEntities) {
-////        this.orderId = orderId;
-////        this.orderDescription = orderDescription;
-////        this.orderDate = orderDate;
-////        this.amount = amount;
-////        this.address = address;
-////        this.payment = payment;
-////        this.orderStatus = orderStatus;
-////        this.totalAmount = totalAmount;
-////        this.discount = discount;
-////        this.trackingId = trackingId;
-////        this.userEntity = userEntity;
-////        this.cartItemsEntities = cartItemsEntities;
-////    }
-////
-////
-////    public long getOrderId() {
-////        return orderId;
-////    }
-////
-////    public void setOrderId(long orderId) {
-////        this.orderId = orderId;
-////    }
-////
-////    public String getOrderDescription() {
-////        return orderDescription;
-////    }
-////
-////    public void setOrderDescription(String orderDescription) {
-////        this.orderDescription = orderDescription;
-////    }
-////
-////    public Date getOrderDate() {
-////        return orderDate;
-////    }
-////
-////    public void setOrderDate(Date orderDate) {
-////        this.orderDate = orderDate;
-////    }
-////
-////    public Long getAmount() {
-////        return amount;
-////    }
-////
-////    public void setAmount(Long amount) {
-////        this.amount = amount;
-////    }
-////
-////    public String getAddress() {
-////        return address;
-////    }
-////
-////    public void setAddress(String address) {
-////        this.address = address;
-////    }
-////
-////    public String getPayment() {
-////        return payment;
-////    }
-////
-////    public void setPayment(String payment) {
-////        this.payment = payment;
-////    }
-////
-////    public OrderStatus getOrderStatus() {
-////        return orderStatus;
-////    }
-////
-////    public void setOrderStatus(OrderStatus orderStatus) {
-////        this.orderStatus = orderStatus;
-////    }
-////
-////    public Long getTotalAmount() {
-////        return totalAmount;
-////    }
-////
-////    public void setTotalAmount(Long totalAmount) {
-////        this.totalAmount = totalAmount;
-////    }
-////
-////    public Long getDiscount() {
-////        return discount;
-////    }
-////
-////    public void setDiscount(Long discount) {
-////        this.discount = discount;
-////    }
-////
-////    public UUID getTrackingId() {
-////        return trackingId;
-////    }
-////
-////    public void setTrackingId(UUID trackingId) {
-////        this.trackingId = trackingId;
-////    }
-////
-////    public UserEntity getUserEntity() {
-////        return userEntity;
-////    }
-////
-////    public void setUserEntity(UserEntity userEntity) {
-////        this.userEntity = userEntity;
-////    }
-////
-////    public List<CartItemsEntity> getCartItemsEntities() {
-////        return cartItemsEntities;
-////    }
-////
-////    public void setCartItemsEntities(List<CartItemsEntity> cartItemsEntities) {
-////        this.cartItemsEntities = cartItemsEntities;
-////    }
-//}
+package com.example.CakeShopManagement.entity;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.Date;
+import java.util.List;
+
+@Data
+@Entity
+@Table(name="order_table")
+public class OrderEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderId;
+
+    private String customerName;
+    private String phone;
+    private String email;
+
+    private String address;
+    private String city;
+
+    private Date orderDate;
+    private Date deliveryDate;
+
+    private Long totalAmount;
+    private Long quantity;
+
+    private String paymentMethod;
+
+    private String trackingId;
+
+    private String status;
+
+    @OneToMany(mappedBy = "order")
+    private List<CartItemsEntity> cartItems;
+
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    private List<OrderItemEntity> orderItems;
+
+
+    public OrderEntity() {
+    }
+
+    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems) {
+        this.orderId = orderId;
+        this.customerName = customerName;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.city = city;
+        this.orderDate = orderDate;
+        this.deliveryDate = deliveryDate;
+        this.totalAmount = totalAmount;
+        this.quantity = quantity;
+        this.paymentMethod = paymentMethod;
+        this.trackingId = trackingId;
+        this.status = status;
+        this.cartItems = cartItems;
+        this.orderItems = orderItems;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public Date getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public Long getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Long totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getTrackingId() {
+        return trackingId;
+    }
+
+    public void setTrackingId(String trackingId) {
+        this.trackingId = trackingId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<CartItemsEntity> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<CartItemsEntity> cartItems) {
+        this.cartItems = cartItems;
+    }
+
+    public List<OrderItemEntity> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItemEntity> orderItems) {
+        this.orderItems = orderItems;
+    }
+}

@@ -36,7 +36,13 @@ public class AddToCartServiceImpl implements AddToCartService {
     }
 
     public List<CartItemsEntity> getCart(String sessionId){
-        return cartRepository.findBySessionId(sessionId);
+        return cartRepository.findBySessionIdAndOrderIsNull(sessionId);
+    }
+
+
+    @Override
+    public CartItemsEntity getCartItemById(Long id){
+        return cartRepository.findById(id).orElseThrow();
     }
 
     public void deleteCartItem(Long cartId){

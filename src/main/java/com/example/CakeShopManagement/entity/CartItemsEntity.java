@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
+@Table(name = "cart")
 public class CartItemsEntity {
 
     @Id
@@ -26,20 +27,21 @@ public class CartItemsEntity {
     private ProductEntity productEntity;
 
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "order_id")
-//    private OrderEntity orderEntity;
-//
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
+
 
     public CartItemsEntity() {
     }
 
-    public CartItemsEntity(Long cartId, String sessionId, Long price, Long quantity, ProductEntity productEntity) {
+    public CartItemsEntity(Long cartId, String sessionId, Long price, Long quantity, ProductEntity productEntity, OrderEntity order) {
         this.cartId = cartId;
         this.sessionId = sessionId;
         this.price = price;
         this.quantity = quantity;
         this.productEntity = productEntity;
+        this.order = order;
     }
 
     public Long getCartId() {
@@ -80,5 +82,13 @@ public class CartItemsEntity {
 
     public void setProductEntity(ProductEntity productEntity) {
         this.productEntity = productEntity;
+    }
+
+    public OrderEntity getOrder() {
+        return order;
+    }
+
+    public void setOrder(OrderEntity order) {
+        this.order = order;
     }
 }
