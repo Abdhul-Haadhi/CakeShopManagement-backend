@@ -1,5 +1,6 @@
 package com.example.CakeShopManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,8 +15,13 @@ public class OrderItemEntity {
 
     private Long price;
 
+//    @ManyToOne
+//    @JoinColumn(name = "order_id")
+//    private OrderEntity order;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private OrderEntity order;
 
     @ManyToOne

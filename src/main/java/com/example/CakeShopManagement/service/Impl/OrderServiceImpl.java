@@ -62,4 +62,9 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException("Request failed with error: "+e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public List<OrderEntity> getOrdersBySession(String sessionId) {
+        return orderRepository.findBySessionIdOrderByOrderDateDesc(sessionId);
+    }
 }

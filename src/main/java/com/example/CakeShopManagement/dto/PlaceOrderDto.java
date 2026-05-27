@@ -18,13 +18,14 @@ public class PlaceOrderDto {
 
     private Long totalAmount;
     private Long quantity;
+    private String sessionId;
 
     private List<Long> cartItemIds;
 
     public PlaceOrderDto() {
     }
 
-    public PlaceOrderDto(String customerName, String phone, String email, String address, String city, Date deliveryDate, String notes, String paymentMethod, Long totalAmount, Long quantity, List<Long> cartItemIds) {
+    public PlaceOrderDto(String customerName, String phone, String email, String address, String city, Date deliveryDate, String notes, String paymentMethod, Long totalAmount, Long quantity, String sessionId, List<Long> cartItemIds) {
         this.customerName = customerName;
         this.phone = phone;
         this.email = email;
@@ -35,6 +36,7 @@ public class PlaceOrderDto {
         this.paymentMethod = paymentMethod;
         this.totalAmount = totalAmount;
         this.quantity = quantity;
+        this.sessionId = sessionId;
         this.cartItemIds = cartItemIds;
     }
 
@@ -116,6 +118,14 @@ public class PlaceOrderDto {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public List<Long> getCartItemIds() {

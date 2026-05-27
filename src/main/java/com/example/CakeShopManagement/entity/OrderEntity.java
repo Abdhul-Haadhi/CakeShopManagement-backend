@@ -34,17 +34,19 @@ public class OrderEntity {
 
     private String status;
 
+    private String sessionId;
+
     @OneToMany(mappedBy = "order")
     private List<CartItemsEntity> cartItems;
 
-    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItemEntity> orderItems;
 
 
     public OrderEntity() {
     }
 
-    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems) {
+    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems) {
         this.orderId = orderId;
         this.customerName = customerName;
         this.phone = phone;
@@ -58,6 +60,7 @@ public class OrderEntity {
         this.paymentMethod = paymentMethod;
         this.trackingId = trackingId;
         this.status = status;
+        this.sessionId = sessionId;
         this.cartItems = cartItems;
         this.orderItems = orderItems;
     }
@@ -164,6 +167,14 @@ public class OrderEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public List<CartItemsEntity> getCartItems() {
