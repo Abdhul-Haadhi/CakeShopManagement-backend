@@ -1,5 +1,6 @@
 package com.example.CakeShopManagement.entity;
 
+import com.example.CakeShopManagement.dto.ProductCustomizationDto;
 import com.example.CakeShopManagement.dto.ProductsDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -31,9 +32,8 @@ public class ProductEntity {
     @Column(columnDefinition = "longblob")
     private byte[] image;
 
-
-
-
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
+    private List<ProductCustomizationEntity> customizations;
 
 //
 //    private String imageName;
@@ -70,14 +70,24 @@ public class ProductEntity {
         productsDto.setCategoryId(categoryEntity.getCategoryId());
         productsDto.setCategoryName(categoryEntity.getCategoryName());
 
+        if(customizations != null){
+            List<ProductCustomizationDto> customizationDtos = customizations.stream().map(pc->new ProductCustomizationDto(
+                    pc.getCustomizationOption().getOptionId(),
+                    pc.getCustomizationOption().getOptionName(),
+                    pc.getCustomizationOption().getOptionType(),
+                    pc.getExtraPrice()
+            ))
+                    .toList();
+            productsDto.setCustomizations(customizationDtos);
+        }
+
         return productsDto;
     }
 
     public ProductEntity() {
     }
 
-
-    public ProductEntity(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDate addedDate, byte[] image, CategoryEntity categoryEntity) {
+    public ProductEntity(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDate addedDate, byte[] image, List<ProductCustomizationEntity> customizations, CategoryEntity categoryEntity) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
@@ -87,6 +97,7 @@ public class ProductEntity {
         this.price = price;
         this.addedDate = addedDate;
         this.image = image;
+        this.customizations = customizations;
         this.categoryEntity = categoryEntity;
     }
 
@@ -168,5 +179,13 @@ public class ProductEntity {
 
     public void setCategoryEntity(CategoryEntity categoryEntity) {
         this.categoryEntity = categoryEntity;
+    }
+
+    public List<ProductCustomizationEntity> getCustomizations() {
+        return customizations;
+    }
+
+    public void setCustomizations(List<ProductCustomizationEntity> customizations) {
+        this.customizations = customizations;
     }
 }

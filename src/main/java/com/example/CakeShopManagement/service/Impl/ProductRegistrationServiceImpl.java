@@ -1,20 +1,27 @@
 package com.example.CakeShopManagement.service.Impl;
 
+import com.example.CakeShopManagement.dto.ProductCustomizationDto;
 import com.example.CakeShopManagement.dto.ProductsDto;
 import com.example.CakeShopManagement.entity.CategoryEntity;
+import com.example.CakeShopManagement.entity.CustomizationOptionEntity;
+import com.example.CakeShopManagement.entity.ProductCustomizationEntity;
 import com.example.CakeShopManagement.entity.ProductEntity;
 import com.example.CakeShopManagement.exceptions.AppException;
 import com.example.CakeShopManagement.mappers.ProductRegistrationMapper;
 import com.example.CakeShopManagement.repository.CategoryRepository;
+import com.example.CakeShopManagement.repository.CustomizationOptionRepository;
+import com.example.CakeShopManagement.repository.ProductCustomizationRepository;
 import com.example.CakeShopManagement.repository.ProductRegistrationRepository;
 import com.example.CakeShopManagement.service.ProductRegistrationService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 
@@ -25,10 +32,17 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
 //    private final ProductRegistrationMapper productRegistrationMapper;
     private final CategoryRepository categoryRepository;
 
-    public ProductRegistrationServiceImpl(ProductRegistrationRepository productRegistrationRepository, ProductRegistrationMapper productRegistrationMapper, CategoryRepository categoryRepository) {
+    private final ProductCustomizationRepository productCustomizationRepository;
+    private final CustomizationOptionRepository customizationOptionRepository;
+    private final ObjectMapper objectMapper;
+
+    public ProductRegistrationServiceImpl(ProductRegistrationRepository productRegistrationRepository, ProductRegistrationMapper productRegistrationMapper, CategoryRepository categoryRepository, ProductCustomizationRepository productCustomizationRepository, CustomizationOptionRepository customizationOptionRepository, ObjectMapper objectMapper) {
         this.productRegistrationRepository = productRegistrationRepository;
 //        this.productRegistrationMapper = productRegistrationMapper;
         this.categoryRepository = categoryRepository;
+        this.productCustomizationRepository = productCustomizationRepository;
+        this.customizationOptionRepository = customizationOptionRepository;
+        this.objectMapper = objectMapper;
     }
 
 
@@ -50,13 +64,39 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
 //        }
 //    }
 
-    public ProductsDto addProduct(ProductsDto productsDto) throws IOException {
+//    public ProductsDto addProduct(ProductsDto productsDto) throws IOException {
+//
+//        if(productRegistrationRepository.existsByProductSku(productsDto.getProductSku())){
+//            throw new AppException("Product SKU already exists!",HttpStatus.BAD_REQUEST);
+//        }
+//
+//        ProductEntity productEntity = new ProductEntity();
+//        productEntity.setProductSku(productsDto.getProductSku());
+//        productEntity.setProductName(productsDto.getProductName());
+//        productEntity.setDescription(productsDto.getDescription());
+//        productEntity.setSize(productsDto.getSize());
+//        productEntity.setQuantity(productsDto.getQuantity());
+//        productEntity.setPrice(productsDto.getPrice());
+//        productEntity.setAddedDate(productsDto.getAddedDate());
+//        productEntity.setImage(productsDto.getImage().getBytes());
+//
+//        CategoryEntity categoryEntity = categoryRepository.findById(productsDto.getCategoryId()).orElseThrow();
+//        productEntity.setCategoryEntity(categoryEntity);
+//
+//        return productRegistrationRepository.save(productEntity).getDto();
+//    }
+
+    @Override
+    public ProductsDto addProduct(ProductsDto productsDto,String customizations) throws IOException {
+
+        System.out.println("SKU RECEIVED = " + productsDto.getProductSku());
 
         if(productRegistrationRepository.existsByProductSku(productsDto.getProductSku())){
             throw new AppException("Product SKU already exists!",HttpStatus.BAD_REQUEST);
         }
 
         ProductEntity productEntity = new ProductEntity();
+
         productEntity.setProductSku(productsDto.getProductSku());
         productEntity.setProductName(productsDto.getProductName());
         productEntity.setDescription(productsDto.getDescription());
@@ -64,12 +104,37 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         productEntity.setQuantity(productsDto.getQuantity());
         productEntity.setPrice(productsDto.getPrice());
         productEntity.setAddedDate(productsDto.getAddedDate());
-        productEntity.setImage(productsDto.getImage().getBytes());
+
+        if(productsDto.getImage() != null){
+            productEntity.setImage(productsDto.getImage().getBytes());
+        }
 
         CategoryEntity categoryEntity = categoryRepository.findById(productsDto.getCategoryId()).orElseThrow();
+
         productEntity.setCategoryEntity(categoryEntity);
 
-        return productRegistrationRepository.save(productEntity).getDto();
+        ProductEntity saveProduct = productRegistrationRepository.save(productEntity);
+
+        if(customizations != null && !customizations.isEmpty()){
+            List<ProductCustomizationDto> customizationDtos = objectMapper.readValue(customizations,
+                    new TypeReference<List<ProductCustomizationDto>>() {
+                    });
+
+            for(ProductCustomizationDto dto : customizationDtos){
+                ProductCustomizationEntity customization1 = new ProductCustomizationEntity();
+
+                customization1.setProduct(saveProduct);
+
+                CustomizationOptionEntity option = customizationOptionRepository.findById(dto.getOptionId()).orElseThrow();
+
+                customization1.setCustomizationOption(option);
+                customization1.setExtraPrice(dto.getExtraPrice());
+
+                productCustomizationRepository.save(customization1);
+            }
+        }
+
+        return saveProduct.getDto();
     }
 
     public List<ProductsDto> getAllProducts() {

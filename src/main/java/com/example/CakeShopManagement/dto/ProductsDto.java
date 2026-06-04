@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ProductsDto {
@@ -27,11 +28,14 @@ public class ProductsDto {
     private Long categoryId;
     private String categoryName;
 
+    private List<ProductCustomizationDto> customizations;
+
+
 
     public ProductsDto() {
     }
 
-    public ProductsDto(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDate addedDate, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName) {
+    public ProductsDto(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDate addedDate, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName, List<ProductCustomizationDto> customizations) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
@@ -44,6 +48,7 @@ public class ProductsDto {
         this.image = image;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
+        this.customizations = customizations;
     }
 
     public String getProductName() {
@@ -140,5 +145,13 @@ public class ProductsDto {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public List<ProductCustomizationDto> getCustomizations() {
+        return customizations;
+    }
+
+    public void setCustomizations(List<ProductCustomizationDto> customizations) {
+        this.customizations = customizations;
     }
 }

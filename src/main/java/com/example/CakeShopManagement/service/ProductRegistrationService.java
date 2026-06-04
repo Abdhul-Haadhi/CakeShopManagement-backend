@@ -9,7 +9,7 @@ public interface ProductRegistrationService {
 
 
 //    ProductsDto addProductEntity(ProductsDto productsDto);
-    ProductsDto addProduct(ProductsDto productsDto) throws IOException;
+    ProductsDto addProduct(ProductsDto productsDto, String customizations) throws IOException;
 
 //    ProductsDto addImage(ProductsDto productsDto) throws IOException;
 

@@ -3,6 +3,7 @@ package com.example.CakeShopManagement.controller;
 
 import com.example.CakeShopManagement.dto.CategoryDto;
 import com.example.CakeShopManagement.entity.CategoryEntity;
+import com.example.CakeShopManagement.exceptions.AppException;
 import com.example.CakeShopManagement.service.admin.category.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +31,37 @@ public class AdminCategoryController {
     public ResponseEntity<List<CategoryEntity>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
+
+//    @GetMapping("category")
+//    public ResponseEntity<List<CategoryDto>> getCategory() {
+//        try {
+//            List<CategoryDto> categoryDtoList = categoryService.getCategories();
+//            return ResponseEntity.ok(categoryDtoList);
+//        }
+//        catch (Exception e) {
+//            throw new AppException("Request failed with error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    @PutMapping("categories/{categoryId}")
+    public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long categoryId, @RequestBody CategoryDto categoryDto) {
+        try {
+            CategoryDto categoryDto1 = categoryService.updateCategory(categoryId, categoryDto);
+            return ResponseEntity.ok(categoryDto1);
+        }
+        catch (Exception e){
+            throw new AppException("Request failed with error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @DeleteMapping("category/{categoryId}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long categoryId) {
+        boolean deleted = categoryService.deleteCategory(categoryId);
+        if(deleted){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 }

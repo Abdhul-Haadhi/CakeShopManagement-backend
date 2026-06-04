@@ -6,8 +6,10 @@ import com.example.CakeShopManagement.service.ProductRegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -34,10 +36,47 @@ public class ProductRegistrationController {
 //    }
 
 
+//    @PostMapping("/product-registration")
+//    public ResponseEntity<ProductsDto> addProduct(@ModelAttribute ProductsDto productsDto) throws IOException {
+//        ProductsDto productsDto1 = productRegistrationService.addProduct(productsDto);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(productsDto1);
+//    }
+
+//    @PostMapping("/product-registration")
+//    public ResponseEntity<ProductsDto> addProduct(@ModelAttribute ProductsDto productsDto,
+//                                                  @RequestParam(value = "customizations", required = false)
+//                                                  String customizations) throws IOException {
+//        ProductsDto productsDto1 = productRegistrationService.addProduct(productsDto,customizations);
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(productsDto1);
+//    }
+
     @PostMapping("/product-registration")
-    public ResponseEntity<ProductsDto> addProduct(@ModelAttribute ProductsDto productsDto) throws IOException {
-        ProductsDto productsDto1 = productRegistrationService.addProduct(productsDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productsDto1);
+    public ResponseEntity<ProductsDto> addProduct( @RequestParam("productSku") String productSku,
+                                                   @RequestParam("productName") String productName,
+                                                   @RequestParam("description") String description,
+                                                   @RequestParam("size") int size,
+                                                   @RequestParam("quantity") int quantity,
+                                                   @RequestParam("price") int price,
+                                                   @RequestParam("addedDate") String addedDate,
+                                                   @RequestParam("categoryId") Long categoryId,
+                                                   @RequestParam(value = "image", required = false) MultipartFile image,
+                                                   @RequestParam(value = "customizations", required = false) String customizations)throws IOException{
+        ProductsDto dto = new ProductsDto();
+
+        dto.setProductSku(productSku);
+        dto.setProductName(productName);
+        dto.setDescription(description);
+        dto.setSize(size);
+        dto.setQuantity(quantity);
+        dto.setPrice(price);
+        dto.setAddedDate(LocalDate.parse(addedDate));
+        dto.setCategoryId(categoryId);
+        dto.setImage(image);
+
+        ProductsDto saved = productRegistrationService.addProduct(dto,customizations);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @GetMapping("/products")
