@@ -20,7 +20,7 @@ public interface ProductRegistrationService {
 
     ProductsDto getProductById(Long productId);
 
-    ProductsDto updateProduct(Long productId, ProductsDto productsDto) throws IOException;
+    ProductsDto updateProduct(Long productId, ProductsDto productsDto, String customizations) throws IOException;
 
     boolean deleteProduct(Long productId);
 

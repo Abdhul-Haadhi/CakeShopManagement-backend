@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.IOException;
@@ -164,7 +165,11 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
 
     }
 
-    public ProductsDto updateProduct(Long productId, ProductsDto productsDto) throws IOException {
+    @Transactional
+    @Override
+    public ProductsDto updateProduct(Long productId, ProductsDto productsDto,String customizations) throws IOException {
+
+//        System.out.println("**********SERVICE HIT");
         Optional<ProductEntity> optionalProductEntity = productRegistrationRepository.findById(productId);
         Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(productsDto.getCategoryId());
 
@@ -181,7 +186,40 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
             if(productsDto.getImage() != null){
                 productEntity.setImage(productsDto.getImage().getBytes());
             }
-            return productRegistrationRepository.save(productEntity).getDto();
+
+            ProductEntity updateProduct = productRegistrationRepository.save(productEntity);
+
+            System.out.println(
+                    "Before delete: " +
+                            productCustomizationRepository.findByProductProductId(productId).size()
+            );
+
+            productCustomizationRepository.deleteByProductProductId(productId);
+
+            System.out.println(
+                    "After delete: " +
+                            productCustomizationRepository.findByProductProductId(productId).size()
+            );
+
+            if(customizations != null && !customizations.isEmpty()){
+                List<ProductCustomizationDto> customizationDtos = objectMapper.readValue(customizations, new TypeReference<List<ProductCustomizationDto>>() {});
+
+                for (ProductCustomizationDto dto : customizationDtos) {
+                    ProductCustomizationEntity customization = new ProductCustomizationEntity();
+
+                    customization.setProduct(updateProduct);
+
+                    CustomizationOptionEntity option = customizationOptionRepository.findById(dto.getOptionId()).orElseThrow();
+
+                    customization.setCustomizationOption(option);
+
+                    customization.setExtraPrice(dto.getExtraPrice());
+
+                    productCustomizationRepository.save(customization);
+                }
+            }
+
+            return updateProduct.getDto();
         }
         else {
             return null;

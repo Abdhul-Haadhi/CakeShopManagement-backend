@@ -23,18 +23,6 @@ public class ProductRegistrationController {
         this.productRegistrationService = productRegistrationService;
     }
 
-//    @PostMapping(value = "/product-registration")
-//    public ResponseEntity<ProductsDto> addForm(@RequestBody ProductsDto productsDto) {
-//        try {
-//            ProductsDto productsDtoResponse = productRegistrationService.addProductEntity(productsDto);
-//            return ResponseEntity.created(URI.create("/product-registration" + productsDtoResponse.getProductId())).body(productsDtoResponse);
-//        }
-//        catch (Exception e){
-//            throw new AppException("Request failed with error: "+e, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//
-//    }
-
 
 //    @PostMapping("/product-registration")
 //    public ResponseEntity<ProductsDto> addProduct(@ModelAttribute ProductsDto productsDto) throws IOException {
@@ -103,33 +91,56 @@ public class ProductRegistrationController {
         }
     }
 
-//    @GetMapping("/check-sku")
-//    public ResponseEntity<Boolean> checkSkuExists(@RequestParam String productSku) {
-//        boolean exists = productRegistrationRepository.existsByProductSku(productSku);
-//        return ResponseEntity.ok(exists);
-//    }
-
-
-//    @GetMapping("/product/{productSku}")
-//    public ResponseEntity<ProductsDto> getProductBySku(@PathVariable String productSku) {
-//        boolean getSku = productRegistrationService.getProductBySku(productSku);
-//        return ResponseEntity.ok();
-//    }
-
     @GetMapping("/check-sku/{productSku}")
     public ResponseEntity<Boolean> checkSkuExists( @PathVariable String productSku) {
         return ResponseEntity.ok(productRegistrationService.getProductBySku(productSku));
     }
 
-    @PutMapping("/product/{productId}")
-    public ResponseEntity<ProductsDto> updateProduct(@PathVariable Long productId, @ModelAttribute ProductsDto productsDto) throws IOException {
-        ProductsDto updateProduct = productRegistrationService.updateProduct(productId, productsDto);
-        if(updateProduct != null) {
-            return ResponseEntity.ok(updateProduct);
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+//    @PutMapping("/product/{productId}")
+//    public ResponseEntity<ProductsDto> updateProduct(@PathVariable Long productId, @ModelAttribute ProductsDto productsDto, @RequestParam(value = "customizations",required = false)String customizations) throws IOException {
+//
+//        System.out.println("**************UPDATE CALLED");
+//        System.out.println("ID = " + productId);
+//        System.out.println("NAME = " + productsDto.getProductName());
+//
+//        ProductsDto updateProduct = productRegistrationService.updateProduct(productId, productsDto,customizations);
+//        if(updateProduct != null) {
+//            return ResponseEntity.ok(updateProduct);
+//        }
+//        else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+
+    @PutMapping(value = "/product/{productId}", consumes = "multipart/form-data")
+    public ResponseEntity<ProductsDto> updateProduct(@PathVariable Long productId,
+                                                     @RequestParam("productName") String productName,
+                                                     @RequestParam("description") String description,
+                                                     @RequestParam("size") int size,
+                                                     @RequestParam("quantity") int quantity,
+                                                     @RequestParam("price") int price,
+                                                     @RequestParam("addedDate") String addedDate,
+                                                     @RequestParam("categoryId") Long categoryId,
+                                                     @RequestParam(value = "image", required = false)
+                                                         MultipartFile image,
+                                                     @RequestParam(value = "customizations", required = false)
+                                                         String customizations
+                                                     ) throws IOException {
+
+        ProductsDto dto = new ProductsDto();
+
+        dto.setProductName(productName);
+        dto.setDescription(description);
+        dto.setSize(size);
+        dto.setQuantity(quantity);
+        dto.setPrice(price);
+        dto.setAddedDate(LocalDate.parse(addedDate));
+        dto.setCategoryId(categoryId);
+        dto.setImage(image);
+
+        ProductsDto updateProduct = productRegistrationService.updateProduct(productId, dto, customizations);
+
+        return ResponseEntity.ok(updateProduct);
     }
 
     @DeleteMapping("/product/{productId}")
