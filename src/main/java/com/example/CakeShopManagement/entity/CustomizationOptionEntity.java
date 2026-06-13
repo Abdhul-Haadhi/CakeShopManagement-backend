@@ -23,8 +23,21 @@ public class CustomizationOptionEntity {
     private List<CustomizationOptionValueEntity> values = new ArrayList<>();
 
 
+//    public CustomizationOptionDto getDto(){
+//        return new CustomizationOptionDto(optionId, optionName, optionType);
+//    }
+
     public CustomizationOptionDto getDto(){
-        return new CustomizationOptionDto(optionId, optionName, optionType);
+        CustomizationOptionDto dto = new CustomizationOptionDto();
+
+        dto.setOptionId(optionId);
+        dto.setOptionName(optionName);
+        dto.setOptionType(optionType);
+
+        dto.setOptionValue(
+                values.stream().map(CustomizationOptionValueEntity::getValue).toList()
+        );
+        return dto;
     }
 
     public CustomizationOptionEntity() {

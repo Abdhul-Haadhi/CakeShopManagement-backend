@@ -3,6 +3,8 @@ package com.example.CakeShopManagement.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AddToCartDto {
 
@@ -12,13 +14,16 @@ public class AddToCartDto {
 
     private String sessionId;
 
+    private List<CartCustomizationDto> customizations;
+
     public AddToCartDto() {
     }
 
-    public AddToCartDto(Long productId, Long quantity, String sessionId) {
+    public AddToCartDto(Long productId, Long quantity, String sessionId, List<CartCustomizationDto> customizations) {
         this.productId = productId;
         this.quantity = quantity;
         this.sessionId = sessionId;
+        this.customizations = customizations;
     }
 
     public Long getProductId() {
@@ -43,5 +48,13 @@ public class AddToCartDto {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public List<CartCustomizationDto> getCustomizations() {
+        return customizations;
+    }
+
+    public void setCustomizations(List<CartCustomizationDto> customizations) {
+        this.customizations = customizations;
     }
 }

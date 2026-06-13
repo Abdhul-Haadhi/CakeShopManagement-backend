@@ -22,9 +22,19 @@ public class PlaceOrderController {
         return ResponseEntity.ok(orderService.placeOrder(placeOrderDto));
     }
 
+//    @GetMapping("/orders/{sessionId}")
+//    public ResponseEntity<?> getOrder(@PathVariable String sessionId){
+//        return ResponseEntity.ok(orderService.getOrdersBySession(sessionId));
+//    }
+
     @GetMapping("/orders/{sessionId}")
     public ResponseEntity<?> getOrder(@PathVariable String sessionId){
-        return ResponseEntity.ok(orderService.getOrdersBySession(sessionId));
+
+        var data = orderService.getOrdersBySession(sessionId);
+
+        System.out.println(data);
+
+        return ResponseEntity.ok(data);
     }
 
 }

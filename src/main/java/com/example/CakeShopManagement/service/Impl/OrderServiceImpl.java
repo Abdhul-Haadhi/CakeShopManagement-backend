@@ -1,5 +1,7 @@
 package com.example.CakeShopManagement.service.Impl;
 
+import com.example.CakeShopManagement.dto.OrderHistoryDto;
+import com.example.CakeShopManagement.dto.OrderItemDto;
 import com.example.CakeShopManagement.dto.PlaceOrderDto;
 import com.example.CakeShopManagement.entity.CartItemsEntity;
 import com.example.CakeShopManagement.entity.OrderEntity;
@@ -63,8 +65,41 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+//    @Override
+//    public List<OrderEntity> getOrdersBySession(String sessionId) {
+//        return orderRepository.findBySessionIdOrderByOrderDateDesc(sessionId);
+//    }
+
     @Override
-    public List<OrderEntity> getOrdersBySession(String sessionId) {
-        return orderRepository.findBySessionIdOrderByOrderDateDesc(sessionId);
+    public List<OrderHistoryDto> getOrdersBySession(String sessionId) {
+        return orderRepository.findBySessionIdOrderByOrderDateDesc(sessionId)
+                .stream()
+                .map(order -> {
+                    OrderHistoryDto dto = new OrderHistoryDto();
+
+                    dto.setOrderId(order.getOrderId());
+                    dto.setTotalAmount(order.getTotalAmount());
+                    dto.setQuantity(order.getQuantity());
+                    dto.setStatus(order.getStatus());
+                    dto.setTrackingId(order.getTrackingId());
+                    dto.setOrderDate(order.getOrderDate());
+                    dto.setDeliveryDate(order.getDeliveryDate());
+
+                    List<OrderItemDto> items = order.getOrderItems().stream()
+                            .map(item -> {
+                                OrderItemDto itemDto = new OrderItemDto();
+
+                                itemDto.setOrderItemId(item.getOrderItemId());
+                                itemDto.setQuantity(item.getQuantity());
+                                itemDto.setPrice(itemDto.getPrice());
+                                itemDto.setProductId(item.getProduct().getProductId());
+                                itemDto.setProductName(item.getProduct().getProductName());
+
+                                return itemDto;
+                            }).toList();
+                    dto.setOrderItems(items);
+                    return dto;
+                }).toList();
     }
+
 }

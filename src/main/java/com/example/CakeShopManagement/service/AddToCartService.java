@@ -2,13 +2,13 @@ package com.example.CakeShopManagement.service;
 
 
 import com.example.CakeShopManagement.dto.AddToCartDto;
-import com.example.CakeShopManagement.entity.CartItemsEntity;
+import com.example.CakeShopManagement.dto.CartItemDto;
 
 import java.util.List;
 
 public interface AddToCartService {
-    CartItemsEntity addToCart(AddToCartDto addToCartDto);
-    List<CartItemsEntity> getCart(String sessionId);
+    CartItemDto addToCart(AddToCartDto addToCartDto);
+    List<CartItemDto> getCart(String sessionId);
     void deleteCartItem(Long cartId);
-    CartItemsEntity getCartItemById(Long id);
+    CartItemDto getCartItemById(Long id);
 }

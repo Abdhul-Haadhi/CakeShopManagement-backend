@@ -3,6 +3,7 @@ package com.example.CakeShopManagement.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class ProductCustomizationDto {
@@ -15,14 +16,17 @@ public class ProductCustomizationDto {
 
     private BigDecimal extraPrice;
 
+    private List<String> optionValues;
+
     public ProductCustomizationDto() {
     }
 
-    public ProductCustomizationDto(Long optionId, String optionName, String optionType, BigDecimal extraPrice) {
+    public ProductCustomizationDto(Long optionId, String optionName, String optionType, BigDecimal extraPrice, List<String> optionValues) {
         this.optionId = optionId;
         this.optionName = optionName;
         this.optionType = optionType;
         this.extraPrice = extraPrice;
+        this.optionValues = optionValues;
     }
 
     public Long getOptionId() {
@@ -55,5 +59,13 @@ public class ProductCustomizationDto {
 
     public void setExtraPrice(BigDecimal extraPrice) {
         this.extraPrice = extraPrice;
+    }
+
+    public List<String> getOptionValues() {
+        return optionValues;
+    }
+
+    public void setOptionValues(List<String> optionValues) {
+        this.optionValues = optionValues;
     }
 }

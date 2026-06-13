@@ -1,0 +1,97 @@
+package com.example.CakeShopManagement.dto;
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class CartItemDto {
+    private Long cartId;
+    private String sessionId;
+    private Long quantity;
+    private Long price;
+
+    private Long productId;
+    private String productName;
+    private byte[] byteImage;
+
+    private List<CartCustomizationDto> customizations;
+
+    public CartItemDto() {
+    }
+
+    public CartItemDto(Long cartId, String sessionId, Long quantity, Long price, Long productId, String productName, byte[] byteImage, List<CartCustomizationDto> customizations) {
+        this.cartId = cartId;
+        this.sessionId = sessionId;
+        this.quantity = quantity;
+        this.price = price;
+        this.productId = productId;
+        this.productName = productName;
+        this.byteImage = byteImage;
+        this.customizations = customizations;
+    }
+
+    public Long getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Long cartId) {
+        this.cartId = cartId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public byte[] getByteImage() {
+        return byteImage;
+    }
+
+    public void setByteImage(byte[] byteImage) {
+        this.byteImage = byteImage;
+    }
+
+    public List<CartCustomizationDto> getCustomizations() {
+        return customizations;
+    }
+
+    public void setCustomizations(List<CartCustomizationDto> customizations) {
+        this.customizations = customizations;
+    }
+}

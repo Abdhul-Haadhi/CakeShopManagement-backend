@@ -70,14 +70,34 @@ public class ProductEntity {
         productsDto.setCategoryId(categoryEntity.getCategoryId());
         productsDto.setCategoryName(categoryEntity.getCategoryName());
 
+//        if(customizations != null){
+//            List<ProductCustomizationDto> customizationDtos = customizations.stream().map(pc->new ProductCustomizationDto(
+//                    pc.getCustomizationOption().getOptionId(),
+//                    pc.getCustomizationOption().getOptionName(),
+//                    pc.getCustomizationOption().getOptionType(),
+//                    pc.getExtraPrice()
+//            ))
+//                    .toList();
+//            productsDto.setCustomizations(customizationDtos);
+//        }
+
         if(customizations != null){
-            List<ProductCustomizationDto> customizationDtos = customizations.stream().map(pc->new ProductCustomizationDto(
-                    pc.getCustomizationOption().getOptionId(),
-                    pc.getCustomizationOption().getOptionName(),
-                    pc.getCustomizationOption().getOptionType(),
-                    pc.getExtraPrice()
-            ))
-                    .toList();
+            List<ProductCustomizationDto> customizationDtos = customizations.stream().map(pc -> {
+                ProductCustomizationDto dto = new ProductCustomizationDto();
+                dto.setOptionId(pc.getCustomizationOption().getOptionId());
+                dto.setOptionName(pc.getCustomizationOption().getOptionName());
+                dto.setOptionType(pc.getCustomizationOption().getOptionType());
+                dto.setExtraPrice(pc.getExtraPrice());
+                dto.setOptionValues(
+                        pc.getCustomizationOption()
+                                .getValues()
+                                .stream()
+                                .map(CustomizationOptionValueEntity::getValue)
+                                .toList()
+                );
+                return dto;
+            }).toList();
+
             productsDto.setCustomizations(customizationDtos);
         }
 
