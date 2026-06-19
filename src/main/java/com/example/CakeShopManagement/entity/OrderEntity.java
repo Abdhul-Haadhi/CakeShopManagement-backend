@@ -42,11 +42,15 @@ public class OrderEntity {
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItemEntity> orderItems;
 
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private PaymentEntity payment;
+
+
 
     public OrderEntity() {
     }
 
-    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems) {
+    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment) {
         this.orderId = orderId;
         this.customerName = customerName;
         this.phone = phone;
@@ -63,6 +67,7 @@ public class OrderEntity {
         this.sessionId = sessionId;
         this.cartItems = cartItems;
         this.orderItems = orderItems;
+        this.payment = payment;
     }
 
     public Long getOrderId() {
@@ -191,5 +196,13 @@ public class OrderEntity {
 
     public void setOrderItems(List<OrderItemEntity> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public PaymentEntity getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentEntity payment) {
+        this.payment = payment;
     }
 }

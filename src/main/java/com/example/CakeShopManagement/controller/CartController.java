@@ -2,6 +2,7 @@ package com.example.CakeShopManagement.controller;
 
 
 import com.example.CakeShopManagement.dto.AddToCartDto;
+import com.example.CakeShopManagement.dto.UpdateCartQuantityDto;
 import com.example.CakeShopManagement.service.AddToCartService;
 import com.example.CakeShopManagement.service.Impl.AddToCartServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,12 @@ public class CartController {
     @GetMapping("/cart/item/{id}")
     public ResponseEntity<?> getCartItemById(@PathVariable Long id){
         return ResponseEntity.ok(addToCartService.getCartItemById(id));
+    }
+
+    @PutMapping("/cart/{cartId}/quantity")
+    public ResponseEntity<?> updateQuantity(@PathVariable Long cartId, @RequestBody UpdateCartQuantityDto dto) {
+        System.out.println("**********************************");
+        return ResponseEntity.ok(addToCartService.updateQuantity(cartId,dto.getQuantity()));
     }
 
     @DeleteMapping("/cart/{cartId}")

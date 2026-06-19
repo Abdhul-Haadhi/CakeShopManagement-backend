@@ -3,6 +3,9 @@ package com.example.CakeShopManagement.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "order_items")
 public class OrderItemEntity {
@@ -28,16 +31,24 @@ public class OrderItemEntity {
     @JoinColumn(name = "product_id")
     private ProductEntity product;
 
+    @OneToMany(
+            mappedBy = "orderItem",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<OrderItemCustomizationEntity> customizations = new ArrayList<>();
+
 
     public OrderItemEntity() {
     }
 
-    public OrderItemEntity(Long orderItemId, Long quantity, Long price, OrderEntity order, ProductEntity product) {
+    public OrderItemEntity(Long orderItemId, Long quantity, Long price, OrderEntity order, ProductEntity product, List<OrderItemCustomizationEntity> customizations) {
         this.orderItemId = orderItemId;
         this.quantity = quantity;
         this.price = price;
         this.order = order;
         this.product = product;
+        this.customizations = customizations;
     }
 
     public Long getOrderItemId() {
@@ -78,5 +89,13 @@ public class OrderItemEntity {
 
     public void setProduct(ProductEntity product) {
         this.product = product;
+    }
+
+    public List<OrderItemCustomizationEntity> getCustomizations() {
+        return customizations;
+    }
+
+    public void setCustomizations(List<OrderItemCustomizationEntity> customizations) {
+        this.customizations = customizations;
     }
 }

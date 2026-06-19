@@ -11,4 +11,5 @@ public interface AddToCartService {
     List<CartItemDto> getCart(String sessionId);
     void deleteCartItem(Long cartId);
     CartItemDto getCartItemById(Long id);
+    CartItemDto updateQuantity(Long cartId, Long quantity);
 }

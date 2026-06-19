@@ -2,6 +2,8 @@ package com.example.CakeShopManagement.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class OrderItemDto {
 
@@ -12,15 +14,18 @@ public class OrderItemDto {
     private Long productId;
     private String productName;
 
+    private List<OrderItemCustomizationDto> customizations;
+
     public OrderItemDto() {
     }
 
-    public OrderItemDto(Long orderItemId, Long quantity, Long price, Long productId, String productName) {
+    public OrderItemDto(Long orderItemId, Long quantity, Long price, Long productId, String productName, List<OrderItemCustomizationDto> customizations) {
         this.orderItemId = orderItemId;
         this.quantity = quantity;
         this.price = price;
         this.productId = productId;
         this.productName = productName;
+        this.customizations = customizations;
     }
 
     public Long getOrderItemId() {
@@ -61,5 +66,13 @@ public class OrderItemDto {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public List<OrderItemCustomizationDto> getCustomizations() {
+        return customizations;
+    }
+
+    public void setCustomizations(List<OrderItemCustomizationDto> customizations) {
+        this.customizations = customizations;
     }
 }

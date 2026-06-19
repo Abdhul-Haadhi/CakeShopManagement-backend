@@ -92,6 +92,27 @@ public class AddToCartServiceImpl implements AddToCartService {
                 .getDto();
     }
 
+    @Override
+    public CartItemDto updateQuantity(Long cartId, Long quantity) {
+        CartItemsEntity cartItem = cartRepository.findById(cartId).orElseThrow();
+
+        long customizationPrice = cartItem.getCustomizations()
+                .stream()
+                .mapToLong(c ->
+                        c.getExtraPrice().longValue()).sum();
+
+        long unitPrice = cartItem.getProductEntity().getPrice() + customizationPrice;
+
+        long newPrice = unitPrice * quantity;
+
+        cartItem.setQuantity(quantity);
+        cartItem.setPrice(newPrice);
+
+        CartItemsEntity saved = cartRepository.save(cartItem);
+
+        return saved.getDto();
+    }
+
     public void deleteCartItem(Long cartId){
         cartRepository.deleteById(cartId);
     }
