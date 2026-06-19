@@ -166,4 +166,63 @@ public class OrderServiceImpl implements OrderService {
                 }).toList();
     }
 
+    @Override
+    public List<OrderHistoryDto> getAllOrders(){
+        return orderRepository.findAllByOrderByOrderDateDesc()
+                .stream()
+                .map(order -> {
+                    OrderHistoryDto dto = new OrderHistoryDto();
+
+                    dto.setOrderId(order.getOrderId());
+                    dto.setTotalAmount(order.getTotalAmount());
+                    dto.setQuantity(order.getQuantity());
+                    dto.setStatus(order.getStatus());
+                    dto.setTrackingId(order.getTrackingId());
+                    dto.setOrderDate(order.getOrderDate());
+                    dto.setDeliveryDate(order.getDeliveryDate());
+
+                    List<OrderItemDto> items = order.getOrderItems().stream()
+                            .map(item -> {
+                                OrderItemDto itemDto = new OrderItemDto();
+
+                                itemDto.setOrderItemId(item.getOrderItemId());
+                                itemDto.setQuantity(item.getQuantity());
+                                itemDto.setPrice(item.getPrice());
+                                itemDto.setProductId(item.getProduct().getProductId());
+                                itemDto.setProductName(item.getProduct().getProductName());
+
+                                List<OrderItemCustomizationDto> customizationDtos = item.getCustomizations()
+                                        .stream()
+                                        .map(custom -> {
+                                            OrderItemCustomizationDto customDto = new OrderItemCustomizationDto();
+
+                                            customDto.setOptionId(custom.getOption().getOptionId());
+                                            customDto.setOptionName(custom.getOption().getOptionName());
+                                            customDto.setValue(custom.getSelectedValue());
+                                            customDto.setExtraPrice(custom.getExtraPrice().longValue());
+
+                                            return customDto;
+                                        }).toList();
+
+                                itemDto.setCustomizations(customizationDtos);
+                                return itemDto;
+                            }).toList();
+                    dto.setOrderItems(items);
+
+                    return dto;
+                }).toList();
+    }
+
+    @Override
+    public OrderHistoryDto updateOrderStatus(Long orderId, String status){
+        OrderEntity order = orderRepository.findById(orderId).orElseThrow(()->new RuntimeException("Order not found"));
+
+        order.setStatus(status);
+
+        OrderEntity updatedOrder = orderRepository.save(order);
+
+        return orderMapper.toOrderHistoryDto(updatedOrder);
+    }
+
+
 }
