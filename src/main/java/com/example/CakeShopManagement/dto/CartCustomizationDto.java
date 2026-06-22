@@ -9,15 +9,17 @@ public class CartCustomizationDto {
     private String optionName;
     private Object value;
     private Long extraPrice;
+    private byte[] referenceImage;
 
     public CartCustomizationDto() {
     }
 
-    public CartCustomizationDto(Long optionId, String optionName, Object value, Long extraPrice) {
+    public CartCustomizationDto(Long optionId, String optionName, Object value, Long extraPrice, byte[] referenceImage) {
         this.optionId = optionId;
         this.optionName = optionName;
         this.value = value;
         this.extraPrice = extraPrice;
+        this.referenceImage = referenceImage;
     }
 
     public Long getOptionId() {
@@ -50,5 +52,13 @@ public class CartCustomizationDto {
 
     public void setExtraPrice(Long extraPrice) {
         this.extraPrice = extraPrice;
+    }
+
+    public byte[] getReferenceImage() {
+        return referenceImage;
+    }
+
+    public void setReferenceImage(byte[] referenceImage) {
+        this.referenceImage = referenceImage;
     }
 }

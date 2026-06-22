@@ -40,8 +40,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto addEmployee(EmployeeDto employeeDto) {
         try {
             EmployeeEntity employeeEntity = employeeMapper.toEmployeeEntity(employeeDto);
+
+            employeeEntity.setJoinDate(java.time.LocalDate.now());
+
             EmployeeEntity saveItem = employeeRepository.save(employeeEntity);
+
             EmployeeDto savedDto = employeeMapper.toEmployeeDto(saveItem);
+
+//            savedDto.setJoinDate(java.time.LocalDate.now());
 
 //            System.out.println("**************"+savedDto);
 

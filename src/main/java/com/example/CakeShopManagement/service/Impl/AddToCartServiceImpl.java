@@ -69,6 +69,10 @@ public class AddToCartServiceImpl implements AddToCartService {
 
                 customization.setSelectedValue(String.valueOf(custom.getValue()));
 
+                if(custom.getReferenceImage() != null){
+                    customization.setReferenceImage(custom.getReferenceImage());
+                }
+
                 customization.setExtraPrice(java.math.BigDecimal.valueOf(custom.getExtraPrice()));
 
                 cartItemCustomizationRepository.save(customization);

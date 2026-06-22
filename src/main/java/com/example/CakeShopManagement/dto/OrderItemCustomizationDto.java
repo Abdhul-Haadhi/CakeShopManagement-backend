@@ -8,15 +8,19 @@ public class OrderItemCustomizationDto {
     private String optionName;
     private String value;
     private Long extraPrice;
+    private String optionType;
+    private byte[] referenceImage;
 
     public OrderItemCustomizationDto() {
     }
 
-    public OrderItemCustomizationDto(Long optionId, String optionName, String value, Long extraPrice) {
+    public OrderItemCustomizationDto(Long optionId, String optionName, String value, Long extraPrice, String optionType, byte[] referenceImage) {
         this.optionId = optionId;
         this.optionName = optionName;
         this.value = value;
         this.extraPrice = extraPrice;
+        this.optionType = optionType;
+        this.referenceImage = referenceImage;
     }
 
     public String getOptionName() {
@@ -49,5 +53,21 @@ public class OrderItemCustomizationDto {
 
     public void setOptionId(Long optionId) {
         this.optionId = optionId;
+    }
+
+    public String getOptionType() {
+        return optionType;
+    }
+
+    public void setOptionType(String optionType) {
+        this.optionType = optionType;
+    }
+
+    public byte[] getReferenceImage() {
+        return referenceImage;
+    }
+
+    public void setReferenceImage(byte[] referenceImage) {
+        this.referenceImage = referenceImage;
     }
 }

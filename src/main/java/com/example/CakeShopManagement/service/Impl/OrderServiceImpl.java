@@ -97,6 +97,9 @@ public class OrderServiceImpl implements OrderService {
                     orderCustom.setOrderItem(savedOrderItem);
                     orderCustom.setOption(cartCustom.getOption());
                     orderCustom.setSelectedValue(cartCustom.getSelectedValue());
+                    if(cartCustom.getReferenceImage() != null){
+                        orderCustom.setReferenceImage(cartCustom.getReferenceImage());
+                    }
                     orderCustom.setExtraPrice(cartCustom.getExtraPrice());
 
                     orderItemCustomizationRepository.save(orderCustom);
@@ -156,6 +159,10 @@ public class OrderServiceImpl implements OrderService {
 
                                                     dto1.setExtraPrice(custom.getExtraPrice().longValue());
 
+                                                    dto1.setReferenceImage(custom.getReferenceImage());
+
+                                                    dto1.setOptionType(custom.getOption().getOptionType());
+
                                                     return dto1;
                                                 }).toList();
                                 itemDto.setCustomizations(customizationDtos);
@@ -181,6 +188,13 @@ public class OrderServiceImpl implements OrderService {
                     dto.setOrderDate(order.getOrderDate());
                     dto.setDeliveryDate(order.getDeliveryDate());
 
+                    dto.setCustomerName(order.getCustomerName());
+                    dto.setPhone(order.getPhone());
+                    dto.setEmail(order.getEmail());
+                    dto.setAddress(order.getAddress());
+                    dto.setCity(order.getCity());
+                    dto.setPaymentMethod(order.getPaymentMethod());
+
                     List<OrderItemDto> items = order.getOrderItems().stream()
                             .map(item -> {
                                 OrderItemDto itemDto = new OrderItemDto();
@@ -200,6 +214,8 @@ public class OrderServiceImpl implements OrderService {
                                             customDto.setOptionName(custom.getOption().getOptionName());
                                             customDto.setValue(custom.getSelectedValue());
                                             customDto.setExtraPrice(custom.getExtraPrice().longValue());
+                                            customDto.setOptionType(custom.getOption().getOptionType());
+                                            customDto.setReferenceImage(custom.getReferenceImage());
 
                                             return customDto;
                                         }).toList();

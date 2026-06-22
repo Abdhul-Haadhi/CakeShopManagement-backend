@@ -90,21 +90,28 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
     @Override
     public ProductsDto addProduct(ProductsDto productsDto,String customizations) throws IOException {
 
-        System.out.println("SKU RECEIVED = " + productsDto.getProductSku());
+//        System.out.println("SKU RECEIVED = " + productsDto.getProductSku());
+//
+//        if(productRegistrationRepository.existsByProductSku(productsDto.getProductSku())){
+//            throw new AppException("Product SKU already exists!",HttpStatus.BAD_REQUEST);
+//        }
 
-        if(productRegistrationRepository.existsByProductSku(productsDto.getProductSku())){
-            throw new AppException("Product SKU already exists!",HttpStatus.BAD_REQUEST);
+        String generatedSku = generateNextSku();
+
+        while (productRegistrationRepository.existsByProductSku(generatedSku)){
+            generatedSku = generateNextSku();
         }
 
         ProductEntity productEntity = new ProductEntity();
 
-        productEntity.setProductSku(productsDto.getProductSku());
+//        productEntity.setProductSku(productsDto.getProductSku());
+        productEntity.setProductSku(generatedSku);
         productEntity.setProductName(productsDto.getProductName());
         productEntity.setDescription(productsDto.getDescription());
         productEntity.setSize(productsDto.getSize());
-        productEntity.setQuantity(productsDto.getQuantity());
+//        productEntity.setQuantity(productsDto.getQuantity());
         productEntity.setPrice(productsDto.getPrice());
-        productEntity.setAddedDate(productsDto.getAddedDate());
+        productEntity.setAddedDate(java.time.LocalDate.now());
 
         if(productsDto.getImage() != null){
             productEntity.setImage(productsDto.getImage().getBytes());
@@ -159,6 +166,12 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         }
     }
 
+    private String generateNextSku(){
+        Long count = productRegistrationRepository.count() + 1;
+
+        return "PRD" + String.format("%04d", count);
+    }
+
     public boolean getProductBySku(String productSku) {
 //        System.out.println("********************"+productSku);
         return productRegistrationRepository.existsByProductSku(productSku);
@@ -179,9 +192,9 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
             productEntity.setProductName(productsDto.getProductName());
             productEntity.setDescription(productsDto.getDescription());
             productEntity.setSize(productsDto.getSize());
-            productEntity.setQuantity(productsDto.getQuantity());
+//            productEntity.setQuantity(productsDto.getQuantity());
             productEntity.setPrice(productsDto.getPrice());
-            productEntity.setAddedDate(productsDto.getAddedDate());
+//            productEntity.setAddedDate(productsDto.getAddedDate());
             productEntity.setCategoryEntity(optionalCategoryEntity.get());
             if(productsDto.getImage() != null){
                 productEntity.setImage(productsDto.getImage().getBytes());

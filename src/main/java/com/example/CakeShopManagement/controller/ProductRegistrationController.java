@@ -40,25 +40,24 @@ public class ProductRegistrationController {
 //    }
 
     @PostMapping("/product-registration")
-    public ResponseEntity<ProductsDto> addProduct( @RequestParam("productSku") String productSku,
-                                                   @RequestParam("productName") String productName,
+    public ResponseEntity<ProductsDto> addProduct( @RequestParam("productName") String productName,
                                                    @RequestParam("description") String description,
                                                    @RequestParam("size") int size,
-                                                   @RequestParam("quantity") int quantity,
+//                                                   @RequestParam("quantity") int quantity,
                                                    @RequestParam("price") int price,
-                                                   @RequestParam("addedDate") String addedDate,
+//                                                   @RequestParam("addedDate") String addedDate,
                                                    @RequestParam("categoryId") Long categoryId,
                                                    @RequestParam(value = "image", required = false) MultipartFile image,
                                                    @RequestParam(value = "customizations", required = false) String customizations)throws IOException{
         ProductsDto dto = new ProductsDto();
 
-        dto.setProductSku(productSku);
+//        dto.setProductSku(productSku);
         dto.setProductName(productName);
         dto.setDescription(description);
         dto.setSize(size);
-        dto.setQuantity(quantity);
+//        dto.setQuantity(quantity);
         dto.setPrice(price);
-        dto.setAddedDate(LocalDate.parse(addedDate));
+//        dto.setAddedDate(LocalDate.parse(addedDate));
         dto.setCategoryId(categoryId);
         dto.setImage(image);
 
@@ -117,9 +116,9 @@ public class ProductRegistrationController {
                                                      @RequestParam("productName") String productName,
                                                      @RequestParam("description") String description,
                                                      @RequestParam("size") int size,
-                                                     @RequestParam("quantity") int quantity,
+//                                                     @RequestParam("quantity") int quantity,
                                                      @RequestParam("price") int price,
-                                                     @RequestParam("addedDate") String addedDate,
+//                                                     @RequestParam("addedDate") String addedDate,
                                                      @RequestParam("categoryId") Long categoryId,
                                                      @RequestParam(value = "image", required = false)
                                                          MultipartFile image,
@@ -132,9 +131,9 @@ public class ProductRegistrationController {
         dto.setProductName(productName);
         dto.setDescription(description);
         dto.setSize(size);
-        dto.setQuantity(quantity);
+//        dto.setQuantity(quantity);
         dto.setPrice(price);
-        dto.setAddedDate(LocalDate.parse(addedDate));
+//        dto.setAddedDate(LocalDate.parse(addedDate));
         dto.setCategoryId(categoryId);
         dto.setImage(image);
 

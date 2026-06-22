@@ -25,6 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDto addCustomer(CustomerDto customerDto) {
         try {
             CustomerEntity customerEntity = customerMapper.toCustomerEntity(customerDto);
+            customerEntity.setJoinDate(java.time.LocalDate.now());
             CustomerEntity saveItem = customerRepository.save(customerEntity);
             CustomerDto savedDto = customerMapper.toCustomerDto(saveItem);
 
@@ -59,6 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerEntity newCustomerEntity = customerMapper.toCustomerEntity(customerDto);
             newCustomerEntity.setCustomerId(customerId);
 
+            newCustomerEntity.setJoinDate(java.time.LocalDate.now());
             CustomerEntity customerEntity = customerRepository.save(newCustomerEntity);
             CustomerDto responseCustomerDto = customerMapper.toCustomerDto(customerEntity);
             return responseCustomerDto;

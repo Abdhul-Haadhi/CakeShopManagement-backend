@@ -25,7 +25,7 @@ public class ProductEntity {
     @Lob
     private String description;
     private int size;
-    private int quantity;
+//    private int quantity;
     private int price;
     private LocalDate addedDate;
     @Lob
@@ -65,7 +65,7 @@ public class ProductEntity {
         productsDto.setPrice(price);
         productsDto.setAddedDate(addedDate);
         productsDto.setSize(size);
-        productsDto.setQuantity(quantity);
+//        productsDto.setQuantity(quantity);
         productsDto.setByteImage(image);
         productsDto.setCategoryId(categoryEntity.getCategoryId());
         productsDto.setCategoryName(categoryEntity.getCategoryName());
@@ -107,13 +107,12 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
-    public ProductEntity(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDate addedDate, byte[] image, List<ProductCustomizationEntity> customizations, CategoryEntity categoryEntity) {
+    public ProductEntity(Long productId, String productSku, String productName, String description, int size, int price, LocalDate addedDate, byte[] image, List<ProductCustomizationEntity> customizations, CategoryEntity categoryEntity) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
         this.description = description;
         this.size = size;
-        this.quantity = quantity;
         this.price = price;
         this.addedDate = addedDate;
         this.image = image;
@@ -161,13 +160,13 @@ public class ProductEntity {
         this.size = size;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+//    public int getQuantity() {
+//        return quantity;
+//    }
+//
+//    public void setQuantity(int quantity) {
+//        this.quantity = quantity;
+//    }
 
     public int getPrice() {
         return price;

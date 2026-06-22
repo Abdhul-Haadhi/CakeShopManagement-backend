@@ -17,10 +17,22 @@ public class OrderHistoryDto {
 
     private List<OrderItemDto> orderItems;
 
+
+//    customer details  //
+
+    private String customerName;
+    private String phone;
+    private String email;
+    private String address;
+    private String city;
+    private String paymentMethod;
+
+
+
     public OrderHistoryDto() {
     }
 
-    public OrderHistoryDto(Long orderId, Long totalAmount, Long quantity, String status, String trackingId, Date orderDate, Date deliveryDate, List<OrderItemDto> orderItems) {
+    public OrderHistoryDto(Long orderId, Long totalAmount, Long quantity, String status, String trackingId, Date orderDate, Date deliveryDate, List<OrderItemDto> orderItems, String customerName, String phone, String email, String address, String city, String paymentMethod) {
         this.orderId = orderId;
         this.totalAmount = totalAmount;
         this.quantity = quantity;
@@ -29,6 +41,12 @@ public class OrderHistoryDto {
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.orderItems = orderItems;
+        this.customerName = customerName;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.city = city;
+        this.paymentMethod = paymentMethod;
     }
 
     public Long getOrderId() {
@@ -93,5 +111,53 @@ public class OrderHistoryDto {
 
     public void setOrderItems(List<OrderItemDto> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }

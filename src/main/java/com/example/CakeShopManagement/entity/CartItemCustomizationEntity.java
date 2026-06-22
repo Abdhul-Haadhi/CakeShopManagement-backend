@@ -23,15 +23,20 @@ public class CartItemCustomizationEntity {
 
     private BigDecimal extraPrice;
 
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] referenceImage;
+
     public CartItemCustomizationEntity() {
     }
 
-    public CartItemCustomizationEntity(Long id, CartItemsEntity cartItem, CustomizationOptionEntity option, String selectedValue, BigDecimal extraPrice) {
+    public CartItemCustomizationEntity(Long id, CartItemsEntity cartItem, CustomizationOptionEntity option, String selectedValue, BigDecimal extraPrice, byte[] referenceImage) {
         this.id = id;
         this.cartItem = cartItem;
         this.option = option;
         this.selectedValue = selectedValue;
         this.extraPrice = extraPrice;
+        this.referenceImage = referenceImage;
     }
 
     public Long getId() {
@@ -72,5 +77,13 @@ public class CartItemCustomizationEntity {
 
     public void setExtraPrice(BigDecimal extraPrice) {
         this.extraPrice = extraPrice;
+    }
+
+    public byte[] getReferenceImage() {
+        return referenceImage;
+    }
+
+    public void setReferenceImage(byte[] referenceImage) {
+        this.referenceImage = referenceImage;
     }
 }

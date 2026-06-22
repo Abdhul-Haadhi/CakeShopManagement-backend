@@ -19,7 +19,7 @@ public class ProductsDto {
     private String description;
 //    private List<String> colors;
     private int size;
-    private int quantity;
+//    private int quantity;
     private int price;
     private LocalDate addedDate;
     private byte[] byteImage;
@@ -35,13 +35,12 @@ public class ProductsDto {
     public ProductsDto() {
     }
 
-    public ProductsDto(Long productId, String productSku, String productName, String description, int size, int quantity, int price, LocalDate addedDate, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName, List<ProductCustomizationDto> customizations) {
+    public ProductsDto(Long productId, String productSku, String productName, String description, int size, int price, LocalDate addedDate, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName, List<ProductCustomizationDto> customizations) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
         this.description = description;
         this.size = size;
-        this.quantity = quantity;
         this.price = price;
         this.addedDate = addedDate;
         this.byteImage = byteImage;
@@ -91,13 +90,13 @@ public class ProductsDto {
         this.size = size;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+//    public int getQuantity() {
+//        return quantity;
+//    }
+//
+//    public void setQuantity(int quantity) {
+//        this.quantity = quantity;
+//    }
 
     public int getPrice() {
         return price;
