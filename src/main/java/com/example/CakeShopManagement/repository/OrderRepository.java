@@ -10,6 +10,7 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     List<OrderEntity> findBySessionIdOrderByOrderDateDesc(String sessionId);
+    List<OrderEntity> findByCustomerCustomerIdOrderByOrderDateDesc(Long customerId);
     List<OrderEntity> findAllByOrderByOrderDateDesc();
 
 }

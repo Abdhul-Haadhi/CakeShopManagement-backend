@@ -45,12 +45,14 @@ public class OrderEntity {
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private PaymentEntity payment;
 
-
+    @ManyToOne
+    @JoinColumn(name = "customer_account_id")
+    private CustomerEntity customer;
 
     public OrderEntity() {
     }
 
-    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment) {
+    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment, CustomerEntity customer) {
         this.orderId = orderId;
         this.customerName = customerName;
         this.phone = phone;
@@ -68,6 +70,7 @@ public class OrderEntity {
         this.cartItems = cartItems;
         this.orderItems = orderItems;
         this.payment = payment;
+        this.customer = customer;
     }
 
     public Long getOrderId() {
@@ -204,5 +207,13 @@ public class OrderEntity {
 
     public void setPayment(PaymentEntity payment) {
         this.payment = payment;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 }

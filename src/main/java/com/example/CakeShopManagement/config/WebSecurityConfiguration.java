@@ -50,7 +50,7 @@ public class WebSecurityConfiguration {
                 .csrf((csrf)->csrf.disable())
                 .cors(cors -> {})
                 .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/authenticate","/sign-up","/order/**","/api/public/**").permitAll()
+                        .requestMatchers("/authenticate","/sign-up","/order/**","/api/public/**","/api/customer/**").permitAll()
 
 //                        Admin only
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

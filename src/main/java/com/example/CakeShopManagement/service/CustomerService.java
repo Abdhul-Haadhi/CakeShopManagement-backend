@@ -10,4 +10,5 @@ public interface CustomerService {
     List<CustomerDto> getCustomers();
     CustomerDto updateCustomer(Long customerId, CustomerDto customerDto);
     boolean deleteCustomer(Long customerId);
+    CustomerDto getCustomerById(Long customerId);
 }

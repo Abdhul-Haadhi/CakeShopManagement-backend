@@ -5,9 +5,6 @@ import com.example.CakeShopManagement.dto.CartCustomizationDto;
 import com.example.CakeShopManagement.dto.CartItemDto;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +36,10 @@ public class CartItemsEntity {
     @OneToMany(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItemCustomizationEntity> customizations = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
+
 
     public CartItemDto getDto(){
         CartItemDto dto = new CartItemDto();
@@ -57,6 +58,10 @@ public class CartItemsEntity {
                         }).toList()
         );
 
+        if(customer != null){
+            dto.setCustomerId(customer.getCustomerId());
+        }
+
         dto.setCartId(cartId);
         dto.setSessionId(sessionId);
         dto.setQuantity(quantity);
@@ -73,7 +78,7 @@ public class CartItemsEntity {
     public CartItemsEntity() {
     }
 
-    public CartItemsEntity(Long cartId, String sessionId, Long price, Long quantity, ProductEntity productEntity, OrderEntity order, List<CartItemCustomizationEntity> customizations) {
+    public CartItemsEntity(Long cartId, String sessionId, Long price, Long quantity, ProductEntity productEntity, OrderEntity order, List<CartItemCustomizationEntity> customizations, CustomerEntity customer) {
         this.cartId = cartId;
         this.sessionId = sessionId;
         this.price = price;
@@ -81,6 +86,7 @@ public class CartItemsEntity {
         this.productEntity = productEntity;
         this.order = order;
         this.customizations = customizations;
+        this.customer = customer;
     }
 
     public Long getCartId() {
@@ -137,5 +143,13 @@ public class CartItemsEntity {
 
     public void setCustomizations(List<CartItemCustomizationEntity> customizations) {
         this.customizations = customizations;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 }

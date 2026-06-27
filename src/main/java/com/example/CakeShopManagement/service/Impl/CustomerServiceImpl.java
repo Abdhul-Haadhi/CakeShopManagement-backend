@@ -51,6 +51,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public CustomerDto getCustomerById(Long customerId){
+        CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(()->new RuntimeException("Customer Not Found"));
+
+        return customerMapper.toCustomerDto(customer);
+    }
+
+    @Override
     public CustomerDto updateCustomer(Long customerId, CustomerDto customerDto) {
         try {
             Optional<CustomerEntity> optionalCustomerEntity=customerRepository.findById(customerId);

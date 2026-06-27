@@ -27,14 +27,21 @@ public class PlaceOrderController {
 //        return ResponseEntity.ok(orderService.getOrdersBySession(sessionId));
 //    }
 
-    @GetMapping("/orders/{sessionId}")
-    public ResponseEntity<?> getOrder(@PathVariable String sessionId){
+//    @GetMapping("/orders/{sessionId}")
+//    public ResponseEntity<?> getOrder(@PathVariable String sessionId){
+//
+//        var data = orderService.getOrdersBySession(sessionId);
+//
+//        System.out.println(data);
+//
+//        return ResponseEntity.ok(data);
+//    }
 
-        var data = orderService.getOrdersBySession(sessionId);
+    @GetMapping("/orders")
+    public ResponseEntity<?> getOrders(@RequestParam(required = false) Long customerId,
+                                       @RequestParam(required = false) String sessionId){
 
-        System.out.println(data);
-
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(orderService.getOrders(customerId, sessionId));
     }
 
 }

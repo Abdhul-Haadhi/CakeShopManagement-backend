@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface CartRepository extends JpaRepository<CartItemsEntity, Long> {
 
+    List<CartItemsEntity> findByCustomerCustomerIdAndOrderIsNull(Long customerId);
     List<CartItemsEntity> findBySessionIdAndOrderIsNull(String sessionId);
+    List<CartItemsEntity> findBySessionIdAndCustomerIsNullAndOrderIsNull(String sessionId);
 }

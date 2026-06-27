@@ -26,14 +26,21 @@ public class CartController {
     }
 
 
-    @GetMapping("/cart/{sessionId}")
-    public ResponseEntity<?> getCart(@PathVariable String sessionId) {
-        return ResponseEntity.ok(addToCartService.getCart(sessionId));
+    @GetMapping("/cart")
+    public ResponseEntity<?> getCart(@RequestParam(required = false) String sessionId,
+                                     @RequestParam(required = false) Long customerId) {
+        return ResponseEntity.ok(addToCartService.getCart(sessionId, customerId));
     }
 
     @GetMapping("/cart/item/{id}")
     public ResponseEntity<?> getCartItemById(@PathVariable Long id){
         return ResponseEntity.ok(addToCartService.getCartItemById(id));
+    }
+
+    @PostMapping("/cart/merge")
+    public ResponseEntity<?> mergeCart(@RequestParam String sessionId, @RequestParam Long customerId) {
+        addToCartService.mergeGuestCartToCustomer(sessionId, customerId);
+        return ResponseEntity.ok("Cart merged successfully");
     }
 
     @PutMapping("/cart/{cartId}/quantity")

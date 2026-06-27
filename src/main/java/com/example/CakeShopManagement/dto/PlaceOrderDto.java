@@ -26,10 +26,12 @@ public class PlaceOrderDto {
 
     private Long paymentId;
 
+    private Long customerId;
+
     public PlaceOrderDto() {
     }
 
-    public PlaceOrderDto(String customerName, String phone, String email, String address, String city, Date deliveryDate, String notes, String paymentMethod, Long totalAmount, Long quantity, String sessionId, List<Long> cartItemIds, PaymentDto payment, Long paymentId) {
+    public PlaceOrderDto(String customerName, String phone, String email, String address, String city, Date deliveryDate, String notes, String paymentMethod, Long totalAmount, Long quantity, String sessionId, List<Long> cartItemIds, PaymentDto payment, Long paymentId, Long customerId) {
         this.customerName = customerName;
         this.phone = phone;
         this.email = email;
@@ -44,6 +46,7 @@ public class PlaceOrderDto {
         this.cartItemIds = cartItemIds;
         this.payment = payment;
         this.paymentId = paymentId;
+        this.customerId = customerId;
     }
 
     public String getCustomerName() {
@@ -156,5 +159,13 @@ public class PlaceOrderDto {
 
     public void setPaymentId(Long paymentId) {
         this.paymentId = paymentId;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }

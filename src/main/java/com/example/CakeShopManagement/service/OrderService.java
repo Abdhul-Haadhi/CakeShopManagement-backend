@@ -10,6 +10,7 @@ public interface OrderService {
     PlaceOrderDto placeOrder(PlaceOrderDto placeOrderDto);
 //    List<OrderEntity> getOrdersBySession(String sessionId);
     List<OrderHistoryDto> getOrdersBySession(String sessionId);
+    List<OrderHistoryDto> getOrders(Long customerId, String sessionId);
     List<OrderHistoryDto> getAllOrders();
     OrderHistoryDto updateOrderStatus(Long orderId, String status);
 }

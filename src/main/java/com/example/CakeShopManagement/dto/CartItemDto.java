@@ -17,10 +17,12 @@ public class CartItemDto {
 
     private List<CartCustomizationDto> customizations;
 
+    private Long customerId;
+
     public CartItemDto() {
     }
 
-    public CartItemDto(Long cartId, String sessionId, Long quantity, Long price, Long productId, String productName, byte[] byteImage, List<CartCustomizationDto> customizations) {
+    public CartItemDto(Long cartId, String sessionId, Long quantity, Long price, Long productId, String productName, byte[] byteImage, List<CartCustomizationDto> customizations, Long customerId) {
         this.cartId = cartId;
         this.sessionId = sessionId;
         this.quantity = quantity;
@@ -29,6 +31,7 @@ public class CartItemDto {
         this.productName = productName;
         this.byteImage = byteImage;
         this.customizations = customizations;
+        this.customerId = customerId;
     }
 
     public Long getCartId() {
@@ -93,5 +96,13 @@ public class CartItemDto {
 
     public void setCustomizations(List<CartCustomizationDto> customizations) {
         this.customizations = customizations;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }

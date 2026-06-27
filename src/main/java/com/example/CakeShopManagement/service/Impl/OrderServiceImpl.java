@@ -25,8 +25,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemCustomizationRepository orderItemCustomizationRepository;
     private final PaymentRepository paymentRepository;
     private final PaymentService paymentService;
+    private final CustomerRepository customerRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartRepository cartRepository, OrderItemRepository orderItemRepository, OrderItemCustomizationRepository orderItemCustomizationRepository, PaymentRepository paymentRepository, PaymentService paymentService) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartRepository cartRepository, OrderItemRepository orderItemRepository, OrderItemCustomizationRepository orderItemCustomizationRepository, PaymentRepository paymentRepository, PaymentService paymentService, CustomerRepository customerRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.cartRepository = cartRepository;
@@ -34,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
         this.orderItemCustomizationRepository = orderItemCustomizationRepository;
         this.paymentRepository = paymentRepository;
         this.paymentService = paymentService;
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -57,6 +59,15 @@ public class OrderServiceImpl implements OrderService {
             orderEntity.setStatus("PENDING");
             orderEntity.setTrackingId(java.util.UUID.randomUUID().toString());
             orderEntity.setPaymentMethod(placeOrderDto.getPaymentMethod());
+
+            if(placeOrderDto.getCustomerId() != null){
+                CustomerEntity customer = customerRepository.findById(placeOrderDto.getCustomerId()).orElseThrow(()->new RuntimeException("Customer not found"));
+
+                orderEntity.setCustomer(customer);
+
+                // optional: no need session for logged users
+                orderEntity.setSessionId(null);
+            }
 
             OrderEntity savedOrder  = orderRepository.save(orderEntity);
 
@@ -169,6 +180,72 @@ public class OrderServiceImpl implements OrderService {
                                 return itemDto;
                             }).toList();
                     dto.setOrderItems(items);
+                    return dto;
+                }).toList();
+    }
+
+    @Override
+    public List<OrderHistoryDto> getOrders(Long customerId, String sessionId) {
+        List<OrderEntity> orders;
+
+        if (customerId != null) {
+            orders = orderRepository.findByCustomerCustomerIdOrderByOrderDateDesc(customerId);
+        } else {
+            orders = orderRepository.findBySessionIdOrderByOrderDateDesc(sessionId);
+        }
+
+        return orders.stream()
+                .map(order -> {
+                    OrderHistoryDto dto = new OrderHistoryDto();
+
+                    dto.setOrderId(order.getOrderId());
+                    dto.setTotalAmount(order.getTotalAmount());
+                    dto.setQuantity(order.getQuantity());
+                    dto.setStatus(order.getStatus());
+                    dto.setTrackingId(order.getTrackingId());
+                    dto.setOrderDate(order.getOrderDate());
+                    dto.setDeliveryDate(order.getDeliveryDate());
+
+                    dto.setCustomerName(order.getCustomerName());
+                    dto.setPhone(order.getPhone());
+                    dto.setEmail(order.getEmail());
+                    dto.setAddress(order.getAddress());
+                    dto.setCity(order.getCity());
+                    dto.setPaymentMethod(order.getPaymentMethod());
+
+                    List<OrderItemDto> items = order.getOrderItems().stream()
+                            .map(item -> {
+                                OrderItemDto itemDto = new OrderItemDto();
+
+                                itemDto.setOrderItemId(item.getOrderItemId());
+                                itemDto.setQuantity(item.getQuantity());
+                                itemDto.setPrice(item.getPrice());
+                                itemDto.setProductId(item.getProduct().getProductId());
+                                itemDto.setProductName(item.getProduct().getProductName());
+
+                                List<OrderItemCustomizationDto> customizationDtos =
+                                        item.getCustomizations().stream()
+                                                .map(custom -> {
+                                                    OrderItemCustomizationDto customDto =
+                                                            new OrderItemCustomizationDto();
+
+                                                    customDto.setOptionId(custom.getOption().getOptionId());
+                                                    customDto.setOptionName(custom.getOption().getOptionName());
+                                                    customDto.setValue(custom.getSelectedValue());
+                                                    customDto.setExtraPrice(custom.getExtraPrice().longValue());
+                                                    customDto.setOptionType(custom.getOption().getOptionType());
+                                                    customDto.setReferenceImage(custom.getReferenceImage());
+
+                                                    return customDto;
+                                                }).toList();
+
+                                itemDto.setCustomizations(customizationDtos);
+
+                                return itemDto;
+                            }).toList();
+
+                    dto.setOrderItems(items);
+
                     return dto;
                 }).toList();
     }

@@ -18,15 +18,18 @@ public class AddToCartDto {
 
     private byte[] referenceImage;
 
+    private Long customerId;
+
     public AddToCartDto() {
     }
 
-    public AddToCartDto(Long productId, Long quantity, String sessionId, List<CartCustomizationDto> customizations, byte[] referenceImage) {
+    public AddToCartDto(Long productId, Long quantity, String sessionId, List<CartCustomizationDto> customizations, byte[] referenceImage, Long customerId) {
         this.productId = productId;
         this.quantity = quantity;
         this.sessionId = sessionId;
         this.customizations = customizations;
         this.referenceImage = referenceImage;
+        this.customerId = customerId;
     }
 
     public Long getProductId() {
@@ -67,5 +70,13 @@ public class AddToCartDto {
 
     public void setReferenceImage(byte[] referenceImage) {
         this.referenceImage = referenceImage;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }
