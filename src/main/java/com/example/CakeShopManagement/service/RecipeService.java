@@ -1,0 +1,18 @@
+package com.example.CakeShopManagement.service;
+
+import com.example.CakeShopManagement.dto.ProductRecipeDto;
+import com.example.CakeShopManagement.dto.RecipeDto;
+import com.example.CakeShopManagement.dto.RecipeRequestDto;
+
+import java.util.List;
+
+public interface RecipeService {
+
+//    RecipeDto addRecipe(RecipeDto dto);
+    void saveRecipe(RecipeRequestDto dto);
+//    List<RecipeDto> getAllRecipe();
+    List<ProductRecipeDto> getRecipeProducts();
+    List<RecipeDto> getRecipeByProduct(Long productId);
+//    void deleteRecipe(Long recipeId);
+    void deleteRecipeByProduct(Long productId);
+}
