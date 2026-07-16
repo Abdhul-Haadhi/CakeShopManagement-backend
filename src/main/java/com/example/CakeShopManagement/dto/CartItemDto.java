@@ -19,10 +19,14 @@ public class CartItemDto {
 
     private Long customerId;
 
+//    private Long variantId;
+    private Integer weight;
+    private Long unitPrice;
+
     public CartItemDto() {
     }
 
-    public CartItemDto(Long cartId, String sessionId, Long quantity, Long price, Long productId, String productName, byte[] byteImage, List<CartCustomizationDto> customizations, Long customerId) {
+    public CartItemDto(Long cartId, String sessionId, Long quantity, Long price, Long productId, String productName, byte[] byteImage, List<CartCustomizationDto> customizations, Long customerId, Integer weight, Long unitPrice) {
         this.cartId = cartId;
         this.sessionId = sessionId;
         this.quantity = quantity;
@@ -32,6 +36,8 @@ public class CartItemDto {
         this.byteImage = byteImage;
         this.customizations = customizations;
         this.customerId = customerId;
+        this.weight = weight;
+        this.unitPrice = unitPrice;
     }
 
     public Long getCartId() {
@@ -104,5 +110,29 @@ public class CartItemDto {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+//    public Long getVariantId() {
+//        return variantId;
+//    }
+//
+//    public void setVariantId(Long variantId) {
+//        this.variantId = variantId;
+//    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public Long getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Long unitPrice) {
+        this.unitPrice = unitPrice;
     }
 }

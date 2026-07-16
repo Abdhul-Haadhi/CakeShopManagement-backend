@@ -84,6 +84,7 @@ public class StockServiceImpl implements StockService {
         dto.setItemName(stock.getInventory().getItemName());
 
         dto.setQuantityAdded(stock.getQuantityAdded());
+        dto.setRemainingQuantity(stock.getRemainingQuantity());
         dto.setExpiryDate(stock.getExpiryDate());
         dto.setReceivedDate(stock.getReceivedDate());
         dto.setBatchNumber(stock.getBatchNumber());

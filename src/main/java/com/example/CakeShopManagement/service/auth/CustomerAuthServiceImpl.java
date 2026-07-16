@@ -28,7 +28,7 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
         CustomerEntity customer = new CustomerEntity();
 
         if(customerRepository.findByPhone(request.getPhone()).isPresent()){
-            throw new AppException("Phone number already registered", HttpStatus.BAD_REQUEST);
+            throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
         }
 
         customer.setCustomerName(request.getCustomerName());

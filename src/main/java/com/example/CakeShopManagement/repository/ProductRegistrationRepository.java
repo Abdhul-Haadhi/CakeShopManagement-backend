@@ -11,4 +11,9 @@ public interface ProductRegistrationRepository extends JpaRepository<ProductEnti
 
     Boolean existsByProductSku(String productSku);
     List<ProductEntity> findAllByProductNameContaining(String title);
+
+    List<ProductEntity> findByActiveTrue();
+    List<ProductEntity> findByActiveTrueAndProductNameContaining(String productName);
+
+    ProductEntity findTopByOrderByProductIdDesc();
 }

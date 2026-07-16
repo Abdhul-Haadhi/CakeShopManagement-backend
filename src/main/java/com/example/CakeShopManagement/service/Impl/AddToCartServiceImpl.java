@@ -2,10 +2,7 @@ package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.dto.AddToCartDto;
 import com.example.CakeShopManagement.dto.CartItemDto;
-import com.example.CakeShopManagement.entity.CartItemCustomizationEntity;
-import com.example.CakeShopManagement.entity.CartItemsEntity;
-import com.example.CakeShopManagement.entity.CustomerEntity;
-import com.example.CakeShopManagement.entity.ProductEntity;
+import com.example.CakeShopManagement.entity.*;
 import com.example.CakeShopManagement.repository.*;
 import com.example.CakeShopManagement.service.AddToCartService;
 import org.springframework.stereotype.Service;
@@ -20,13 +17,15 @@ public class AddToCartServiceImpl implements AddToCartService {
     private final CartItemCustomizationRepository cartItemCustomizationRepository;
     private final CustomizationOptionRepository customizationOptionRepository;
     private final CustomerRepository customerRepository;
+    private final ProductVariantRepository productVariantRepository;
 
-    public AddToCartServiceImpl(ProductRegistrationRepository productRegistrationRepository, CartRepository cartRepository, CartItemCustomizationRepository cartItemCustomizationRepository, CustomizationOptionRepository customizationOptionRepository, CustomerRepository customerRepository) {
+    public AddToCartServiceImpl(ProductRegistrationRepository productRegistrationRepository, CartRepository cartRepository, CartItemCustomizationRepository cartItemCustomizationRepository, CustomizationOptionRepository customizationOptionRepository, CustomerRepository customerRepository, ProductVariantRepository productVariantRepository) {
         this.productRegistrationRepository = productRegistrationRepository;
         this.cartRepository = cartRepository;
         this.cartItemCustomizationRepository = cartItemCustomizationRepository;
         this.customizationOptionRepository = customizationOptionRepository;
         this.customerRepository = customerRepository;
+        this.productVariantRepository = productVariantRepository;
     }
 
 
@@ -45,7 +44,17 @@ public class AddToCartServiceImpl implements AddToCartService {
             cartItemsEntity.setSessionId(addToCartDto.getSessionId());
         }
 
+//        ProductVariant variant = productVariantRepository.findById(addToCartDto.getVariantId()).orElseThrow();
+
+        ProductVariant variant = productVariantRepository.findById(addToCartDto.getVariantId()).orElseThrow();
+        cartItemsEntity.setWeight(variant.getWeight());
+//        cartItemsEntity.setUnitPrice(
+//                variant.getPrice().longValue()
+//        );
+
+
         cartItemsEntity.setProductEntity(productEntity);
+//        cartItemsEntity.setProductVariant(variant);
         cartItemsEntity.setQuantity(addToCartDto.getQuantity());
 
         long customizationPrice = 0;
@@ -56,7 +65,13 @@ public class AddToCartServiceImpl implements AddToCartService {
             }
         }
 
-        long finalPrice = (productEntity.getPrice() + customizationPrice) * addToCartDto.getQuantity();
+
+
+//        long finalPrice = (variant.getPrice().longValue() + customizationPrice) * addToCartDto.getQuantity();
+
+        long unitPrice = variant.getPrice().longValue() + customizationPrice;
+        cartItemsEntity.setUnitPrice(unitPrice);
+        long finalPrice = unitPrice * addToCartDto.getQuantity();
 
         cartItemsEntity.setPrice(finalPrice);
 
@@ -123,7 +138,9 @@ public class AddToCartServiceImpl implements AddToCartService {
             boolean alreadyExists = false;
 
             for(CartItemsEntity customerItem : customerCartItems){
-                if(customerItem.getProductEntity().getProductId().equals(guestItem.getProductEntity().getProductId())){
+                if(customerItem.getProductEntity().getProductId().equals(guestItem.getProductEntity().getProductId())
+                && customerItem.getUnitPrice().equals(guestItem.getUnitPrice()))
+                {
                     customerItem.setQuantity(customerItem.getQuantity() + guestItem.getQuantity());
                     customerItem.setPrice(customerItem.getPrice() + guestItem.getPrice());
 
@@ -157,7 +174,14 @@ public class AddToCartServiceImpl implements AddToCartService {
                 .mapToLong(c ->
                         c.getExtraPrice().longValue()).sum();
 
-        long unitPrice = cartItem.getProductEntity().getPrice() + customizationPrice;
+//        ProductVariant variant = cartItem.getProductVariant();
+//
+//        long unitPrice = variant.getPrice().longValue() + customizationPrice;
+
+        long unitPrice = cartItem.getUnitPrice();
+        cartItem.setPrice(
+                unitPrice * quantity
+        );
 
         long newPrice = unitPrice * quantity;
 

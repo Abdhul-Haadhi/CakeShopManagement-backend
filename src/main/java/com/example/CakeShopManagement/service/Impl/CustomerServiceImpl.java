@@ -24,6 +24,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     public CustomerDto addCustomer(CustomerDto customerDto) {
         try {
+            if(customerRepository.findByPhone(customerDto.getPhone()).isPresent()){
+                throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
+            }
+
             CustomerEntity customerEntity = customerMapper.toCustomerEntity(customerDto);
             customerEntity.setJoinDate(java.time.LocalDate.now());
             CustomerEntity saveItem = customerRepository.save(customerEntity);

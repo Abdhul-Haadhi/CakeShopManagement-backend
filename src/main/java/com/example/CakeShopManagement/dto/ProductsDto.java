@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.dto;
 
 
+import com.example.CakeShopManagement.entity.ProductVariant;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,10 +19,11 @@ public class ProductsDto {
     private String productName;
     private String description;
 //    private List<String> colors;
-    private int size;
+//    private int size;
 //    private int quantity;
-    private int price;
+//    private int price;
     private LocalDate addedDate;
+    private Boolean active;
     private byte[] byteImage;
     private MultipartFile image;
 
@@ -29,33 +31,26 @@ public class ProductsDto {
     private String categoryName;
 
     private List<ProductCustomizationDto> customizations;
+    private List<ProductVariantDto> variants;
 
 
 
     public ProductsDto() {
     }
 
-    public ProductsDto(Long productId, String productSku, String productName, String description, int size, int price, LocalDate addedDate, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName, List<ProductCustomizationDto> customizations) {
+    public ProductsDto(Long productId, String productSku, String productName, String description, LocalDate addedDate, Boolean active, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName, List<ProductCustomizationDto> customizations, List<ProductVariantDto> variants) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
         this.description = description;
-        this.size = size;
-        this.price = price;
         this.addedDate = addedDate;
+        this.active = active;
         this.byteImage = byteImage;
         this.image = image;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.customizations = customizations;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
+        this.variants = variants;
     }
 
     public Long getProductId() {
@@ -74,6 +69,14 @@ public class ProductsDto {
         this.productSku = productSku;
     }
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -82,36 +85,20 @@ public class ProductsDto {
         this.description = description;
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-//    public int getQuantity() {
-//        return quantity;
-//    }
-//
-//    public void setQuantity(int quantity) {
-//        this.quantity = quantity;
-//    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
     public LocalDate getAddedDate() {
         return addedDate;
     }
 
     public void setAddedDate(LocalDate addedDate) {
         this.addedDate = addedDate;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public byte[] getByteImage() {
@@ -152,5 +139,13 @@ public class ProductsDto {
 
     public void setCustomizations(List<ProductCustomizationDto> customizations) {
         this.customizations = customizations;
+    }
+
+    public List<ProductVariantDto> getVariants() {
+        return variants;
+    }
+
+    public void setVariants(List<ProductVariantDto> variants) {
+        this.variants = variants;
     }
 }

@@ -1,20 +1,13 @@
 package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.dto.ProductCustomizationDto;
+import com.example.CakeShopManagement.dto.ProductVariantDto;
 import com.example.CakeShopManagement.dto.ProductsDto;
-import com.example.CakeShopManagement.entity.CategoryEntity;
-import com.example.CakeShopManagement.entity.CustomizationOptionEntity;
-import com.example.CakeShopManagement.entity.ProductCustomizationEntity;
-import com.example.CakeShopManagement.entity.ProductEntity;
-import com.example.CakeShopManagement.exceptions.AppException;
+import com.example.CakeShopManagement.entity.*;
 import com.example.CakeShopManagement.mappers.ProductRegistrationMapper;
-import com.example.CakeShopManagement.repository.CategoryRepository;
-import com.example.CakeShopManagement.repository.CustomizationOptionRepository;
-import com.example.CakeShopManagement.repository.ProductCustomizationRepository;
-import com.example.CakeShopManagement.repository.ProductRegistrationRepository;
+import com.example.CakeShopManagement.repository.*;
 import com.example.CakeShopManagement.service.ProductRegistrationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,56 +29,20 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
     private final ProductCustomizationRepository productCustomizationRepository;
     private final CustomizationOptionRepository customizationOptionRepository;
     private final ObjectMapper objectMapper;
+    private final ProductVariantRepository productVariantRepository;
 
-    public ProductRegistrationServiceImpl(ProductRegistrationRepository productRegistrationRepository, ProductRegistrationMapper productRegistrationMapper, CategoryRepository categoryRepository, ProductCustomizationRepository productCustomizationRepository, CustomizationOptionRepository customizationOptionRepository, ObjectMapper objectMapper) {
+
+    public ProductRegistrationServiceImpl(ProductRegistrationRepository productRegistrationRepository, ProductRegistrationMapper productRegistrationMapper, CategoryRepository categoryRepository, ProductCustomizationRepository productCustomizationRepository, CustomizationOptionRepository customizationOptionRepository, ObjectMapper objectMapper, ProductVariantRepository productVariantRepository) {
         this.productRegistrationRepository = productRegistrationRepository;
 //        this.productRegistrationMapper = productRegistrationMapper;
         this.categoryRepository = categoryRepository;
         this.productCustomizationRepository = productCustomizationRepository;
         this.customizationOptionRepository = customizationOptionRepository;
         this.objectMapper = objectMapper;
+
+        this.productVariantRepository = productVariantRepository;
     }
 
-
-//    @Override
-//    public ProductsDto addProductEntity(ProductsDto productsDto) {
-//        try {
-//            ProductEntity productEntity = productRegistrationMapper.toProductEntity(productsDto);
-//
-//            if(productsDto.getImage() != null){
-//                productEntity.setImage(productsDto.getImage().getBytes());
-//            }
-//            ProductEntity savedItem = productRegistrationRepository.save(productEntity);
-//            ProductsDto savedDto = productRegistrationMapper.toProductDto(savedItem);
-//            return savedDto;
-//
-//        }
-//        catch (Exception e) {
-//            throw new AppException("Request failed with error: "+ e, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-//    public ProductsDto addProduct(ProductsDto productsDto) throws IOException {
-//
-//        if(productRegistrationRepository.existsByProductSku(productsDto.getProductSku())){
-//            throw new AppException("Product SKU already exists!",HttpStatus.BAD_REQUEST);
-//        }
-//
-//        ProductEntity productEntity = new ProductEntity();
-//        productEntity.setProductSku(productsDto.getProductSku());
-//        productEntity.setProductName(productsDto.getProductName());
-//        productEntity.setDescription(productsDto.getDescription());
-//        productEntity.setSize(productsDto.getSize());
-//        productEntity.setQuantity(productsDto.getQuantity());
-//        productEntity.setPrice(productsDto.getPrice());
-//        productEntity.setAddedDate(productsDto.getAddedDate());
-//        productEntity.setImage(productsDto.getImage().getBytes());
-//
-//        CategoryEntity categoryEntity = categoryRepository.findById(productsDto.getCategoryId()).orElseThrow();
-//        productEntity.setCategoryEntity(categoryEntity);
-//
-//        return productRegistrationRepository.save(productEntity).getDto();
-//    }
 
     @Override
     public ProductsDto addProduct(ProductsDto productsDto,String customizations) throws IOException {
@@ -108,9 +65,7 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         productEntity.setProductSku(generatedSku);
         productEntity.setProductName(productsDto.getProductName());
         productEntity.setDescription(productsDto.getDescription());
-        productEntity.setSize(productsDto.getSize());
 //        productEntity.setQuantity(productsDto.getQuantity());
-        productEntity.setPrice(productsDto.getPrice());
         productEntity.setAddedDate(java.time.LocalDate.now());
 
         if(productsDto.getImage() != null){
@@ -121,7 +76,36 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
 
         productEntity.setCategoryEntity(categoryEntity);
 
+        productEntity.setActive(true);
+
         ProductEntity saveProduct = productRegistrationRepository.save(productEntity);
+
+        List<ProductVariantDto> variantDtos = productsDto.getVariants();
+
+        if(variantDtos != null){
+            for(ProductVariantDto dto : variantDtos){
+
+                ProductVariant variant = new ProductVariant();
+
+                variant.setProduct(saveProduct);
+                variant.setWeight(dto.getWeight());
+                variant.setPrice(dto.getPrice());
+
+                productVariantRepository.save(variant);
+            }
+        }
+
+
+//        if(productsDto.getSizes() != null){
+//            for(ProductSizeDto dto : productsDto.getSizes()){
+//                ProductSizeEntity size = new ProductSizeEntity();
+//                size.setProduct(saveProduct);
+//                size.setSize(dto.getSize());
+//                size.setPrice(dto.getPrice());
+//
+//                productSizeRepository.save(size);
+//            }
+//        }
 
         if(customizations != null && !customizations.isEmpty()){
             List<ProductCustomizationDto> customizationDtos = objectMapper.readValue(customizations,
@@ -146,13 +130,13 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
     }
 
     public List<ProductsDto> getAllProducts() {
-        List<ProductEntity> productEntities = productRegistrationRepository.findAll();
+        List<ProductEntity> productEntities = productRegistrationRepository.findByActiveTrue();
 //        System.out.println("*********************"+ productEntities.get(1).getSize());
         return productEntities.stream().map(ProductEntity::getDto).collect(Collectors.toList());
     }
 
     public List<ProductsDto> getAllProductsByName(String productName) {
-        List<ProductEntity> productEntities = productRegistrationRepository.findAllByProductNameContaining(productName);
+        List<ProductEntity> productEntities = productRegistrationRepository.findByActiveTrueAndProductNameContaining(productName);
         return productEntities.stream().map(ProductEntity::getDto).collect(Collectors.toList());
     }
 
@@ -166,10 +150,28 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         }
     }
 
-    private String generateNextSku(){
-        Long count = productRegistrationRepository.count() + 1;
 
-        return "PRD" + String.format("%04d", count);
+    public String generateNextSku() {
+
+        ProductEntity lastProduct = productRegistrationRepository.findTopByOrderByProductIdDesc();
+
+        if (lastProduct == null) {
+            return "PRD0001";
+        }
+
+        String lastSku = lastProduct.getProductSku();
+
+        // Remove the "PRD" prefix
+        int number = Integer.parseInt(lastSku.substring(3));
+
+        number++;
+
+        // Add the prefix back
+        return "PRD" + String.format("%04d", number);
+
+//        Long count = productRegistrationRepository.count() + 1;
+//
+//        return "PRD" + String.format("%04d", count);
     }
 
     public boolean getProductBySku(String productSku) {
@@ -191,9 +193,7 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
 
             productEntity.setProductName(productsDto.getProductName());
             productEntity.setDescription(productsDto.getDescription());
-            productEntity.setSize(productsDto.getSize());
 //            productEntity.setQuantity(productsDto.getQuantity());
-            productEntity.setPrice(productsDto.getPrice());
 //            productEntity.setAddedDate(productsDto.getAddedDate());
             productEntity.setCategoryEntity(optionalCategoryEntity.get());
             if(productsDto.getImage() != null){
@@ -201,6 +201,29 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
             }
 
             ProductEntity updateProduct = productRegistrationRepository.save(productEntity);
+
+            productVariantRepository.deleteByProductProductId(productId);
+            if(productsDto.getVariants() != null){
+                for(ProductVariantDto dto : productsDto.getVariants()){
+                    ProductVariant variant = new ProductVariant();
+
+                    variant.setProduct(updateProduct);
+                    variant.setWeight(dto.getWeight());
+                    variant.setPrice(dto.getPrice());
+                    productVariantRepository.save(variant);
+                }
+            }
+
+//            if(productsDto.getSizes() != null){
+//                for(ProductSizeDto dto : productsDto.getSizes()){
+//                    ProductSizeEntity size = new ProductSizeEntity();
+//                    size.setProduct(updateProduct);
+//                    size.setSize(dto.getSize());
+//                    size.setPrice(dto.getPrice());
+//
+//                    productSizeRepository.save(size);
+//                }
+//            }
 
             System.out.println(
                     "Before delete: " +
@@ -239,10 +262,21 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         }
     }
 
+//    public boolean deleteProduct(Long productId) {
+//        Optional<ProductEntity> optionalProduct = productRegistrationRepository.findById(productId);
+//        if(optionalProduct.isPresent()) {
+//            productRegistrationRepository.deleteById(productId);
+//            return true;
+//        }
+//        return false;
+//    }
+
     public boolean deleteProduct(Long productId) {
         Optional<ProductEntity> optionalProduct = productRegistrationRepository.findById(productId);
         if(optionalProduct.isPresent()) {
-            productRegistrationRepository.deleteById(productId);
+            ProductEntity product = optionalProduct.get();
+            product.setActive(false);
+            productRegistrationRepository.save(product);
             return true;
         }
         return false;

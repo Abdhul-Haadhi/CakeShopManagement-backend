@@ -28,6 +28,10 @@ public class CartItemsEntity {
     @JoinColumn(name = "product_id",nullable = false)
     private ProductEntity productEntity;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "variant_id")
+//    private ProductVariant productVariant;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
@@ -39,6 +43,10 @@ public class CartItemsEntity {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private CustomerEntity customer;
+
+    private Integer weight;
+
+    private Long unitPrice;
 
 
     public CartItemDto getDto(){
@@ -68,6 +76,10 @@ public class CartItemsEntity {
         dto.setPrice(price);
 
         dto.setProductId(productEntity.getProductId());
+//        dto.setVariantId(productVariant.getVariantId());
+//        dto.setWeight(productVariant.getWeight());
+        dto.setWeight(weight);
+        dto.setUnitPrice(unitPrice);
         dto.setProductName(productEntity.getProductName());
         dto.setByteImage(productEntity.getImage());
 
@@ -129,6 +141,14 @@ public class CartItemsEntity {
         this.productEntity = productEntity;
     }
 
+//    public ProductVariant getProductVariant() {
+//        return productVariant;
+//    }
+//
+//    public void setProductVariant(ProductVariant productVariant) {
+//        this.productVariant = productVariant;
+//    }
+
     public OrderEntity getOrder() {
         return order;
     }
@@ -151,5 +171,21 @@ public class CartItemsEntity {
 
     public void setCustomer(CustomerEntity customer) {
         this.customer = customer;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public Long getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Long unitPrice) {
+        this.unitPrice = unitPrice;
     }
 }

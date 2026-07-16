@@ -25,4 +25,6 @@ public interface ProductRegistrationService {
     boolean deleteProduct(Long productId);
 
     boolean getProductBySku(String productSku);
+
+    String generateNextSku();
 }

@@ -100,6 +100,13 @@ public class RecipeServiceImpl implements RecipeService {
 //        recipeRepository.deleteById(recipeId);
 //    }
 
+
+    @Override
+    public List<RecipeEntity> getRecipeEntities(Long productId){
+        return recipeRepository.findByProductProductId(productId);
+    }
+
+
     @Override
     @Transactional
     public void deleteRecipeByProduct(Long productId){

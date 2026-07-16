@@ -2,14 +2,18 @@ package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.entity.InventoryEntity;
 import com.example.CakeShopManagement.entity.StockEntity;
+import com.example.CakeShopManagement.exceptions.InsufficientStockException;
 import com.example.CakeShopManagement.repository.InventoryRepository;
 import com.example.CakeShopManagement.repository.StockRepository;
+import com.example.CakeShopManagement.service.InventoryConsumptionService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class InventoryConsumptionServiceImpl {
+@Transactional
+public class InventoryConsumptionServiceImpl implements InventoryConsumptionService {
 
     private final StockRepository stockRepository;
     private final InventoryRepository inventoryRepository;
@@ -20,8 +24,17 @@ public class InventoryConsumptionServiceImpl {
         this.inventoryRepository = inventoryRepository;
     }
 
-    public void consumeItem(Long inventoryId,double requiredQty) {
-        InventoryEntity inventory = inventoryRepository.findById(inventoryId).orElseThrow();
+    @Transactional
+    @Override
+    public void consumeItem(Long inventoryId, double requiredQty) {
+
+        InventoryEntity inventory = inventoryRepository.findById(inventoryId).orElseThrow(()-> new RuntimeException("Inventory not found"));
+
+        if(inventory.getCurrentQuantity() < requiredQty) {
+            throw new RuntimeException(
+                    inventory.getItemName() + " does not have enough stock.\n" + "Available : " + inventory.getCurrentQuantity() + "\nRequired : " + requiredQty
+            );
+        }
 
         List<StockEntity> batches = stockRepository.findByInventoryInventoryIdAndRemainingQuantityGreaterThanOrderByExpiryDateAscReceivedDateAsc(inventoryId,0.0);
 
@@ -43,7 +56,7 @@ public class InventoryConsumptionServiceImpl {
             stockRepository.save(batch);
         }
         if(remainingNeed > 0){
-            throw new RuntimeException(inventory.getItemName()+"stock not enough");
+            throw new InsufficientStockException(inventory.getItemName()+"stock not enough");
         }
         inventory.setCurrentQuantity(inventory.getCurrentQuantity()-requiredQty);
         inventoryRepository.save(inventory);

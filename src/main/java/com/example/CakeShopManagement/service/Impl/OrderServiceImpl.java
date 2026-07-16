@@ -8,8 +8,10 @@ import com.example.CakeShopManagement.entity.*;
 import com.example.CakeShopManagement.exceptions.AppException;
 import com.example.CakeShopManagement.mappers.OrderMapper;
 import com.example.CakeShopManagement.repository.*;
+import com.example.CakeShopManagement.service.InventoryConsumptionService;
 import com.example.CakeShopManagement.service.OrderService;
 import com.example.CakeShopManagement.service.PaymentService;
+import com.example.CakeShopManagement.service.RecipeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +28,10 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentRepository paymentRepository;
     private final PaymentService paymentService;
     private final CustomerRepository customerRepository;
+    private final RecipeService recipeService;
+    private final InventoryConsumptionService inventoryConsumptionService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartRepository cartRepository, OrderItemRepository orderItemRepository, OrderItemCustomizationRepository orderItemCustomizationRepository, PaymentRepository paymentRepository, PaymentService paymentService, CustomerRepository customerRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartRepository cartRepository, OrderItemRepository orderItemRepository, OrderItemCustomizationRepository orderItemCustomizationRepository, PaymentRepository paymentRepository, PaymentService paymentService, CustomerRepository customerRepository, RecipeService recipeService, InventoryConsumptionService inventoryConsumptionService) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.cartRepository = cartRepository;
@@ -36,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
         this.paymentRepository = paymentRepository;
         this.paymentService = paymentService;
         this.customerRepository = customerRepository;
+        this.recipeService = recipeService;
+        this.inventoryConsumptionService = inventoryConsumptionService;
     }
 
     @Override
@@ -98,7 +104,8 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setOrder(savedOrder);
                 orderItem.setProduct(cartItem.getProductEntity());
                 orderItem.setQuantity(cartItem.getQuantity());
-                orderItem.setPrice(cartItem.getProductEntity().getPrice() * cartItem.getQuantity());
+//                orderItem.setPrice(cartItem.getProductEntity().getPrice() * cartItem.getQuantity());
+                orderItem.setPrice(cartItem.getPrice());
 
                 OrderItemEntity savedOrderItem = orderItemRepository.save(orderItem);
 
@@ -308,7 +315,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderHistoryDto updateOrderStatus(Long orderId, String status){
+
         OrderEntity order = orderRepository.findById(orderId).orElseThrow(()->new RuntimeException("Order not found"));
+
+        if(status.equals("CONFIRMED") && !"CONFIRMED".equals(order.getStatus()) && !order.getInventoryReduced()){
+            reduceIngredients(order);
+            order.setInventoryReduced(true);
+        }
+
+        if(!isValidTransition(order.getStatus(),status)){
+            throw new RuntimeException("Invalid status transition.");
+        }
 
         order.setStatus(status);
 
@@ -317,5 +334,46 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toOrderHistoryDto(updatedOrder);
     }
 
+    private boolean isValidTransition(String current, String next) {
 
+        switch (current) {
+
+            case "PENDING":
+                return next.equals("PENDING") || next.equals("CONFIRMED") || next.equals("CANCELLED");
+
+            case "CONFIRMED":
+                return next.equals("CONFIRMED")
+                        || next.equals("BAKING");
+
+            case "BAKING":
+                return next.equals("BAKING")
+                        || next.equals("OUT FOR DELIVERY");
+
+            case "OUT FOR DELIVERY":
+                return next.equals("OUT FOR DELIVERY")
+                        || next.equals("DELIVERED");
+
+            case "DELIVERED":
+                return next.equals("DELIVERED");
+
+            case "CANCELLED":
+                return next.equals("CANCELLED");
+
+            default:
+                return false;
+        }
+
+    }
+
+    private void reduceIngredients(OrderEntity order){
+        for(OrderItemEntity orderItem : order.getOrderItems()){
+            List<RecipeEntity> recipes = recipeService.getRecipeEntities(orderItem.getProduct().getProductId());
+
+            for(RecipeEntity recipe : recipes){
+                double required = recipe.getQuantityRequired() * orderItem.getQuantity();
+
+                inventoryConsumptionService.consumeItem(recipe.getInventory().getInventoryId(),required);
+            }
+        }
+    }
 }

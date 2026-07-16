@@ -1,8 +1,11 @@
 package com.example.CakeShopManagement.controller;
 
+import com.example.CakeShopManagement.dto.ProductVariantDto;
 import com.example.CakeShopManagement.dto.ProductsDto;
 import com.example.CakeShopManagement.repository.ProductRegistrationRepository;
 import com.example.CakeShopManagement.service.ProductRegistrationService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +45,9 @@ public class ProductRegistrationController {
     @PostMapping("/product-registration")
     public ResponseEntity<ProductsDto> addProduct( @RequestParam("productName") String productName,
                                                    @RequestParam("description") String description,
-                                                   @RequestParam("size") int size,
 //                                                   @RequestParam("quantity") int quantity,
-                                                   @RequestParam("price") int price,
 //                                                   @RequestParam("addedDate") String addedDate,
+                                                   @RequestParam("variants") String variants,
                                                    @RequestParam("categoryId") Long categoryId,
                                                    @RequestParam(value = "image", required = false) MultipartFile image,
                                                    @RequestParam(value = "customizations", required = false) String customizations)throws IOException{
@@ -54,12 +56,14 @@ public class ProductRegistrationController {
 //        dto.setProductSku(productSku);
         dto.setProductName(productName);
         dto.setDescription(description);
-        dto.setSize(size);
 //        dto.setQuantity(quantity);
-        dto.setPrice(price);
 //        dto.setAddedDate(LocalDate.parse(addedDate));
         dto.setCategoryId(categoryId);
         dto.setImage(image);
+
+        List<ProductVariantDto> variantDtos = new ObjectMapper().readValue(variants, new TypeReference<List<ProductVariantDto>>() {
+        });
+        dto.setVariants(variantDtos);
 
         ProductsDto saved = productRegistrationService.addProduct(dto,customizations);
 
@@ -95,6 +99,11 @@ public class ProductRegistrationController {
         return ResponseEntity.ok(productRegistrationService.getProductBySku(productSku));
     }
 
+    @GetMapping("/next-product-sku")
+    public ResponseEntity<String> getNextSku(){
+        return ResponseEntity.ok(productRegistrationService.generateNextSku());
+    }
+
 //    @PutMapping("/product/{productId}")
 //    public ResponseEntity<ProductsDto> updateProduct(@PathVariable Long productId, @ModelAttribute ProductsDto productsDto, @RequestParam(value = "customizations",required = false)String customizations) throws IOException {
 //
@@ -115,10 +124,9 @@ public class ProductRegistrationController {
     public ResponseEntity<ProductsDto> updateProduct(@PathVariable Long productId,
                                                      @RequestParam("productName") String productName,
                                                      @RequestParam("description") String description,
-                                                     @RequestParam("size") int size,
 //                                                     @RequestParam("quantity") int quantity,
-                                                     @RequestParam("price") int price,
 //                                                     @RequestParam("addedDate") String addedDate,
+                                                     @RequestParam("variants") String variants,
                                                      @RequestParam("categoryId") Long categoryId,
                                                      @RequestParam(value = "image", required = false)
                                                          MultipartFile image,
@@ -130,12 +138,17 @@ public class ProductRegistrationController {
 
         dto.setProductName(productName);
         dto.setDescription(description);
-        dto.setSize(size);
 //        dto.setQuantity(quantity);
-        dto.setPrice(price);
 //        dto.setAddedDate(LocalDate.parse(addedDate));
         dto.setCategoryId(categoryId);
         dto.setImage(image);
+
+        List<ProductVariantDto> variantDtos =
+                new ObjectMapper().readValue(
+                        variants,
+                        new TypeReference<List<ProductVariantDto>>() {}
+                );
+        dto.setVariants(variantDtos);
 
         ProductsDto updateProduct = productRegistrationService.updateProduct(productId, dto, customizations);
 

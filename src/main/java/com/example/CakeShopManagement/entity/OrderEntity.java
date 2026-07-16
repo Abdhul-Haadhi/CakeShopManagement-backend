@@ -33,6 +33,7 @@ public class OrderEntity {
     private String trackingId;
 
     private String status;
+    private Boolean inventoryReduced = false;
 
     private String sessionId;
 
@@ -52,7 +53,7 @@ public class OrderEntity {
     public OrderEntity() {
     }
 
-    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment, CustomerEntity customer) {
+    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, Boolean inventoryReduced, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment, CustomerEntity customer) {
         this.orderId = orderId;
         this.customerName = customerName;
         this.phone = phone;
@@ -66,6 +67,7 @@ public class OrderEntity {
         this.paymentMethod = paymentMethod;
         this.trackingId = trackingId;
         this.status = status;
+        this.inventoryReduced = inventoryReduced;
         this.sessionId = sessionId;
         this.cartItems = cartItems;
         this.orderItems = orderItems;
@@ -175,6 +177,14 @@ public class OrderEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Boolean getInventoryReduced() {
+        return inventoryReduced;
+    }
+
+    public void setInventoryReduced(Boolean inventoryReduced) {
+        this.inventoryReduced = inventoryReduced;
     }
 
     public String getSessionId() {

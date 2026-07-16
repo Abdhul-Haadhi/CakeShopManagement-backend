@@ -11,7 +11,7 @@ public class StockDto {
     private Double quantityAdded;
     private LocalDate expiryDate;
     private String batchNumber;
-
+    private Double remainingQuantity;
     private String itemName;
     private LocalDate receivedDate;
 
@@ -19,12 +19,13 @@ public class StockDto {
     public StockDto() {
     }
 
-    public StockDto(Long stockId, Long inventoryId, Double quantityAdded, LocalDate expiryDate, String batchNumber, String itemName, LocalDate receivedDate) {
+    public StockDto(Long stockId, Long inventoryId, Double quantityAdded, LocalDate expiryDate, String batchNumber, Double remainingQuantity, String itemName, LocalDate receivedDate) {
         this.stockId = stockId;
         this.inventoryId = inventoryId;
         this.quantityAdded = quantityAdded;
         this.expiryDate = expiryDate;
         this.batchNumber = batchNumber;
+        this.remainingQuantity = remainingQuantity;
         this.itemName = itemName;
         this.receivedDate = receivedDate;
     }
@@ -67,6 +68,14 @@ public class StockDto {
 
     public void setBatchNumber(String batchNumber) {
         this.batchNumber = batchNumber;
+    }
+
+    public Double getRemainingQuantity() {
+        return remainingQuantity;
+    }
+
+    public void setRemainingQuantity(Double remainingQuantity) {
+        this.remainingQuantity = remainingQuantity;
     }
 
     public String getItemName() {
