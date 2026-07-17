@@ -106,6 +106,8 @@ public class OrderServiceImpl implements OrderService {
                 orderItem.setQuantity(cartItem.getQuantity());
 //                orderItem.setPrice(cartItem.getProductEntity().getPrice() * cartItem.getQuantity());
                 orderItem.setPrice(cartItem.getPrice());
+                orderItem.setVariantType(cartItem.getVariantType());
+                orderItem.setVariantValue(cartItem.getVariantValue());
 
                 OrderItemEntity savedOrderItem = orderItemRepository.save(orderItem);
 
@@ -191,6 +193,7 @@ public class OrderServiceImpl implements OrderService {
                 }).toList();
     }
 
+//    ---customer order history
     @Override
     public List<OrderHistoryDto> getOrders(Long customerId, String sessionId) {
         List<OrderEntity> orders;
@@ -229,6 +232,8 @@ public class OrderServiceImpl implements OrderService {
                                 itemDto.setPrice(item.getPrice());
                                 itemDto.setProductId(item.getProduct().getProductId());
                                 itemDto.setProductName(item.getProduct().getProductName());
+                                itemDto.setVariantType(item.getVariantType());
+                                itemDto.setVariantValue(item.getVariantValue());
 
                                 List<OrderItemCustomizationDto> customizationDtos =
                                         item.getCustomizations().stream()
@@ -257,6 +262,7 @@ public class OrderServiceImpl implements OrderService {
                 }).toList();
     }
 
+//    --- admin order table
     @Override
     public List<OrderHistoryDto> getAllOrders(){
         return orderRepository.findAllByOrderByOrderDateDesc()
@@ -288,6 +294,8 @@ public class OrderServiceImpl implements OrderService {
                                 itemDto.setPrice(item.getPrice());
                                 itemDto.setProductId(item.getProduct().getProductId());
                                 itemDto.setProductName(item.getProduct().getProductName());
+                                itemDto.setVariantType(item.getVariantType());
+                                itemDto.setVariantValue(item.getVariantValue());
 
                                 List<OrderItemCustomizationDto> customizationDtos = item.getCustomizations()
                                         .stream()
@@ -318,7 +326,11 @@ public class OrderServiceImpl implements OrderService {
 
         OrderEntity order = orderRepository.findById(orderId).orElseThrow(()->new RuntimeException("Order not found"));
 
+        System.out.println("STATUS = " + status);
+        System.out.println("Current = " + order.getStatus());
+
         if(status.equals("CONFIRMED") && !"CONFIRMED".equals(order.getStatus()) && !order.getInventoryReduced()){
+            System.out.println("Reducing inventory...");
             reduceIngredients(order);
             order.setInventoryReduced(true);
         }
@@ -366,11 +378,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void reduceIngredients(OrderEntity order){
+
         for(OrderItemEntity orderItem : order.getOrderItems()){
-            List<RecipeEntity> recipes = recipeService.getRecipeEntities(orderItem.getProduct().getProductId());
+
+            List<RecipeEntity> recipes = recipeService.getRecipeEntities(
+                    orderItem.getProduct().getProductId(),
+                    orderItem.getVariantType(),
+                    null        // <-- don't search by value
+            );
+
+            if(recipes.isEmpty()){
+                throw new RuntimeException("Recipe not found for product: " + orderItem.getProduct().getProductName());
+            }
+
+            ProductVariant recipeVariant = recipes.get(0).getProductVariant();
+
+            double factor;
+
+            if(recipeVariant.getWeight() != null){
+
+                factor = (double) orderItem.getVariantValue() / recipeVariant.getWeight();
+
+            }else{
+
+                factor = (double) orderItem.getVariantValue() / recipeVariant.getPieces();
+
+            }
 
             for(RecipeEntity recipe : recipes){
-                double required = recipe.getQuantityRequired() * orderItem.getQuantity();
+
+                double required = recipe.getQuantityRequired() * factor * orderItem.getQuantity();
 
                 inventoryConsumptionService.consumeItem(recipe.getInventory().getInventoryId(),required);
             }

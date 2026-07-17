@@ -16,16 +16,23 @@ public class OrderItemDto {
 
     private List<OrderItemCustomizationDto> customizations;
 
+    private String variantType;
+    private Integer variantValue;
+    private Long variantId;
+
     public OrderItemDto() {
     }
 
-    public OrderItemDto(Long orderItemId, Long quantity, Long price, Long productId, String productName, List<OrderItemCustomizationDto> customizations) {
+    public OrderItemDto(Long orderItemId, Long quantity, Long price, Long productId, String productName, List<OrderItemCustomizationDto> customizations, String variantType, Integer variantValue, Long variantId) {
         this.orderItemId = orderItemId;
         this.quantity = quantity;
         this.price = price;
         this.productId = productId;
         this.productName = productName;
         this.customizations = customizations;
+        this.variantType = variantType;
+        this.variantValue = variantValue;
+        this.variantId = variantId;
     }
 
     public Long getOrderItemId() {
@@ -74,5 +81,29 @@ public class OrderItemDto {
 
     public void setCustomizations(List<OrderItemCustomizationDto> customizations) {
         this.customizations = customizations;
+    }
+
+    public String getVariantType() {
+        return variantType;
+    }
+
+    public void setVariantType(String variantType) {
+        this.variantType = variantType;
+    }
+
+    public Integer getVariantValue() {
+        return variantValue;
+    }
+
+    public void setVariantValue(Integer variantValue) {
+        this.variantValue = variantValue;
+    }
+
+    public Long getVariantId() {
+        return variantId;
+    }
+
+    public void setVariantId(Long variantId) {
+        this.variantId = variantId;
     }
 }

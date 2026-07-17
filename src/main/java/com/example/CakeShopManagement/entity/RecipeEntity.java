@@ -3,7 +3,7 @@ package com.example.CakeShopManagement.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "recipe",uniqueConstraints = {@UniqueConstraint(columnNames = {"product_id","inventory_id"})})
+@Table(name = "recipe",uniqueConstraints = {@UniqueConstraint(columnNames = {"product_id","variant_id","inventory_id"})})
 public class RecipeEntity {
 
     @Id
@@ -21,14 +21,19 @@ public class RecipeEntity {
     @Column(nullable = false)
     private Double quantityRequired;
 
+    @ManyToOne
+    @JoinColumn(name = "variant_id")
+    private ProductVariant productVariant;
+
     public RecipeEntity() {
     }
 
-    public RecipeEntity(Long recipeId, ProductEntity product, InventoryEntity inventory, Double quantityRequired) {
+    public RecipeEntity(Long recipeId, ProductEntity product, InventoryEntity inventory, Double quantityRequired, ProductVariant productVariant) {
         this.recipeId = recipeId;
         this.product = product;
         this.inventory = inventory;
         this.quantityRequired = quantityRequired;
+        this.productVariant = productVariant;
     }
 
     public Long getRecipeId() {
@@ -61,5 +66,13 @@ public class RecipeEntity {
 
     public void setQuantityRequired(Double quantityRequired) {
         this.quantityRequired = quantityRequired;
+    }
+
+    public ProductVariant getProductVariant() {
+        return productVariant;
+    }
+
+    public void setProductVariant(ProductVariant productVariant) {
+        this.productVariant = productVariant;
     }
 }

@@ -7,14 +7,18 @@ public class ProductVariantDto {
 
     private Long variantId;
     private Integer weight;
+    private Integer pieces;
+    private String variantType;
     private Double price;
 
     public ProductVariantDto() {
     }
 
-    public ProductVariantDto(Long variantId, Integer weight, Double price) {
+    public ProductVariantDto(Long variantId, Integer weight, Integer pieces, String variantType, Double price) {
         this.variantId = variantId;
         this.weight = weight;
+        this.pieces = pieces;
+        this.variantType = variantType;
         this.price = price;
     }
 
@@ -32,6 +36,22 @@ public class ProductVariantDto {
 
     public void setWeight(Integer weight) {
         this.weight = weight;
+    }
+
+    public Integer getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(Integer pieces) {
+        this.pieces = pieces;
+    }
+
+    public String getVariantType() {
+        return variantType;
+    }
+
+    public void setVariantType(String variantType) {
+        this.variantType = variantType;
     }
 
     public Double getPrice() {

@@ -17,6 +17,9 @@ public class OrderHistoryDto {
 
     private List<OrderItemDto> orderItems;
 
+    private String variantType;
+    private Integer variantValue;
+
 
 //    customer details  //
 
@@ -32,7 +35,7 @@ public class OrderHistoryDto {
     public OrderHistoryDto() {
     }
 
-    public OrderHistoryDto(Long orderId, Long totalAmount, Long quantity, String status, String trackingId, Date orderDate, Date deliveryDate, List<OrderItemDto> orderItems, String customerName, String phone, String email, String address, String city, String paymentMethod) {
+    public OrderHistoryDto(Long orderId, Long totalAmount, Long quantity, String status, String trackingId, Date orderDate, Date deliveryDate, List<OrderItemDto> orderItems, String variantType, Integer variantValue, String customerName, String phone, String email, String address, String city, String paymentMethod) {
         this.orderId = orderId;
         this.totalAmount = totalAmount;
         this.quantity = quantity;
@@ -41,6 +44,8 @@ public class OrderHistoryDto {
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.orderItems = orderItems;
+        this.variantType = variantType;
+        this.variantValue = variantValue;
         this.customerName = customerName;
         this.phone = phone;
         this.email = email;
@@ -111,6 +116,22 @@ public class OrderHistoryDto {
 
     public void setOrderItems(List<OrderItemDto> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public String getVariantType() {
+        return variantType;
+    }
+
+    public void setVariantType(String variantType) {
+        this.variantType = variantType;
+    }
+
+    public Integer getVariantValue() {
+        return variantValue;
+    }
+
+    public void setVariantValue(Integer variantValue) {
+        this.variantValue = variantValue;
     }
 
     public String getCustomerName() {

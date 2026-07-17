@@ -38,17 +38,21 @@ public class OrderItemEntity {
     )
     private List<OrderItemCustomizationEntity> customizations = new ArrayList<>();
 
+    private String variantType;
+    private Integer variantValue;
 
     public OrderItemEntity() {
     }
 
-    public OrderItemEntity(Long orderItemId, Long quantity, Long price, OrderEntity order, ProductEntity product, List<OrderItemCustomizationEntity> customizations) {
+    public OrderItemEntity(Long orderItemId, Long quantity, Long price, OrderEntity order, ProductEntity product, List<OrderItemCustomizationEntity> customizations, String variantType, Integer variantValue) {
         this.orderItemId = orderItemId;
         this.quantity = quantity;
         this.price = price;
         this.order = order;
         this.product = product;
         this.customizations = customizations;
+        this.variantType = variantType;
+        this.variantValue = variantValue;
     }
 
     public Long getOrderItemId() {
@@ -97,5 +101,21 @@ public class OrderItemEntity {
 
     public void setCustomizations(List<OrderItemCustomizationEntity> customizations) {
         this.customizations = customizations;
+    }
+
+    public String getVariantType() {
+        return variantType;
+    }
+
+    public void setVariantType(String variantType) {
+        this.variantType = variantType;
+    }
+
+    public Integer getVariantValue() {
+        return variantValue;
+    }
+
+    public void setVariantValue(Integer variantValue) {
+        this.variantValue = variantValue;
     }
 }

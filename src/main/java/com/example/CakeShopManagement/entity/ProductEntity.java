@@ -23,6 +23,7 @@ public class ProductEntity {
     private String productName;
     @Lob
     private String description;
+    private String sellingType;
 //    private int size;
 //    private int quantity;
 //    private int price;
@@ -66,6 +67,7 @@ public class ProductEntity {
         productsDto.setProductSku(productSku);
         productsDto.setProductName(productName);
         productsDto.setDescription(description);
+        productsDto.setSellingType(sellingType);
         productsDto.setAddedDate(addedDate);
         productsDto.setActive(active);
 //        productsDto.setQuantity(quantity);
@@ -73,15 +75,22 @@ public class ProductEntity {
         productsDto.setCategoryId(categoryEntity.getCategoryId());
         productsDto.setCategoryName(categoryEntity.getCategoryName());
 
-        if(variants != null){
+        if(variants != null) {
             List<ProductVariantDto> variantDtos = variants.stream()
-                    .map(v -> new ProductVariantDto(
-                            v.getVariantId(),
-                            v.getWeight(),
-                            v.getPrice())).toList();
+                    .map(v -> {
+                        ProductVariantDto dto = new ProductVariantDto();
 
+                        dto.setVariantId(v.getVariantId());
+                        dto.setWeight(v.getWeight());
+                        dto.setPieces(v.getPieces());
+                        dto.setPrice(v.getPrice());
+                        dto.setVariantType(v.getVariantType().name());
+
+                        return dto;
+                    }).toList();
             productsDto.setVariants(variantDtos);
         }
+
 
 //        if(customizations != null){
 //            List<ProductCustomizationDto> customizationDtos = customizations.stream().map(pc->new ProductCustomizationDto(
@@ -129,11 +138,12 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
-    public ProductEntity(Long productId, String productSku, String productName, String description, LocalDate addedDate, Boolean active, byte[] image, List<ProductCustomizationEntity> customizations, List<ProductVariant> variants, CategoryEntity categoryEntity) {
+    public ProductEntity(Long productId, String productSku, String productName, String description, String sellingType, LocalDate addedDate, Boolean active, byte[] image, List<ProductCustomizationEntity> customizations, List<ProductVariant> variants, CategoryEntity categoryEntity) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
         this.description = description;
+        this.sellingType = sellingType;
         this.addedDate = addedDate;
         this.active = active;
         this.image = image;
@@ -172,6 +182,14 @@ public class ProductEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSellingType() {
+        return sellingType;
+    }
+
+    public void setSellingType(String sellingType) {
+        this.sellingType = sellingType;
     }
 
     public LocalDate getAddedDate() {

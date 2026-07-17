@@ -18,6 +18,7 @@ public class ProductsDto {
     private String productSku;
     private String productName;
     private String description;
+    private String sellingType;
 //    private List<String> colors;
 //    private int size;
 //    private int quantity;
@@ -38,11 +39,12 @@ public class ProductsDto {
     public ProductsDto() {
     }
 
-    public ProductsDto(Long productId, String productSku, String productName, String description, LocalDate addedDate, Boolean active, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName, List<ProductCustomizationDto> customizations, List<ProductVariantDto> variants) {
+    public ProductsDto(Long productId, String productSku, String productName, String description, String sellingType, LocalDate addedDate, Boolean active, byte[] byteImage, MultipartFile image, Long categoryId, String categoryName, List<ProductCustomizationDto> customizations, List<ProductVariantDto> variants) {
         this.productId = productId;
         this.productSku = productSku;
         this.productName = productName;
         this.description = description;
+        this.sellingType = sellingType;
         this.addedDate = addedDate;
         this.active = active;
         this.byteImage = byteImage;
@@ -83,6 +85,14 @@ public class ProductsDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSellingType() {
+        return sellingType;
+    }
+
+    public void setSellingType(String sellingType) {
+        this.sellingType = sellingType;
     }
 
     public LocalDate getAddedDate() {

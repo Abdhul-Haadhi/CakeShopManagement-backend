@@ -50,10 +50,13 @@ public class OrderEntity {
     @JoinColumn(name = "customer_account_id")
     private CustomerEntity customer;
 
+    private String variantType;
+    private Integer variantValue;
+
     public OrderEntity() {
     }
 
-    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, Boolean inventoryReduced, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment, CustomerEntity customer) {
+    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, Boolean inventoryReduced, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment, CustomerEntity customer, String variantType, Integer variantValue) {
         this.orderId = orderId;
         this.customerName = customerName;
         this.phone = phone;
@@ -73,6 +76,8 @@ public class OrderEntity {
         this.orderItems = orderItems;
         this.payment = payment;
         this.customer = customer;
+        this.variantType = variantType;
+        this.variantValue = variantValue;
     }
 
     public Long getOrderId() {
@@ -225,5 +230,21 @@ public class OrderEntity {
 
     public void setCustomer(CustomerEntity customer) {
         this.customer = customer;
+    }
+
+    public String getVariantType() {
+        return variantType;
+    }
+
+    public void setVariantType(String variantType) {
+        this.variantType = variantType;
+    }
+
+    public Integer getVariantValue() {
+        return variantValue;
+    }
+
+    public void setVariantValue(Integer variantValue) {
+        this.variantValue = variantValue;
     }
 }

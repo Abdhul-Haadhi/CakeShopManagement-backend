@@ -44,7 +44,8 @@ public class CartItemsEntity {
     @JoinColumn(name = "customer_id")
     private CustomerEntity customer;
 
-    private Integer weight;
+    private String variantType;
+    private Integer variantValue;
 
     private Long unitPrice;
 
@@ -78,7 +79,8 @@ public class CartItemsEntity {
         dto.setProductId(productEntity.getProductId());
 //        dto.setVariantId(productVariant.getVariantId());
 //        dto.setWeight(productVariant.getWeight());
-        dto.setWeight(weight);
+        dto.setVariantType(variantType);
+        dto.setVariantValue(variantValue);
         dto.setUnitPrice(unitPrice);
         dto.setProductName(productEntity.getProductName());
         dto.setByteImage(productEntity.getImage());
@@ -90,7 +92,7 @@ public class CartItemsEntity {
     public CartItemsEntity() {
     }
 
-    public CartItemsEntity(Long cartId, String sessionId, Long price, Long quantity, ProductEntity productEntity, OrderEntity order, List<CartItemCustomizationEntity> customizations, CustomerEntity customer) {
+    public CartItemsEntity(Long cartId, String sessionId, Long price, Long quantity, ProductEntity productEntity, OrderEntity order, List<CartItemCustomizationEntity> customizations, CustomerEntity customer, String variantType, Integer variantValue, Long unitPrice) {
         this.cartId = cartId;
         this.sessionId = sessionId;
         this.price = price;
@@ -99,6 +101,9 @@ public class CartItemsEntity {
         this.order = order;
         this.customizations = customizations;
         this.customer = customer;
+        this.variantType = variantType;
+        this.variantValue = variantValue;
+        this.unitPrice = unitPrice;
     }
 
     public Long getCartId() {
@@ -141,14 +146,6 @@ public class CartItemsEntity {
         this.productEntity = productEntity;
     }
 
-//    public ProductVariant getProductVariant() {
-//        return productVariant;
-//    }
-//
-//    public void setProductVariant(ProductVariant productVariant) {
-//        this.productVariant = productVariant;
-//    }
-
     public OrderEntity getOrder() {
         return order;
     }
@@ -173,12 +170,20 @@ public class CartItemsEntity {
         this.customer = customer;
     }
 
-    public Integer getWeight() {
-        return weight;
+    public String getVariantType() {
+        return variantType;
     }
 
-    public void setWeight(Integer weight) {
-        this.weight = weight;
+    public void setVariantType(String variantType) {
+        this.variantType = variantType;
+    }
+
+    public Integer getVariantValue() {
+        return variantValue;
+    }
+
+    public void setVariantValue(Integer variantValue) {
+        this.variantValue = variantValue;
     }
 
     public Long getUnitPrice() {

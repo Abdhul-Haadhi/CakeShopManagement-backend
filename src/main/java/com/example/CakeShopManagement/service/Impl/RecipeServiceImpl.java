@@ -6,9 +6,11 @@ import com.example.CakeShopManagement.dto.RecipeItemDto;
 import com.example.CakeShopManagement.dto.RecipeRequestDto;
 import com.example.CakeShopManagement.entity.InventoryEntity;
 import com.example.CakeShopManagement.entity.ProductEntity;
+import com.example.CakeShopManagement.entity.ProductVariant;
 import com.example.CakeShopManagement.entity.RecipeEntity;
 import com.example.CakeShopManagement.repository.InventoryRepository;
 import com.example.CakeShopManagement.repository.ProductRegistrationRepository;
+import com.example.CakeShopManagement.repository.ProductVariantRepository;
 import com.example.CakeShopManagement.repository.RecipeRepository;
 import com.example.CakeShopManagement.service.RecipeService;
 import org.springframework.stereotype.Service;
@@ -22,17 +24,19 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final ProductRegistrationRepository productReposotory;
     private final InventoryRepository inventoryRepository;
+    private final ProductVariantRepository productVariantRepository;
 
-    public RecipeServiceImpl(RecipeRepository recipeRepository, ProductRegistrationRepository productReposotory, InventoryRepository inventoryRepository) {
+    public RecipeServiceImpl(RecipeRepository recipeRepository, ProductRegistrationRepository productReposotory, InventoryRepository inventoryRepository, ProductVariantRepository productVariantRepository) {
         this.recipeRepository = recipeRepository;
         this.productReposotory = productReposotory;
         this.inventoryRepository = inventoryRepository;
+        this.productVariantRepository = productVariantRepository;
     }
 
 //    @Override
 //    public RecipeDto addRecipe(RecipeDto dto){
 //
-//        if(recipeRepository.existsByProductProductIdAndInventoryInventoryId(dto.getProductId(), dto.getInventoryId())){
+//        if(recipeRepository.existsByProductProductIdAndProductVariantVariantIdAndInventoryInventoryId(dto.getProductId(), dto.getInventoryId())){
 //            throw new RuntimeException("This ingredient is already added to this product.");
 //        }
 //
@@ -53,18 +57,21 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public void saveRecipe(RecipeRequestDto dto){
         ProductEntity product = productReposotory.findById(dto.getProductId()).orElseThrow();
+        ProductVariant variant = productVariantRepository.findById(dto.getVariantId()).orElseThrow();
 
         for(RecipeItemDto item : dto.getIngredients()){
-            if(recipeRepository.existsByProductProductIdAndInventoryInventoryId(dto.getProductId(), item.getInventoryId())){
-                throw new RuntimeException("Ingredient already exists.");
+            if(recipeRepository.existsByProductProductIdAndProductVariantVariantIdAndInventoryInventoryId(dto.getProductId(), dto.getVariantId(), item.getInventoryId())){
+                throw new RuntimeException("Ingredient already exists for this variant.");
             }
             InventoryEntity inventory = inventoryRepository.findById(item.getInventoryId()).orElseThrow();
 
             RecipeEntity recipe = new RecipeEntity();
 
             recipe.setProduct(product);
+            recipe.setProductVariant(variant);
             recipe.setInventory(inventory);
             recipe.setQuantityRequired(item.getQuantityRequired());
+
 
             recipeRepository.save(recipe);
         }
@@ -102,9 +109,52 @@ public class RecipeServiceImpl implements RecipeService {
 
 
     @Override
-    public List<RecipeEntity> getRecipeEntities(Long productId){
-        return recipeRepository.findByProductProductId(productId);
+    public List<RecipeEntity> getRecipeEntities(Long productId, String variantType, Integer variantValue) {
+
+        List<RecipeEntity> recipes = recipeRepository.findByProductProductId(productId);
+
+        if(variantValue == null){
+
+            ProductVariant smallest = recipes.stream()
+                    .map(RecipeEntity::getProductVariant)
+                    .filter(v -> v.getVariantType().name().equals(variantType))
+                    .min((a,b)->{
+
+                        int va = a.getWeight()!=null ? a.getWeight() : a.getPieces();
+                        int vb = b.getWeight()!=null ? b.getWeight() : b.getPieces();
+
+                        return Integer.compare(va,vb);
+
+                    })
+                    .orElse(null);
+
+            if(smallest==null){
+                return List.of();
+            }
+
+            Long variantId = smallest.getVariantId();
+
+            return recipes.stream()
+                    .filter(r->r.getProductVariant().getVariantId().equals(variantId))
+                    .toList();
+        }
+
+        return recipes.stream().filter(recipe->{
+
+                    ProductVariant variant = recipe.getProductVariant();
+
+                    if(!variant.getVariantType().name().equals(variantType))
+                        return false;
+
+                    if(variant.getWeight()!=null)
+                        return variant.getWeight().equals(variantValue);
+
+                    return variant.getPieces().equals(variantValue);
+
+                })
+                .toList();
     }
+
 
 
     @Override
@@ -124,6 +174,15 @@ public class RecipeServiceImpl implements RecipeService {
         dto.setInventoryId(recipe.getInventory().getInventoryId());
         dto.setInventoryName(recipe.getInventory().getItemName());
         dto.setQuantityRequired(recipe.getQuantityRequired());
+        dto.setVariantId(recipe.getProductVariant().getVariantId());
+        dto.setVariantType(recipe.getProductVariant().getVariantType().name());
+
+        if(recipe.getProductVariant().getWeight() != null){
+            dto.setVariantValue(recipe.getProductVariant().getWeight());
+        }
+        else {
+            dto.setVariantValue(recipe.getProductVariant().getPieces());
+        }
 
         return dto;
     }

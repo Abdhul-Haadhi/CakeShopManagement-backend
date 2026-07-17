@@ -4,6 +4,7 @@ import com.example.CakeShopManagement.dto.ProductCustomizationDto;
 import com.example.CakeShopManagement.dto.ProductVariantDto;
 import com.example.CakeShopManagement.dto.ProductsDto;
 import com.example.CakeShopManagement.entity.*;
+import com.example.CakeShopManagement.enums.VariantType;
 import com.example.CakeShopManagement.mappers.ProductRegistrationMapper;
 import com.example.CakeShopManagement.repository.*;
 import com.example.CakeShopManagement.service.ProductRegistrationService;
@@ -39,7 +40,6 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         this.productCustomizationRepository = productCustomizationRepository;
         this.customizationOptionRepository = customizationOptionRepository;
         this.objectMapper = objectMapper;
-
         this.productVariantRepository = productVariantRepository;
     }
 
@@ -65,6 +65,7 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         productEntity.setProductSku(generatedSku);
         productEntity.setProductName(productsDto.getProductName());
         productEntity.setDescription(productsDto.getDescription());
+        productEntity.setSellingType(productsDto.getSellingType());
 //        productEntity.setQuantity(productsDto.getQuantity());
         productEntity.setAddedDate(java.time.LocalDate.now());
 
@@ -88,7 +89,12 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
                 ProductVariant variant = new ProductVariant();
 
                 variant.setProduct(saveProduct);
+//                variant.setWeight(dto.getWeight());
+//                variant.setPrice(dto.getPrice());
+
+                variant.setVariantType(VariantType.valueOf(dto.getVariantType()));
                 variant.setWeight(dto.getWeight());
+                variant.setPieces(dto.getPieces());
                 variant.setPrice(dto.getPrice());
 
                 productVariantRepository.save(variant);
@@ -150,6 +156,26 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         }
     }
 
+    @Override
+    public List<ProductVariantDto> getProductVariants(Long productId) {
+
+        return productVariantRepository
+                .findByProductProductId(productId)
+                .stream()
+                .map(v -> {
+
+                    ProductVariantDto dto = new ProductVariantDto();
+
+                    dto.setVariantId(v.getVariantId());
+                    dto.setVariantType(v.getVariantType().toString());
+
+                    dto.setWeight(v.getWeight());
+                    dto.setPieces(v.getPieces());
+
+                    return dto;
+
+                }).toList();
+    }
 
     public String generateNextSku() {
 
@@ -208,8 +234,14 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
                     ProductVariant variant = new ProductVariant();
 
                     variant.setProduct(updateProduct);
+//                    variant.setWeight(dto.getWeight());
+//                    variant.setPrice(dto.getPrice());
+
+                    variant.setVariantType(VariantType.valueOf(dto.getVariantType()));
                     variant.setWeight(dto.getWeight());
+                    variant.setPieces(dto.getPieces());
                     variant.setPrice(dto.getPrice());
+
                     productVariantRepository.save(variant);
                 }
             }

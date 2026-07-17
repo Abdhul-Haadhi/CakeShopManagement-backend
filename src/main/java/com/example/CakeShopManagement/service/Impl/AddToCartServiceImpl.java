@@ -47,7 +47,16 @@ public class AddToCartServiceImpl implements AddToCartService {
 //        ProductVariant variant = productVariantRepository.findById(addToCartDto.getVariantId()).orElseThrow();
 
         ProductVariant variant = productVariantRepository.findById(addToCartDto.getVariantId()).orElseThrow();
-        cartItemsEntity.setWeight(variant.getWeight());
+
+        cartItemsEntity.setVariantType(variant.getVariantType().name());
+
+        switch (variant.getVariantType()) {
+            case WEIGHT ->
+                    cartItemsEntity.setVariantValue(variant.getWeight());
+
+            case PIECE ->
+                    cartItemsEntity.setVariantValue(variant.getPieces());
+        }
 //        cartItemsEntity.setUnitPrice(
 //                variant.getPrice().longValue()
 //        );

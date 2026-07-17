@@ -45,6 +45,7 @@ public class ProductRegistrationController {
     @PostMapping("/product-registration")
     public ResponseEntity<ProductsDto> addProduct( @RequestParam("productName") String productName,
                                                    @RequestParam("description") String description,
+                                                   @RequestParam("sellingType") String sellingType,
 //                                                   @RequestParam("quantity") int quantity,
 //                                                   @RequestParam("addedDate") String addedDate,
                                                    @RequestParam("variants") String variants,
@@ -56,6 +57,7 @@ public class ProductRegistrationController {
 //        dto.setProductSku(productSku);
         dto.setProductName(productName);
         dto.setDescription(description);
+        dto.setSellingType(sellingType);
 //        dto.setQuantity(quantity);
 //        dto.setAddedDate(LocalDate.parse(addedDate));
         dto.setCategoryId(categoryId);
@@ -104,6 +106,13 @@ public class ProductRegistrationController {
         return ResponseEntity.ok(productRegistrationService.generateNextSku());
     }
 
+    @GetMapping("/product/{id}/variants")
+    public ResponseEntity<List<ProductVariantDto>> getVariants(@PathVariable Long id){
+
+        return ResponseEntity.ok(productRegistrationService.getProductVariants(id));
+
+    }
+
 //    @PutMapping("/product/{productId}")
 //    public ResponseEntity<ProductsDto> updateProduct(@PathVariable Long productId, @ModelAttribute ProductsDto productsDto, @RequestParam(value = "customizations",required = false)String customizations) throws IOException {
 //
@@ -124,6 +133,7 @@ public class ProductRegistrationController {
     public ResponseEntity<ProductsDto> updateProduct(@PathVariable Long productId,
                                                      @RequestParam("productName") String productName,
                                                      @RequestParam("description") String description,
+                                                     @RequestParam("sellingType") String sellingType,
 //                                                     @RequestParam("quantity") int quantity,
 //                                                     @RequestParam("addedDate") String addedDate,
                                                      @RequestParam("variants") String variants,
@@ -138,6 +148,7 @@ public class ProductRegistrationController {
 
         dto.setProductName(productName);
         dto.setDescription(description);
+        dto.setSellingType(sellingType);
 //        dto.setQuantity(quantity);
 //        dto.setAddedDate(LocalDate.parse(addedDate));
         dto.setCategoryId(categoryId);

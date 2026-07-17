@@ -20,13 +20,15 @@ public class CartItemDto {
     private Long customerId;
 
 //    private Long variantId;
-    private Integer weight;
+//    private Integer weight;
+    private String variantType;
+    private Integer variantValue;
     private Long unitPrice;
 
     public CartItemDto() {
     }
 
-    public CartItemDto(Long cartId, String sessionId, Long quantity, Long price, Long productId, String productName, byte[] byteImage, List<CartCustomizationDto> customizations, Long customerId, Integer weight, Long unitPrice) {
+    public CartItemDto(Long cartId, String sessionId, Long quantity, Long price, Long productId, String productName, byte[] byteImage, List<CartCustomizationDto> customizations, Long customerId, String variantType, Integer variantValue, Long unitPrice) {
         this.cartId = cartId;
         this.sessionId = sessionId;
         this.quantity = quantity;
@@ -36,7 +38,8 @@ public class CartItemDto {
         this.byteImage = byteImage;
         this.customizations = customizations;
         this.customerId = customerId;
-        this.weight = weight;
+        this.variantType = variantType;
+        this.variantValue = variantValue;
         this.unitPrice = unitPrice;
     }
 
@@ -112,20 +115,20 @@ public class CartItemDto {
         this.customerId = customerId;
     }
 
-//    public Long getVariantId() {
-//        return variantId;
-//    }
-//
-//    public void setVariantId(Long variantId) {
-//        this.variantId = variantId;
-//    }
-
-    public Integer getWeight() {
-        return weight;
+    public String getVariantType() {
+        return variantType;
     }
 
-    public void setWeight(Integer weight) {
-        this.weight = weight;
+    public void setVariantType(String variantType) {
+        this.variantType = variantType;
+    }
+
+    public Integer getVariantValue() {
+        return variantValue;
+    }
+
+    public void setVariantValue(Integer variantValue) {
+        this.variantValue = variantValue;
     }
 
     public Long getUnitPrice() {

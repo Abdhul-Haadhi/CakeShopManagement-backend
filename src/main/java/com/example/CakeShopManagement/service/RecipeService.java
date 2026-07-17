@@ -14,7 +14,7 @@ public interface RecipeService {
 //    List<RecipeDto> getAllRecipe();
     List<ProductRecipeDto> getRecipeProducts();
     List<RecipeDto> getRecipeByProduct(Long productId);
-    List<RecipeEntity> getRecipeEntities(Long productId);
+    List<RecipeEntity> getRecipeEntities(Long productId, String variantType, Integer variantValue);
 //    void deleteRecipe(Long recipeId);
     void deleteRecipeByProduct(Long productId);
 }

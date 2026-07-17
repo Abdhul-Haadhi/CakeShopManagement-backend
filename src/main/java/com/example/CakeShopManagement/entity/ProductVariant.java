@@ -1,5 +1,6 @@
 package com.example.CakeShopManagement.entity;
 
+import com.example.CakeShopManagement.enums.VariantType;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +12,11 @@ public class ProductVariant {
     private Long variantId;
 
     private Integer weight;
+    private Integer pieces;
+
+    @Enumerated(EnumType.STRING)
+    private VariantType variantType;
+
     private Double price;
     private Boolean available=true;
 
@@ -21,9 +27,11 @@ public class ProductVariant {
     public ProductVariant() {
     }
 
-    public ProductVariant(Long variantId, Integer weight, Double price, Boolean available, ProductEntity product) {
+    public ProductVariant(Long variantId, Integer weight, Integer pieces, VariantType variantType, Double price, Boolean available, ProductEntity product) {
         this.variantId = variantId;
         this.weight = weight;
+        this.pieces = pieces;
+        this.variantType = variantType;
         this.price = price;
         this.available = available;
         this.product = product;
@@ -43,6 +51,22 @@ public class ProductVariant {
 
     public void setWeight(Integer weight) {
         this.weight = weight;
+    }
+
+    public Integer getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(Integer pieces) {
+        this.pieces = pieces;
+    }
+
+    public VariantType getVariantType() {
+        return variantType;
+    }
+
+    public void setVariantType(VariantType variantType) {
+        this.variantType = variantType;
     }
 
     public Double getPrice() {

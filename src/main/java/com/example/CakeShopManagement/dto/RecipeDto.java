@@ -10,17 +10,23 @@ public class RecipeDto {
     private Long inventoryId;
     private String inventoryName;
     private Double quantityRequired;
+    private Long variantId;
+    private String variantType;
+    private Integer variantValue;
 
     public RecipeDto() {
     }
 
-    public RecipeDto(Long recipeId, Long productId, String productName, Long inventoryId, String inventoryName, Double quantityRequired) {
+    public RecipeDto(Long recipeId, Long productId, String productName, Long inventoryId, String inventoryName, Double quantityRequired, Long variantId, String variantType, Integer variantValue) {
         this.recipeId = recipeId;
         this.productId = productId;
         this.productName = productName;
         this.inventoryId = inventoryId;
         this.inventoryName = inventoryName;
         this.quantityRequired = quantityRequired;
+        this.variantId = variantId;
+        this.variantType = variantType;
+        this.variantValue = variantValue;
     }
 
     public Long getRecipeId() {
@@ -69,5 +75,29 @@ public class RecipeDto {
 
     public void setQuantityRequired(Double quantityRequired) {
         this.quantityRequired = quantityRequired;
+    }
+
+    public Long getVariantId() {
+        return variantId;
+    }
+
+    public void setVariantId(Long variantId) {
+        this.variantId = variantId;
+    }
+
+    public String getVariantType() {
+        return variantType;
+    }
+
+    public void setVariantType(String variantType) {
+        this.variantType = variantType;
+    }
+
+    public Integer getVariantValue() {
+        return variantValue;
+    }
+
+    public void setVariantValue(Integer variantValue) {
+        this.variantValue = variantValue;
     }
 }
