@@ -8,13 +8,11 @@ import com.example.CakeShopManagement.entity.*;
 import com.example.CakeShopManagement.exceptions.AppException;
 import com.example.CakeShopManagement.mappers.OrderMapper;
 import com.example.CakeShopManagement.repository.*;
-import com.example.CakeShopManagement.service.InventoryConsumptionService;
-import com.example.CakeShopManagement.service.OrderService;
-import com.example.CakeShopManagement.service.PaymentService;
-import com.example.CakeShopManagement.service.RecipeService;
+import com.example.CakeShopManagement.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,8 +28,9 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerRepository customerRepository;
     private final RecipeService recipeService;
     private final InventoryConsumptionService inventoryConsumptionService;
+    private final NotificationService notificationService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartRepository cartRepository, OrderItemRepository orderItemRepository, OrderItemCustomizationRepository orderItemCustomizationRepository, PaymentRepository paymentRepository, PaymentService paymentService, CustomerRepository customerRepository, RecipeService recipeService, InventoryConsumptionService inventoryConsumptionService) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartRepository cartRepository, OrderItemRepository orderItemRepository, OrderItemCustomizationRepository orderItemCustomizationRepository, PaymentRepository paymentRepository, PaymentService paymentService, CustomerRepository customerRepository, RecipeService recipeService, InventoryConsumptionService inventoryConsumptionService, NotificationService notificationService) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.cartRepository = cartRepository;
@@ -42,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
         this.customerRepository = customerRepository;
         this.recipeService = recipeService;
         this.inventoryConsumptionService = inventoryConsumptionService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -127,6 +127,9 @@ public class OrderServiceImpl implements OrderService {
             }
 
             cartRepository.deleteAll(cartItems);
+
+            String message = "A new order has been placed. Tracking ID: " + savedOrder.getTrackingId();
+            notificationService.notifyAdmin("New Order Received!", message, "ORDERS");
 
             return orderMapper.toPlaceOrderDto(savedOrder);
         }
@@ -379,6 +382,19 @@ public class OrderServiceImpl implements OrderService {
 
     private void reduceIngredients(OrderEntity order){
 
+        class Consumption{
+            Long inventoryId;
+            Double quantity;
+
+            Consumption(Long inventoryId, Double quantity){
+                this.inventoryId = inventoryId;
+                this.quantity = quantity;
+            }
+        }
+
+        List<Consumption> consumptions = new java.util.ArrayList<>();
+
+        // STEP 1 - Calculate all required quantities
         for(OrderItemEntity orderItem : order.getOrderItems()){
 
             List<RecipeEntity> recipes = recipeService.getRecipeEntities(
@@ -409,8 +425,26 @@ public class OrderServiceImpl implements OrderService {
 
                 double required = recipe.getQuantityRequired() * factor * orderItem.getQuantity();
 
-                inventoryConsumptionService.consumeItem(recipe.getInventory().getInventoryId(),required);
+                consumptions.add(new Consumption(recipe.getInventory().getInventoryId(),required));
+
+//                inventoryConsumptionService.consumeItem(recipe.getInventory().getInventoryId(),required);
             }
+        }
+
+        // STEP 2 - Validate ALL stock first
+        for(Consumption c : consumptions){
+            inventoryConsumptionService.validateStock(
+                    c.inventoryId,
+                    c.quantity
+            );
+        }
+
+        // STEP 3 - Consume stock only if every validation passed
+        for(Consumption c : consumptions){
+            inventoryConsumptionService.consumeItem(
+                    c.inventoryId,
+                    c.quantity
+            );
         }
     }
 }

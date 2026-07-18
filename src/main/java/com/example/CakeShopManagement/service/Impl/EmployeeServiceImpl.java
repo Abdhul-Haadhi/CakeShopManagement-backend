@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,37 +26,39 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeMapper employeeMapper;
     private final UserRepository userRepository;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PasswordEncoder passwordEncoder;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, PasswordEncoder passwordEncoder) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
         this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.passwordEncoder = passwordEncoder;
     }
 
 
     public EmployeeDto addEmployee(EmployeeDto employeeDto) {
-        try {
-            EmployeeEntity employeeEntity = employeeMapper.toEmployeeEntity(employeeDto);
 
-            employeeEntity.setJoinDate(java.time.LocalDate.now());
-
-            EmployeeEntity saveItem = employeeRepository.save(employeeEntity);
-
-            EmployeeDto savedDto = employeeMapper.toEmployeeDto(saveItem);
-
-//            savedDto.setJoinDate(java.time.LocalDate.now());
-
-//            System.out.println("**************"+savedDto);
-
-            return savedDto;
+        if(employeeRepository.existsByEmail(employeeDto.getEmail())) {
+            throw new AppException("Email already exists.", HttpStatus.BAD_REQUEST);
         }
-        catch (Exception e) {
-            throw new AppException("Request failed with error: "+e, HttpStatus.INTERNAL_SERVER_ERROR);
+        if(employeeRepository.existsByPhone(employeeDto.getPhone())){
+            throw new AppException("Phone number already exists.", HttpStatus.BAD_REQUEST);
         }
+        EmployeeEntity employeeEntity = employeeMapper.toEmployeeEntity(employeeDto);
+
+        employeeEntity.setJoinDate(java.time.LocalDate.now());
+
+        EmployeeEntity saveItem = employeeRepository.save(employeeEntity);
+
+        EmployeeDto savedDto = employeeMapper.toEmployeeDto(saveItem);
+
+//        savedDto.setJoinDate(java.time.LocalDate.now());
+//
+//        System.out.println("**************"+savedDto);
+
+        return savedDto;
+
+
     }
 
     public void createEmployeeLogin(EmployeeDto employeeDto) {
@@ -70,7 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(employeeDto.getUserName());
         userEntity.setEmail(employeeEntity.getEmail());
-        userEntity.setPassword(bCryptPasswordEncoder.encode(employeeDto.getPassword()));
+        userEntity.setPassword(passwordEncoder.encode(employeeDto.getPassword()));
         userEntity.setRole(UserRole.EMPLOYEE);
 
         UserEntity savedUser = userRepository.save(userEntity);
@@ -118,21 +121,28 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public EmployeeDto updateEmployee(Long employeeId, EmployeeDto employeeDto) {
-        try {
-            Optional<EmployeeEntity> optionalEmployeeEntity=employeeRepository.findById(employeeId);
-            if(!optionalEmployeeEntity.isPresent()){
-                throw new AppException("Employee does not Exists", HttpStatus.BAD_REQUEST);
-            }
-            EmployeeEntity newEmployeeEntity = employeeMapper.toEmployeeEntity(employeeDto);
-            newEmployeeEntity.setEmployeeId(employeeId);
 
-            EmployeeEntity employeeEntity = employeeRepository.save(newEmployeeEntity);
-            EmployeeDto responseEmployeeDto = employeeMapper.toEmployeeDto(employeeEntity);
-            return responseEmployeeDto;
+        Optional<EmployeeEntity> optionalEmployeeEntity=employeeRepository.findById(employeeId);
+        if(!optionalEmployeeEntity.isPresent()){
+            throw new AppException("Employee does not Exists", HttpStatus.BAD_REQUEST);
         }
-        catch (Exception e) {
-            throw new AppException("Request failed with error: "+e, HttpStatus.INTERNAL_SERVER_ERROR);
+        EmployeeEntity newEmployeeEntity = employeeMapper.toEmployeeEntity(employeeDto);
+        newEmployeeEntity.setEmployeeId(employeeId);
+        newEmployeeEntity.setJoinDate(java.time.LocalDate.now());
+
+        if(employeeRepository.existsByEmailAndEmployeeIdNot(employeeDto.getEmail(), employeeId)){
+            throw new AppException("Email already exists.", HttpStatus.BAD_REQUEST);
         }
+
+        if(employeeRepository.existsByPhoneAndEmployeeIdNot(employeeDto.getPhone(), employeeId)){
+            throw new AppException("Phone number already exists.", HttpStatus.BAD_REQUEST);
+        }
+
+        EmployeeEntity employeeEntity = employeeRepository.save(newEmployeeEntity);
+        EmployeeDto responseEmployeeDto = employeeMapper.toEmployeeDto(employeeEntity);
+        return responseEmployeeDto;
+
+
     }
 
     public void updateEmployeePassword(UpdateEmployeeAccDto updateEmployeeAccDto){

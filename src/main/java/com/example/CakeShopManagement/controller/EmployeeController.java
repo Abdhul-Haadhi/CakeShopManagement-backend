@@ -35,14 +35,17 @@ public class EmployeeController {
 //    }
 
     @PostMapping("/employee")
-    public ResponseEntity<EmployeeDto> addForm(@RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<EmployeeDto> addEmployee(@RequestBody EmployeeDto employeeDto) {
 
         try {
             EmployeeDto employeeDtoResponse = employeeService.addEmployee(employeeDto);
             return ResponseEntity.created(URI.create("/employee"+employeeDtoResponse.getEmployeeId())).body(employeeDtoResponse);
         }
+        catch (AppException e) {
+            throw e;
+        }
         catch (Exception e) {
-            throw new AppException("Request failed with error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -64,8 +67,11 @@ public class EmployeeController {
             List<EmployeeDto> employeeDtoList = employeeService.getEmployees();
             return ResponseEntity.ok(employeeDtoList);
         }
+        catch (AppException e) {
+            throw e;
+        }
         catch (Exception e) {
-            throw new AppException("Request failed with error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -81,8 +87,11 @@ public class EmployeeController {
             EmployeeDto employeeDto1 = employeeService.updateEmployee(employeeId, employeeDto);
             return ResponseEntity.ok(employeeDto1);
         }
+        catch (AppException e) {
+            throw e;
+        }
         catch (Exception e) {
-            throw new AppException("Request failed with error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

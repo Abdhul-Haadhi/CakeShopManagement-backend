@@ -11,4 +11,5 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
     List<NotificationEntity> findByRecipientRoleOrderByCreatedAtDesc(String role);
     List<NotificationEntity> findByRecipientUserIdOrderByCreatedAtDesc(Long userId);
+    List<NotificationEntity> findByRecipientRoleAndIsReadOrderByCreatedAtDesc(String role, boolean isRead);
 }

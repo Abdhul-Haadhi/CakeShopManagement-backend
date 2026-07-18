@@ -1,12 +1,15 @@
 package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.entity.InventoryEntity;
+import com.example.CakeShopManagement.entity.NotificationEntity;
 import com.example.CakeShopManagement.entity.StockEntity;
 import com.example.CakeShopManagement.exceptions.InsufficientStockException;
 import com.example.CakeShopManagement.repository.InventoryRepository;
+import com.example.CakeShopManagement.repository.NotificationRepository;
 import com.example.CakeShopManagement.repository.StockRepository;
 import com.example.CakeShopManagement.service.InventoryConsumptionService;
 import jakarta.transaction.Transactional;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +21,15 @@ public class InventoryConsumptionServiceImpl implements InventoryConsumptionServ
     private final StockRepository stockRepository;
     private final InventoryRepository inventoryRepository;
 
+    private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public InventoryConsumptionServiceImpl(StockRepository stockRepository, InventoryRepository inventoryRepository) {
+
+    public InventoryConsumptionServiceImpl(StockRepository stockRepository, InventoryRepository inventoryRepository, NotificationRepository notificationRepository, SimpMessagingTemplate messagingTemplate) {
         this.stockRepository = stockRepository;
         this.inventoryRepository = inventoryRepository;
+        this.notificationRepository = notificationRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
@@ -58,7 +66,39 @@ public class InventoryConsumptionServiceImpl implements InventoryConsumptionServ
         if(remainingNeed > 0){
             throw new InsufficientStockException(inventory.getItemName()+"stock not enough");
         }
+
+        // Deduct stock
         inventory.setCurrentQuantity(inventory.getCurrentQuantity()-requiredQty);
         inventoryRepository.save(inventory);
+
+        double lowStockThreshold = inventory.getReorderLevel();
+
+        if(inventory.getCurrentQuantity() <= lowStockThreshold){
+            NotificationEntity alert = new NotificationEntity();
+            alert.setTitle("Low Stock Alert!");
+            alert.setMessage(inventory.getItemName() + " is running critically low. Remaining quantity: " + inventory.getCurrentQuantity());
+            alert.setRecipientRole("ADMIN");
+            alert.setRead(false);
+
+            notificationRepository.save(alert);
+
+            messagingTemplate.convertAndSend("/topic/admin/notifications", alert);
+        }
+    }
+
+    @Override
+    public void validateStock(Long inventoryId, Double requiredQuantity){
+        List<StockEntity> stocks = stockRepository.findByInventoryInventoryId(inventoryId);
+
+        if(stocks.isEmpty()){
+            throw new RuntimeException("No Stock available.");
+        }
+
+        double totalAvailable = stocks.stream().mapToDouble(StockEntity::getRemainingQuantity).sum();
+
+        if(totalAvailable < requiredQuantity){
+//            throw new RuntimeException("Insufficient stock available for"+inventoryId+". Available : " + totalAvailable + "\nRequired : " + requiredQuantity);
+            throw new RuntimeException("Insufficient stock available for " + stocks.get(0).getInventory().getItemName());
+        }
     }
 }

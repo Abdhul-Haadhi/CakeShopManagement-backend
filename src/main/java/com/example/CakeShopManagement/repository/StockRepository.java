@@ -12,6 +12,7 @@ public interface StockRepository extends JpaRepository<StockEntity,Long> {
     List<StockEntity> findAllByOrderByReceivedDateDesc();
     List<StockEntity> findByInventoryInventoryIdOrderByReceivedDateDesc(Long inventoryId);
     long countByInventoryInventoryId(Long inventoryId);
+    List<StockEntity> findByInventoryInventoryId(Long inventoryId);
 
     List<StockEntity> findByInventoryInventoryIdAndRemainingQuantityGreaterThanOrderByExpiryDateAscReceivedDateAsc(
             Long inventoryId,

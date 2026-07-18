@@ -27,6 +27,9 @@ public class CustomerServiceImpl implements CustomerService {
             if(customerRepository.findByPhone(customerDto.getPhone()).isPresent()){
                 throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
             }
+            if(customerRepository.findByEmail(customerDto.getEmail()).isPresent()){
+                throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
+            }
 
             CustomerEntity customerEntity = customerMapper.toCustomerEntity(customerDto);
             customerEntity.setJoinDate(java.time.LocalDate.now());
@@ -70,8 +73,15 @@ public class CustomerServiceImpl implements CustomerService {
             }
             CustomerEntity newCustomerEntity = customerMapper.toCustomerEntity(customerDto);
             newCustomerEntity.setCustomerId(customerId);
-
             newCustomerEntity.setJoinDate(java.time.LocalDate.now());
+
+            if(customerRepository.existsByEmailAndCustomerIdNot(customerDto.getEmail(), customerId)){
+                throw new AppException("Email already exists.", HttpStatus.BAD_REQUEST);
+            }
+
+            if(customerRepository.existsByPhoneAndCustomerIdNot(customerDto.getPhone(), customerId)){
+                throw new AppException("Phone number already exists.", HttpStatus.BAD_REQUEST);
+            }
             CustomerEntity customerEntity = customerRepository.save(newCustomerEntity);
             CustomerDto responseCustomerDto = customerMapper.toCustomerDto(customerEntity);
             return responseCustomerDto;

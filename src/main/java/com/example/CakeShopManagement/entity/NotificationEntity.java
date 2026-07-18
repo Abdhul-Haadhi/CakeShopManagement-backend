@@ -7,6 +7,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "notifications")
 public class NotificationEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notificationId;
@@ -15,14 +16,13 @@ public class NotificationEntity {
     private String module;
     private String recipientRole;
     private Long recipientUserId;
-
-    private boolean isRead = false;
+    private Boolean isRead = false;
     private LocalDate createdAt = LocalDate.now();
 
     public NotificationEntity() {
     }
 
-    public NotificationEntity(Long notificationId, String title, String message, String module, String recipientRole, Long recipientUserId, boolean isRead, LocalDate createdAt) {
+    public NotificationEntity(Long notificationId, String title, String message, String module, String recipientRole, Long recipientUserId, Boolean isRead, LocalDate createdAt) {
         this.notificationId = notificationId;
         this.title = title;
         this.message = message;
@@ -81,11 +81,11 @@ public class NotificationEntity {
         this.recipientUserId = recipientUserId;
     }
 
-    public boolean isRead() {
+    public Boolean getRead() {
         return isRead;
     }
 
-    public void setRead(boolean read) {
+    public void setRead(Boolean read) {
         isRead = read;
     }
 

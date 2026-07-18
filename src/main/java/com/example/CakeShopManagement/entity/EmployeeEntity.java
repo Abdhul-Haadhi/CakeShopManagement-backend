@@ -14,6 +14,8 @@ public class EmployeeEntity {
     private String employeeName;
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false, unique = true)
     private String phone;
     private String address;
     private LocalDate joinDate;
