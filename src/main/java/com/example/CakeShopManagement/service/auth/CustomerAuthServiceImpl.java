@@ -31,6 +31,10 @@ public class CustomerAuthServiceImpl implements CustomerAuthService {
             throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
         }
 
+        if(customerRepository.findByEmail(request.getEmail()).isPresent()){
+            throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
+        }
+
         customer.setCustomerName(request.getCustomerName());
         customer.setPhone(request.getPhone());
         customer.setEmail(request.getEmail());

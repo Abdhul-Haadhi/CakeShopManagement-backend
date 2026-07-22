@@ -23,26 +23,24 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public CustomerDto addCustomer(CustomerDto customerDto) {
-        try {
-            if(customerRepository.findByPhone(customerDto.getPhone()).isPresent()){
-                throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
-            }
-            if(customerRepository.findByEmail(customerDto.getEmail()).isPresent()){
-                throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
-            }
 
-            CustomerEntity customerEntity = customerMapper.toCustomerEntity(customerDto);
-            customerEntity.setJoinDate(java.time.LocalDate.now());
-            CustomerEntity saveItem = customerRepository.save(customerEntity);
-            CustomerDto savedDto = customerMapper.toCustomerDto(saveItem);
+        if(customerRepository.findByPhone(customerDto.getPhone()).isPresent()){
+            throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
+        }
+        if(customerRepository.findByEmail(customerDto.getEmail()).isPresent()){
+            throw new AppException("User already registered", HttpStatus.BAD_REQUEST);
+        }
+
+        CustomerEntity customerEntity = customerMapper.toCustomerEntity(customerDto);
+        customerEntity.setJoinDate(java.time.LocalDate.now());
+        CustomerEntity saveItem = customerRepository.save(customerEntity);
+        CustomerDto savedDto = customerMapper.toCustomerDto(saveItem);
 
 //            System.out.println("**************"+savedDto);
 
-            return savedDto;
-        }
-        catch (Exception e) {
-            throw new AppException("Request failed with error: "+e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return savedDto;
+
+
     }
 
     @Override

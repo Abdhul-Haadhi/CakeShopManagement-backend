@@ -2,8 +2,11 @@ package com.example.CakeShopManagement.service;
 
 import com.example.CakeShopManagement.dto.OrderHistoryDto;
 import com.example.CakeShopManagement.dto.PlaceOrderDto;
+import com.example.CakeShopManagement.dto.SalesReportDto;
 import com.example.CakeShopManagement.entity.OrderEntity;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public interface OrderService {
@@ -13,4 +16,6 @@ public interface OrderService {
     List<OrderHistoryDto> getOrders(Long customerId, String sessionId);
     List<OrderHistoryDto> getAllOrders();
     OrderHistoryDto updateOrderStatus(Long orderId, String status);
+
+    SalesReportDto getSalesReport(LocalDate startDate, LocalDate endDate);
 }

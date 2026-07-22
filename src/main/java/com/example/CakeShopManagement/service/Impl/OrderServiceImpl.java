@@ -1,9 +1,6 @@
 package com.example.CakeShopManagement.service.Impl;
 
-import com.example.CakeShopManagement.dto.OrderHistoryDto;
-import com.example.CakeShopManagement.dto.OrderItemCustomizationDto;
-import com.example.CakeShopManagement.dto.OrderItemDto;
-import com.example.CakeShopManagement.dto.PlaceOrderDto;
+import com.example.CakeShopManagement.dto.*;
 import com.example.CakeShopManagement.entity.*;
 import com.example.CakeShopManagement.exceptions.AppException;
 import com.example.CakeShopManagement.mappers.OrderMapper;
@@ -12,7 +9,11 @@ import com.example.CakeShopManagement.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -323,6 +324,31 @@ public class OrderServiceImpl implements OrderService {
                     return dto;
                 }).toList();
     }
+
+
+    @Override
+    public SalesReportDto getSalesReport(LocalDate startDate, LocalDate endDate){
+
+        Date start = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date end = Date.from(endDate.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
+
+        SalesReportDto dto = new SalesReportDto();
+
+        dto.setTotalOrders(orderRepository.getTotalOrders(start, end));
+        dto.setTotalRevenue(orderRepository.getTotalRevenue(start, end));
+        dto.setTotalItemsSold(orderRepository.getTotalItemsSold(start, end));
+
+        dto.setAverageOrderValue(dto.getTotalOrders()==0 ? 0 : dto.getTotalRevenue().doubleValue()/dto.getTotalOrders());
+
+        dto.setMonthlySales(orderRepository.getMonthlySales(start, end));
+        dto.setTopProducts(orderRepository.getTopProducts(start, end));
+        System.out.println("Top Products = " + dto.getTopProducts().size());
+
+        dto.getTopProducts().forEach(System.out::println);
+
+        return dto;
+    }
+
 
     @Override
     public OrderHistoryDto updateOrderStatus(Long orderId, String status){

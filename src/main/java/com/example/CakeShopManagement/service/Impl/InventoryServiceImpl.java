@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.dto.InventoryDto;
+import com.example.CakeShopManagement.dto.InventoryReportDto;
 import com.example.CakeShopManagement.entity.InventoryEntity;
 import com.example.CakeShopManagement.entity.StockEntity;
 import com.example.CakeShopManagement.mappers.InventoryMapper;
@@ -120,6 +121,41 @@ public class InventoryServiceImpl implements InventoryService {
             }
         }
         return dto;
+    }
+
+    @Override
+    public List<InventoryReportDto> getInventoryReport(){
+//        List<InventoryEntity> inventories = inventoryRepository.findAll();
+//
+//        return inventories.stream().map(item->{
+//            List<StockEntity> stocks = stockRepository.findByInventoryInventoryIdOrderByExpiryDateAsc(item.getInventoryId());
+//
+//            String batchNo = "";
+//            LocalDate expiry = null;
+//
+//            if(!stocks.isEmpty()){
+//                StockEntity firstStock = stocks.stream()
+//                        .filter(s -> s.getRemainingQuantity() > 0)
+//                        .findFirst()
+//                        .orElse(null);
+//
+//                if(firstStock != null){
+//                    batchNo = firstStock.getBatchNumber();
+//                    expiry = firstStock.getExpiryDate();
+//                }
+//            }
+//            return new InventoryReportDto(
+//                    item.getItemSku(),
+//                    item.getItemName(),
+//                    item.getCurrentQuantity(),
+//                    item.getReorderLevel(),
+//                    batchNo,
+//                    expiry,
+//                    item.getUnit()
+//
+//            );
+//        }).toList();
+        return inventoryRepository.getInventoryReports();
     }
 
     private String generateNextSku(){

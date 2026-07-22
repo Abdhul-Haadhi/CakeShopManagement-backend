@@ -18,4 +18,6 @@ public interface StockRepository extends JpaRepository<StockEntity,Long> {
             Long inventoryId,
             Double quantity
     );
+
+    List<StockEntity> findByInventoryInventoryIdOrderByExpiryDateAsc(Long inventoryId);
 }

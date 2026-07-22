@@ -25,15 +25,13 @@ public class CustomerController {
     }
 
     @PostMapping("/customer")
-    public ResponseEntity<CustomerDto> addForm(@RequestBody CustomerDto customerDto) {
+    public ResponseEntity<CustomerDto> addCustomer(@RequestBody CustomerDto customerDto) {
 
-        try {
-            CustomerDto customerDtoResponse = customerService.addCustomer(customerDto);
-            return ResponseEntity.created(URI.create("/customer"+customerDtoResponse.getCustomerId())).body(customerDtoResponse);
-        }
-        catch (Exception e) {
-            throw new AppException("Request failed with error: " + e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        CustomerDto customerDtoResponse = customerService.addCustomer(customerDto);
+        return ResponseEntity.created(URI.create("/customer"+customerDtoResponse.getCustomerId())).body(customerDtoResponse);
+
+
     }
 
     @GetMapping("/customer")
