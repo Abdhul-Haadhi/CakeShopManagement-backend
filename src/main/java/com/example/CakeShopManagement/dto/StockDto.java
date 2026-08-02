@@ -14,12 +14,14 @@ public class StockDto {
     private Double remainingQuantity;
     private String itemName;
     private LocalDate receivedDate;
+    private Double quantityDeducted;
+    private String deductionReason;
 
 
     public StockDto() {
     }
 
-    public StockDto(Long stockId, Long inventoryId, Double quantityAdded, LocalDate expiryDate, String batchNumber, Double remainingQuantity, String itemName, LocalDate receivedDate) {
+    public StockDto(Long stockId, Long inventoryId, Double quantityAdded, LocalDate expiryDate, String batchNumber, Double remainingQuantity, String itemName, LocalDate receivedDate, Double quantityDeducted, String deductionReason) {
         this.stockId = stockId;
         this.inventoryId = inventoryId;
         this.quantityAdded = quantityAdded;
@@ -28,6 +30,8 @@ public class StockDto {
         this.remainingQuantity = remainingQuantity;
         this.itemName = itemName;
         this.receivedDate = receivedDate;
+        this.quantityDeducted = quantityDeducted;
+        this.deductionReason = deductionReason;
     }
 
     public Long getStockId() {
@@ -92,5 +96,21 @@ public class StockDto {
 
     public void setReceivedDate(LocalDate receivedDate) {
         this.receivedDate = receivedDate;
+    }
+
+    public Double getQuantityDeducted() {
+        return quantityDeducted;
+    }
+
+    public void setQuantityDeducted(Double quantityDeducted) {
+        this.quantityDeducted = quantityDeducted;
+    }
+
+    public String getDeductionReason() {
+        return deductionReason;
+    }
+
+    public void setDeductionReason(String deductionReason) {
+        this.deductionReason = deductionReason;
     }
 }

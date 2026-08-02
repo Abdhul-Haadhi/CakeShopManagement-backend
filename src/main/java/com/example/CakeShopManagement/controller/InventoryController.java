@@ -2,6 +2,7 @@ package com.example.CakeShopManagement.controller;
 
 import com.example.CakeShopManagement.dto.InventoryDto;
 import com.example.CakeShopManagement.dto.InventoryReportDto;
+import com.example.CakeShopManagement.dto.InventorySummaryReportDto;
 import com.example.CakeShopManagement.service.InventoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +38,14 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.getItemBySku());
     }
 
-    @GetMapping("/inventory/report")
-    public ResponseEntity<List<InventoryReportDto>> getInventoryReport(){
-        return ResponseEntity.ok(inventoryService.getInventoryReport());
+    @GetMapping("/inventory/batch-report")
+    public ResponseEntity<List<InventoryReportDto>> getBatchReport(){
+        return ResponseEntity.ok(inventoryService.getInventoryBatchReport());
+    }
+
+    @GetMapping("/inventory/summary-report")
+    public ResponseEntity<List<InventorySummaryReportDto>> getSummaryReport() {
+        return ResponseEntity.ok(inventoryService.getInventorySummaryReport());
     }
 
     @PutMapping("/inventory/{id}")

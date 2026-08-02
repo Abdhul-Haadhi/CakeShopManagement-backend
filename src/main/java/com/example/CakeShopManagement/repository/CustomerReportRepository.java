@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CustomerReportRepository extends JpaRepository<OrderEntity,Long> {
+
     @Query("""
 SELECT new com.example.CakeShopManagement.dto.CustomerReportDto(
 COALESCE(MAX(c.customerName), MAX(o.customerName)),
@@ -18,12 +19,15 @@ count(o.orderId),
 SUM(o.totalAmount),
 MAX(o.orderDate),
 MIN(o.orderDate),
-''
-)
+CASE
+ WHEN MAX(c.customerId) IS NOT NULL THEN 'Registered'
+ ELSE 'Guest'
+END
+ )
 FROM OrderEntity o
 LEFT JOIN o.customer c
 GROUP BY o.phone
-ORDER BY SUM (o.totalAmount) DESC 
+ORDER BY SUM (o.totalAmount) DESC
 """)
     List<CustomerReportDto> getCustomerReport();
 }

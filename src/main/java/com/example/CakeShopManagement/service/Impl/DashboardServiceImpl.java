@@ -3,6 +3,7 @@ package com.example.CakeShopManagement.service.Impl;
 import com.example.CakeShopManagement.dto.DashboardDto;
 import com.example.CakeShopManagement.dto.OrderStatusDto;
 import com.example.CakeShopManagement.repository.DashboardRepository;
+import com.example.CakeShopManagement.repository.StockRepository;
 import com.example.CakeShopManagement.service.DashboardService;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,11 @@ import java.util.List;
 public class DashboardServiceImpl implements DashboardService {
 
     private final DashboardRepository repository;
+    private final StockRepository stockRepository;
 
-    public DashboardServiceImpl(DashboardRepository repository) {
+    public DashboardServiceImpl(DashboardRepository repository, StockRepository stockRepository) {
         this.repository = repository;
+        this.stockRepository = stockRepository;
     }
 
     @Override
@@ -36,6 +39,8 @@ public class DashboardServiceImpl implements DashboardService {
         dto.setCompletedOrders(repository.countByStatus("Delivered"));
         dto.setAvailableProducts(repository.getAvailableProducts());
         dto.setLowStockCount(repository.getLowStockCount());
+        dto.setExpiringItemsCount(stockRepository.getExpiringItemsCount(today,today.plusDays(7)));
+        dto.setExpiredItemsCount(stockRepository.getExpiredItemsCount(today,today.minusDays(30)));
 //        dto.setRevenueChart(repository.getRevenueChart(today.minusDays(30)));
         Date startDate = Date.from(today.minusDays(30)
                         .atStartOfDay(ZoneId.systemDefault())

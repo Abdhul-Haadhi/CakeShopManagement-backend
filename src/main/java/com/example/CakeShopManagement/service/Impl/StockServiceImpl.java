@@ -1,10 +1,14 @@
 package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.dto.StockDto;
+import com.example.CakeShopManagement.dto.StockTransactionDto;
 import com.example.CakeShopManagement.entity.InventoryEntity;
 import com.example.CakeShopManagement.entity.StockEntity;
+import com.example.CakeShopManagement.entity.StockTransactionEntity;
+import com.example.CakeShopManagement.enums.TransactionType;
 import com.example.CakeShopManagement.repository.InventoryRepository;
 import com.example.CakeShopManagement.repository.StockRepository;
+import com.example.CakeShopManagement.repository.StockTransactionRepository;
 import com.example.CakeShopManagement.service.StockService;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +20,12 @@ public class StockServiceImpl implements StockService {
 
     private final StockRepository stockRepository;
     private final InventoryRepository inventoryRepository;
+    private final StockTransactionRepository stockTransactionRepository;
 
-    public StockServiceImpl(StockRepository stockRepository, InventoryRepository inventoryRepository) {
+    public StockServiceImpl(StockRepository stockRepository, InventoryRepository inventoryRepository, StockTransactionRepository stockTransactionRepository) {
         this.stockRepository = stockRepository;
         this.inventoryRepository = inventoryRepository;
+        this.stockTransactionRepository = stockTransactionRepository;
     }
 
     @Override
@@ -36,6 +42,16 @@ public class StockServiceImpl implements StockService {
         stock.setRemainingQuantity(dto.getQuantityAdded());
 
         stockRepository.save(stock);
+
+        StockTransactionEntity transaction = new StockTransactionEntity();
+
+        transaction.setStock(stock);
+        transaction.setTransactionType(TransactionType.IN);
+        transaction.setQuantity(dto.getQuantityAdded());
+        transaction.setReason("Stock Added");
+        transaction.setTransactionDate(LocalDate.now());
+
+        stockTransactionRepository.save(transaction);
 
         inventory.setCurrentQuantity(inventory.getCurrentQuantity() + dto.getQuantityAdded());
 
@@ -85,12 +101,47 @@ public class StockServiceImpl implements StockService {
 
         dto.setQuantityAdded(stock.getQuantityAdded());
         dto.setRemainingQuantity(stock.getRemainingQuantity());
+//        dto.setQuantityDeducted(stock.getQuantityDeducted());
+//        dto.setDeductionReason(stock.getDeductionReason());
         dto.setExpiryDate(stock.getExpiryDate());
         dto.setReceivedDate(stock.getReceivedDate());
         dto.setBatchNumber(stock.getBatchNumber());
 
         return dto;
 
+    }
+
+    @Override
+    public StockDto deductStock(Long stockId, Double quantity, String reason){
+        StockEntity stock = stockRepository.findById(stockId).orElseThrow(()->new RuntimeException("Stock batch not found"));
+
+        if(quantity <= 0){
+            throw new RuntimeException("Invalid deduction quantity");
+        }
+        if(stock.getRemainingQuantity() < quantity){
+            throw new RuntimeException("Invalid deduction quantity");
+        }
+
+        stock.setRemainingQuantity(stock.getRemainingQuantity() - quantity);
+//        Double deducted = stock.getQuantityDeducted() == null ? 0.0 : stock.getQuantityDeducted();
+//        stock.setQuantityDeducted(deducted + quantity);
+//        stock.setDeductionReason(reason);
+
+        stockRepository.save(stock);
+
+        StockTransactionEntity transaction = new StockTransactionEntity();
+        transaction.setStock(stock);
+        transaction.setTransactionType(TransactionType.OUT);
+        transaction.setQuantity(quantity);
+        transaction.setReason(reason);
+        transaction.setTransactionDate(LocalDate.now());
+        stockTransactionRepository.save(transaction);
+
+        InventoryEntity inventory = stock.getInventory();
+        inventory.setCurrentQuantity(inventory.getCurrentQuantity() - quantity);
+
+        inventoryRepository.save(inventory);
+        return convertToDto(stock);
     }
 
     @Override
@@ -106,6 +157,32 @@ public class StockServiceImpl implements StockService {
                 .map(this::convertToDto)
                 .toList();
 
+    }
+
+    @Override
+    public List<StockTransactionDto> getStockTransactions(Long inventoryId){
+
+        return stockTransactionRepository
+                .findByStockInventoryInventoryIdOrderByTransactionDateDesc(inventoryId)
+                .stream()
+                .map(this::convertTransactionToDto)
+                .toList();
+    }
+
+    @Override
+    public StockTransactionDto convertTransactionToDto(StockTransactionEntity transaction){
+
+        StockTransactionDto dto = new StockTransactionDto();
+
+        dto.setTransactionId(transaction.getTransactionId());
+        dto.setTransactionType(transaction.getTransactionType());
+        dto.setQuantity(transaction.getQuantity());
+        StockEntity stock = new StockEntity();
+        dto.setBatchNumber(stock.getBatchNumber());
+        dto.setReason(transaction.getReason());
+        dto.setTransactionDate(transaction.getTransactionDate());
+
+        return dto;
     }
 
 }

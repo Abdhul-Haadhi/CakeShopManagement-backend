@@ -1,9 +1,6 @@
 package com.example.CakeShopManagement.service.Impl;
 
-import com.example.CakeShopManagement.dto.ProductRecipeDto;
-import com.example.CakeShopManagement.dto.RecipeDto;
-import com.example.CakeShopManagement.dto.RecipeItemDto;
-import com.example.CakeShopManagement.dto.RecipeRequestDto;
+import com.example.CakeShopManagement.dto.*;
 import com.example.CakeShopManagement.entity.InventoryEntity;
 import com.example.CakeShopManagement.entity.ProductEntity;
 import com.example.CakeShopManagement.entity.ProductVariant;
@@ -85,8 +82,37 @@ public class RecipeServiceImpl implements RecipeService {
 //    }
 
     @Override
-    public List<RecipeDto> getRecipeByProduct(Long productId){
-        return recipeRepository.findByProductProductId(productId).stream().map(this::convert).toList();
+    public RecipeDetailsDto getRecipeByProduct(Long productId) {
+
+        List<RecipeEntity> recipes = recipeRepository.findByProductProductId(productId);
+
+        if (recipes.isEmpty()) {
+            throw new RuntimeException("Recipe not found");
+        }
+
+        RecipeEntity firstRecipe = recipes.get(0);
+
+        RecipeDetailsDto details = new RecipeDetailsDto();
+
+        details.setProductId(firstRecipe.getProduct().getProductId());
+        details.setProductName(firstRecipe.getProduct().getProductName());
+
+        details.setVariantId(firstRecipe.getProductVariant().getVariantId());
+        details.setVariantType(firstRecipe.getProductVariant().getVariantType().name());
+
+        if (firstRecipe.getProductVariant().getWeight() != null) {
+            details.setWeight(firstRecipe.getProductVariant().getWeight());
+        } else {
+            details.setPieces(firstRecipe.getProductVariant().getPieces());
+        }
+
+        List<RecipeDto> ingredientList = recipes.stream()
+                .map(this::convert)
+                .toList();
+
+        details.setIngredients(ingredientList);
+
+        return details;
     }
 
     @Override

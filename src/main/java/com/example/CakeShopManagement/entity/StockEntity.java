@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "stock")
@@ -25,11 +27,18 @@ public class StockEntity {
     @Column(nullable = false,unique = true)
     private String batchNumber;
     private Double remainingQuantity;
+//    private Double quantityDeducted = 0.0;
+//
+//    @Column(length = 255)
+//    private String deductionReason;
+
+    @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL)
+    private List<StockTransactionEntity> transactions = new ArrayList<>();
 
     public StockEntity() {
     }
 
-    public StockEntity(Long stockId, InventoryEntity inventory, Double quantityAdded, LocalDate expiryDate, LocalDate receivedDate, String batchNumber, Double remainingQuantity) {
+    public StockEntity(Long stockId, InventoryEntity inventory, Double quantityAdded, LocalDate expiryDate, LocalDate receivedDate, String batchNumber, Double remainingQuantity, List<StockTransactionEntity> transactions) {
         this.stockId = stockId;
         this.inventory = inventory;
         this.quantityAdded = quantityAdded;
@@ -37,6 +46,7 @@ public class StockEntity {
         this.receivedDate = receivedDate;
         this.batchNumber = batchNumber;
         this.remainingQuantity = remainingQuantity;
+        this.transactions = transactions;
     }
 
     public Long getStockId() {
@@ -93,5 +103,13 @@ public class StockEntity {
 
     public void setRemainingQuantity(Double remainingQuantity) {
         this.remainingQuantity = remainingQuantity;
+    }
+
+    public List<StockTransactionEntity> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<StockTransactionEntity> transactions) {
+        this.transactions = transactions;
     }
 }

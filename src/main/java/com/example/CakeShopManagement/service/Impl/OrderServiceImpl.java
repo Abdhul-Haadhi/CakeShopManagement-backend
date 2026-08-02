@@ -358,7 +358,7 @@ public class OrderServiceImpl implements OrderService {
         System.out.println("STATUS = " + status);
         System.out.println("Current = " + order.getStatus());
 
-        if(status.equals("CONFIRMED") && !"CONFIRMED".equals(order.getStatus()) && !order.getInventoryReduced()){
+        if(status.equals("BAKING") && !"BAKING".equals(order.getStatus()) && !order.getInventoryReduced()){
             System.out.println("Reducing inventory...");
             reduceIngredients(order);
             order.setInventoryReduced(true);
@@ -383,16 +383,13 @@ public class OrderServiceImpl implements OrderService {
                 return next.equals("PENDING") || next.equals("CONFIRMED") || next.equals("CANCELLED");
 
             case "CONFIRMED":
-                return next.equals("CONFIRMED")
-                        || next.equals("BAKING");
+                return next.equals("CONFIRMED") || next.equals("BAKING") || next.equals("CANCELLED");
 
             case "BAKING":
-                return next.equals("BAKING")
-                        || next.equals("OUT FOR DELIVERY");
+                return next.equals("BAKING") || next.equals("OUT FOR DELIVERY");
 
             case "OUT FOR DELIVERY":
-                return next.equals("OUT FOR DELIVERY")
-                        || next.equals("DELIVERED");
+                return next.equals("OUT FOR DELIVERY") || next.equals("DELIVERED");
 
             case "DELIVERED":
                 return next.equals("DELIVERED");

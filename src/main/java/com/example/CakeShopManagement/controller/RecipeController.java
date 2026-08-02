@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.controller;
 
 import com.example.CakeShopManagement.dto.ProductRecipeDto;
+import com.example.CakeShopManagement.dto.RecipeDetailsDto;
 import com.example.CakeShopManagement.dto.RecipeDto;
 import com.example.CakeShopManagement.dto.RecipeRequestDto;
 import com.example.CakeShopManagement.service.RecipeService;
@@ -40,7 +41,7 @@ public class RecipeController {
     }
 
     @GetMapping("/recipe/{productId}")
-    public List<RecipeDto> getRecipeByProduct(@PathVariable Long productId) {
+    public RecipeDetailsDto getRecipeByProduct(@PathVariable Long productId) {
         return recipeService.getRecipeByProduct(productId);
     }
 

@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.service;
 
 import com.example.CakeShopManagement.dto.ProductRecipeDto;
+import com.example.CakeShopManagement.dto.RecipeDetailsDto;
 import com.example.CakeShopManagement.dto.RecipeDto;
 import com.example.CakeShopManagement.dto.RecipeRequestDto;
 import com.example.CakeShopManagement.entity.RecipeEntity;
@@ -13,7 +14,8 @@ public interface RecipeService {
     void saveRecipe(RecipeRequestDto dto);
 //    List<RecipeDto> getAllRecipe();
     List<ProductRecipeDto> getRecipeProducts();
-    List<RecipeDto> getRecipeByProduct(Long productId);
+//    List<RecipeDto> getRecipeByProduct(Long productId);
+    RecipeDetailsDto getRecipeByProduct(Long productId);
     List<RecipeEntity> getRecipeEntities(Long productId, String variantType, Integer variantValue);
 //    void deleteRecipe(Long recipeId);
     void deleteRecipeByProduct(Long productId);

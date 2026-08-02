@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface RecipeRepository extends JpaRepository<RecipeEntity,Long> {
     List<RecipeEntity> findByProductProductId(Long productId);
+
     boolean existsByProductProductIdAndProductVariantVariantIdAndInventoryInventoryId(Long productId,Long variantId, Long inventoryId);
 
     List<RecipeEntity> findAllByProductProductId(Long productId);

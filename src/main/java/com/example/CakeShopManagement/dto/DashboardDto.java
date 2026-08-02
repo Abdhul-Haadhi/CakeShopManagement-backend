@@ -10,6 +10,8 @@ public class DashboardDto {
     private Long availableProducts;
     private Long lowStockCount;
     private Long completedOrders;
+    private Long expiringItemsCount;
+    private Long expiredItemsCount;
 //    private Long totalEmployees;
     private List<OrderStatusDto> orderStatus;
     private List<RevenueChartDto> revenueChart;
@@ -19,13 +21,15 @@ public class DashboardDto {
     public DashboardDto() {
     }
 
-    public DashboardDto(Long todayOrders, Long pendingOrders, Long todayRevenue, Long availableProducts, Long lowStockCount, Long completedOrders, List<OrderStatusDto> orderStatus, List<RevenueChartDto> revenueChart, List<RecentOrderDto> recentOrders, List<LowStockDto> lowStockItems) {
+    public DashboardDto(Long todayOrders, Long pendingOrders, Long todayRevenue, Long availableProducts, Long lowStockCount, Long completedOrders, Long expiringItemsCount, Long expiredItemsCount, List<OrderStatusDto> orderStatus, List<RevenueChartDto> revenueChart, List<RecentOrderDto> recentOrders, List<LowStockDto> lowStockItems) {
         this.todayOrders = todayOrders;
         this.pendingOrders = pendingOrders;
         this.todayRevenue = todayRevenue;
         this.availableProducts = availableProducts;
         this.lowStockCount = lowStockCount;
         this.completedOrders = completedOrders;
+        this.expiringItemsCount = expiringItemsCount;
+        this.expiredItemsCount = expiredItemsCount;
         this.orderStatus = orderStatus;
         this.revenueChart = revenueChart;
         this.recentOrders = recentOrders;
@@ -78,6 +82,22 @@ public class DashboardDto {
 
     public void setCompletedOrders(Long completedOrders) {
         this.completedOrders = completedOrders;
+    }
+
+    public Long getExpiringItemsCount() {
+        return expiringItemsCount;
+    }
+
+    public void setExpiringItemsCount(Long expiringItemsCount) {
+        this.expiringItemsCount = expiringItemsCount;
+    }
+
+    public Long getExpiredItemsCount() {
+        return expiredItemsCount;
+    }
+
+    public void setExpiredItemsCount(Long expiredItemsCount) {
+        this.expiredItemsCount = expiredItemsCount;
     }
 
     public List<OrderStatusDto> getOrderStatus() {

@@ -2,6 +2,7 @@ package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.dto.InventoryDto;
 import com.example.CakeShopManagement.dto.InventoryReportDto;
+import com.example.CakeShopManagement.dto.InventorySummaryReportDto;
 import com.example.CakeShopManagement.entity.InventoryEntity;
 import com.example.CakeShopManagement.entity.StockEntity;
 import com.example.CakeShopManagement.mappers.InventoryMapper;
@@ -124,7 +125,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public List<InventoryReportDto> getInventoryReport(){
+    public List<InventoryReportDto> getInventoryBatchReport(){
 //        List<InventoryEntity> inventories = inventoryRepository.findAll();
 //
 //        return inventories.stream().map(item->{
@@ -156,6 +157,12 @@ public class InventoryServiceImpl implements InventoryService {
 //            );
 //        }).toList();
         return inventoryRepository.getInventoryReports();
+    }
+
+
+    @Override
+    public List<InventorySummaryReportDto> getInventorySummaryReport() {
+        return inventoryRepository.getInventorySummaryReport();
     }
 
     private String generateNextSku(){

@@ -20,25 +20,25 @@ public class CustomerReportServiceImpl implements CustomerReportService {
 
     @Override
     public List<CustomerReportDto> getCustomerReport(){
-        System.out.println("Customer report service called");
-        List<CustomerReportDto> report = repository.getCustomerReport();
-
-        System.out.println("Records = " + report.size());
-
-        LocalDate today = LocalDate.now();
-
-        for(CustomerReportDto customer: report){
-            LocalDate lastOrder = customer.getLastOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-            if(customer.getTotalSpent() >= 40000){
-                customer.setStatus("Regular");
-            } else if (lastOrder.isAfter(today.minusDays(30))) {
-                customer.setStatus("Active");
-            }
-            else {
-                customer.setStatus("Inactive");
-            }
-        }
-        return report;
+//        System.out.println("Customer report service called");
+//        List<CustomerReportDto> report = repository.getCustomerReport();
+//
+//        System.out.println("Records = " + report.size());
+//
+//        LocalDate today = LocalDate.now();
+//
+//        for(CustomerReportDto customer: report){
+//            LocalDate lastOrder = customer.getLastOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//
+//            if(customer.getTotalSpent() >= 40000){
+//                customer.setStatus("Regular");
+//            } else if (lastOrder.isAfter(today.minusDays(30))) {
+//                customer.setStatus("Active");
+//            }
+//            else {
+//                customer.setStatus("Inactive");
+//            }
+//        }
+        return repository.getCustomerReport();
     }
 }
