@@ -3,6 +3,7 @@ package com.example.CakeShopManagement.controller;
 import com.example.CakeShopManagement.dto.StockDeductionDto;
 import com.example.CakeShopManagement.dto.StockDto;
 import com.example.CakeShopManagement.dto.StockTransactionDto;
+import com.example.CakeShopManagement.dto.StockTransactionReportDto;
 import com.example.CakeShopManagement.service.StockService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,13 @@ public class StockController {
     public ResponseEntity<List<StockTransactionDto>> getTransactions(@PathVariable Long inventoryId) {
 
         return ResponseEntity.ok(stockService.getStockTransactions(inventoryId));
+    }
+
+    @GetMapping("/stock/transaction-report")
+    public ResponseEntity<List<StockTransactionReportDto>> getTransactionReport(){
+
+        return ResponseEntity.ok(stockService.getStockTransactionReport());
+
     }
 
     @PutMapping("/stock/deduct/{stockId}")

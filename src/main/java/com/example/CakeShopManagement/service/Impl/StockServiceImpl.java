@@ -2,6 +2,7 @@ package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.dto.StockDto;
 import com.example.CakeShopManagement.dto.StockTransactionDto;
+import com.example.CakeShopManagement.dto.StockTransactionReportDto;
 import com.example.CakeShopManagement.entity.InventoryEntity;
 import com.example.CakeShopManagement.entity.StockEntity;
 import com.example.CakeShopManagement.entity.StockTransactionEntity;
@@ -170,6 +171,11 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
+    public List<StockTransactionReportDto> getStockTransactionReport(){
+        return stockTransactionRepository.getTransactionReport();
+    }
+
+    @Override
     public StockTransactionDto convertTransactionToDto(StockTransactionEntity transaction){
 
         StockTransactionDto dto = new StockTransactionDto();
@@ -178,7 +184,7 @@ public class StockServiceImpl implements StockService {
         dto.setTransactionType(transaction.getTransactionType());
         dto.setQuantity(transaction.getQuantity());
         StockEntity stock = new StockEntity();
-        dto.setBatchNumber(stock.getBatchNumber());
+        dto.setBatchNumber(transaction.getStock().getBatchNumber());
         dto.setReason(transaction.getReason());
         dto.setTransactionDate(transaction.getTransactionDate());
 

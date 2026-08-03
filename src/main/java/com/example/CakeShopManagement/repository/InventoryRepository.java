@@ -47,4 +47,6 @@ public interface InventoryRepository extends JpaRepository<InventoryEntity,Long>
     """)
     List<InventorySummaryReportDto> getInventorySummaryReport();
 
+
+
 }
