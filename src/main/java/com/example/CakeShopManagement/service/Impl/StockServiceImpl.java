@@ -4,15 +4,9 @@ import com.example.CakeShopManagement.dto.InventoryDto;
 import com.example.CakeShopManagement.dto.StockDto;
 import com.example.CakeShopManagement.dto.StockTransactionDto;
 import com.example.CakeShopManagement.dto.StockTransactionReportDto;
-import com.example.CakeShopManagement.entity.InventoryEntity;
-import com.example.CakeShopManagement.entity.NotificationEntity;
-import com.example.CakeShopManagement.entity.StockEntity;
-import com.example.CakeShopManagement.entity.StockTransactionEntity;
+import com.example.CakeShopManagement.entity.*;
 import com.example.CakeShopManagement.enums.TransactionType;
-import com.example.CakeShopManagement.repository.InventoryRepository;
-import com.example.CakeShopManagement.repository.NotificationRepository;
-import com.example.CakeShopManagement.repository.StockRepository;
-import com.example.CakeShopManagement.repository.StockTransactionRepository;
+import com.example.CakeShopManagement.repository.*;
 import com.example.CakeShopManagement.service.StockService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -30,13 +24,15 @@ public class StockServiceImpl implements StockService {
     private final StockTransactionRepository stockTransactionRepository;
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final EmployeeRepository employeeRepository;
 
-    public StockServiceImpl(StockRepository stockRepository, InventoryRepository inventoryRepository, StockTransactionRepository stockTransactionRepository, NotificationRepository notificationRepository, SimpMessagingTemplate messagingTemplate) {
+    public StockServiceImpl(StockRepository stockRepository, InventoryRepository inventoryRepository, StockTransactionRepository stockTransactionRepository, NotificationRepository notificationRepository, SimpMessagingTemplate messagingTemplate, EmployeeRepository employeeRepository) {
         this.stockRepository = stockRepository;
         this.inventoryRepository = inventoryRepository;
         this.stockTransactionRepository = stockTransactionRepository;
         this.notificationRepository = notificationRepository;
         this.messagingTemplate = messagingTemplate;
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -61,6 +57,10 @@ public class StockServiceImpl implements StockService {
         transaction.setQuantity(dto.getQuantityAdded());
         transaction.setReason("Stock Added");
         transaction.setTransactionDate(LocalDate.now());
+
+        String currentUserEmail = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        EmployeeEntity currentEmployee = employeeRepository.findByEmail(currentUserEmail).orElse(null);
+        transaction.setEmployee(currentEmployee);
 
         stockTransactionRepository.save(transaction);
 
@@ -180,7 +180,40 @@ public class StockServiceImpl implements StockService {
         inventory.setCurrentQuantity(inventory.getCurrentQuantity() - quantity);
 
         StockEntity updatedStock = stockRepository.save(stock);
+
         inventoryRepository.save(inventory);
+
+
+        EmployeeEntity currentEmployee = null;
+        String employeeName = "System/Unknown";
+
+        org.springframework.security.core.Authentication auth =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+
+        // Safely check if a user is authenticated to prevent NullPointerExceptions
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            String currentUserEmail = auth.getName();
+            currentEmployee = employeeRepository.findByEmail(currentUserEmail).orElse(null);
+
+            if (currentEmployee != null) {
+                employeeName = currentEmployee.getEmployeeName(); // Adjust based on your entity fields
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 6. RECORD THE TRANSACTION HISTORY
+        // -------------------------------------------------------------
+        // NOTE: Replace 'StockTransactionEntity' with whatever your transaction entity is named
+        StockTransactionEntity transaction = new StockTransactionEntity();
+        transaction.setStock(updatedStock);
+        transaction.setQuantity(quantity);
+        transaction.setReason(reason);
+        transaction.setTransactionType(TransactionType.OUT);
+        transaction.setEmployee(currentEmployee); // Link the employee here
+
+
+        // Save the transaction using your transaction repository
+        stockTransactionRepository.save(transaction);
 
         // -------------------------------------------------------------
         // 5. TRIGGER NOTIFICATION: Stock Deducted Event

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductCustomizationRepository extends JpaRepository<ProductCustomizationEntity,Long> {
@@ -15,4 +16,6 @@ public interface ProductCustomizationRepository extends JpaRepository<ProductCus
     @Transactional
     @Modifying
     void deleteByProductProductId(Long productId);
+
+    Optional<ProductCustomizationEntity> findByProductProductIdAndCustomizationOptionOptionId(Long productId,Long optionId);
 }

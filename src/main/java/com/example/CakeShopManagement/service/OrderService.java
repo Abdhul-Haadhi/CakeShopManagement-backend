@@ -3,6 +3,7 @@ package com.example.CakeShopManagement.service;
 import com.example.CakeShopManagement.dto.OrderHistoryDto;
 import com.example.CakeShopManagement.dto.PlaceOrderDto;
 import com.example.CakeShopManagement.dto.SalesReportDto;
+import com.example.CakeShopManagement.dto.WalkInOrderDto;
 import com.example.CakeShopManagement.entity.OrderEntity;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public interface OrderService {
     PlaceOrderDto placeOrder(PlaceOrderDto placeOrderDto);
+    WalkInOrderDto createWalkInOrder(WalkInOrderDto walkInOrderDto);
 //    List<OrderEntity> getOrdersBySession(String sessionId);
     List<OrderHistoryDto> getOrdersBySession(String sessionId);
     List<OrderHistoryDto> getOrders(Long customerId, String sessionId);

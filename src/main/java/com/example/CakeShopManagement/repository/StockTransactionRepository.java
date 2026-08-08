@@ -24,10 +24,11 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
         t.transactionType,
         t.quantity,
         s.remainingQuantity,
-        'System'
+        COALESCE(e.employeeName, 'System')
     )
     FROM StockTransactionEntity t
     JOIN t.stock s
+    LEFT JOIN t.employee e
     ORDER BY t.transactionDate DESC, t.transactionId DESC
     """)
     List<StockTransactionReportDto> getTransactionReport();

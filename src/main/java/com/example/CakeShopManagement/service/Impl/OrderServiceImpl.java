@@ -6,13 +6,16 @@ import com.example.CakeShopManagement.exceptions.AppException;
 import com.example.CakeShopManagement.mappers.OrderMapper;
 import com.example.CakeShopManagement.repository.*;
 import com.example.CakeShopManagement.service.*;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -30,8 +33,11 @@ public class OrderServiceImpl implements OrderService {
     private final RecipeService recipeService;
     private final InventoryConsumptionService inventoryConsumptionService;
     private final NotificationService notificationService;
+    private final ProductRegistrationRepository productRepository;
+    private final ProductVariantRepository productVariantRepository;
+    private final ProductCustomizationRepository productCustomizationRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartRepository cartRepository, OrderItemRepository orderItemRepository, OrderItemCustomizationRepository orderItemCustomizationRepository, PaymentRepository paymentRepository, PaymentService paymentService, CustomerRepository customerRepository, RecipeService recipeService, InventoryConsumptionService inventoryConsumptionService, NotificationService notificationService) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, CartRepository cartRepository, OrderItemRepository orderItemRepository, OrderItemCustomizationRepository orderItemCustomizationRepository, PaymentRepository paymentRepository, PaymentService paymentService, CustomerRepository customerRepository, RecipeService recipeService, InventoryConsumptionService inventoryConsumptionService, NotificationService notificationService, ProductRegistrationRepository productRepository, ProductVariantRepository productVariantRepository, ProductCustomizationRepository productCustomizationRepository) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.cartRepository = cartRepository;
@@ -43,6 +49,9 @@ public class OrderServiceImpl implements OrderService {
         this.recipeService = recipeService;
         this.inventoryConsumptionService = inventoryConsumptionService;
         this.notificationService = notificationService;
+        this.productRepository = productRepository;
+        this.productVariantRepository = productVariantRepository;
+        this.productCustomizationRepository = productCustomizationRepository;
     }
 
     @Override
@@ -136,6 +145,281 @@ public class OrderServiceImpl implements OrderService {
         }
         catch (Exception e) {
             throw new AppException("Request failed with error: "+e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @Override
+    @Transactional
+    public WalkInOrderDto createWalkInOrder(WalkInOrderDto dto){
+        try {
+            // 1. Basic validation
+            if(dto.getCustomerName() == null || dto.getCustomerName().trim().isEmpty()){
+                throw new RuntimeException("Customer name is required.");
+            }
+            if(dto.getPhone() == null || dto.getPhone().trim().isEmpty()){
+                throw new RuntimeException("Customer phone number is required.");
+            }
+            if (dto.getItems() == null || dto.getItems().isEmpty()){
+                throw new RuntimeException("At least one product is required.");
+            }
+            if (dto.getPaymentMethod() == null || dto.getPaymentMethod().trim().isEmpty()){
+                throw new RuntimeException("Payment method is required.");
+            }
+
+            // 2. Create OrderEntity
+            OrderEntity order = new OrderEntity();
+            order.setCustomerName(dto.getCustomerName().trim());
+            order.setPhone(dto.getPhone().trim());
+            order.setDeliveryDate(java.sql.Date.valueOf(dto.getDeliveryDate()));
+            order.setCustomer(null);
+            order.setSessionId(null);
+            order.setOrderType("WALK_IN");
+            order.setNotes(dto.getNotes());
+            order.setOrderDate(new java.util.Date());
+            order.setStatus("PENDING");
+            order.setInventoryReduced(false);
+            order.setTrackingId(java.util.UUID.randomUUID().toString());
+            order.setPaymentMethod(dto.getPaymentMethod().toUpperCase());
+
+
+            // 3. Payment validation
+            PaymentEntity existingPayment = null;
+            if ("CARD".equalsIgnoreCase(dto.getPaymentMethod())){
+                if (dto.getPaymentId() == null){
+                    throw new RuntimeException("Card payment is required.");
+                }
+                existingPayment = paymentRepository.findById(dto.getPaymentId()).orElseThrow(()->new RuntimeException("Payment not found"));
+            }
+
+            // 4. Calculate order totals from database
+            long calculatedTotal = 0;
+            long calculatedQuantity = 0;
+
+            // 5. Create Order Items
+            List<OrderItemEntity> orderItems = new ArrayList<>();
+            for (WalkInOrderItemDto itemDto : dto.getItems()){
+                if(itemDto.getProductId() == null){
+                    throw new RuntimeException("Product ID is required.");
+                }
+                if (itemDto.getQuantity() == null || itemDto.getQuantity() <= 0){
+                    throw new RuntimeException("Invalid product quantity.");
+                }
+
+                // Find product
+                ProductEntity product = productRepository.findById(itemDto.getProductId()).orElseThrow(()->new RuntimeException("Product not found"+ itemDto.getProductId()));
+
+                if(Boolean.FALSE.equals(product.getActive())){
+                    throw new RuntimeException("Product is currently unavailable: " + product.getProductName());
+                }
+
+                // Find selected variant
+                ProductVariant variant = null;
+
+                if (itemDto.getVariantId() != null) {
+
+                    variant = productVariantRepository.findByVariantIdAndProductProductId(
+                                    itemDto.getVariantId(),
+                                    itemDto.getProductId()
+                            )
+                            .orElseThrow(() ->new RuntimeException("Selected variant does not belong to product: "+ product.getProductName()));
+
+                    if (Boolean.FALSE.equals(variant.getAvailable())) {
+
+                        throw new RuntimeException("Selected variant is unavailable for product: "+ product.getProductName());
+                    }
+                }
+
+                // Determine base price
+                double basePrice = 0;
+                if (variant != null){
+                    if (variant.getPrice() == null){
+                        throw new RuntimeException("Variant price is not configured.");
+                    }
+                    basePrice = variant.getPrice();
+                }
+                else {
+                    throw new RuntimeException("A product variant must be selected for: " + product.getProductName());
+                }
+
+                // Create OrderItem
+                OrderItemEntity orderItem = new OrderItemEntity();
+
+                orderItem.setOrder(order);
+                orderItem.setProduct(product);
+
+                orderItem.setQuantity(itemDto.getQuantity());
+
+                // Variant information
+                orderItem.setVariantType(variant.getVariantType() != null ? variant.getVariantType().name() : null);
+
+                if (variant.getVariantType() != null){
+                    switch (variant.getVariantType().name()){
+                        case "WEIGHT":
+                            orderItem.setVariantValue(variant.getWeight());
+                            break;
+
+                        case "PIECE":
+                            orderItem.setVariantValue(variant.getPieces());
+                            break;
+
+                        default:
+                            orderItem.setVariantValue(null);
+                    }
+                }
+
+                // Customizations
+                double customizationTotal = 0;
+
+                List<OrderItemCustomizationEntity> customizationEntities = new ArrayList<>();
+
+                if (itemDto.getCustomizations() != null){
+                    for (WalkInCustomizationDto customDto : itemDto.getCustomizations()){
+                        if (customDto.getOptionId() == null) {
+                            throw new RuntimeException("Customization option ID is required.");
+                        }
+
+                        ProductCustomizationEntity productCustomization = productCustomizationRepository.findByProductProductIdAndCustomizationOptionOptionId(
+                                product.getProductId(),
+                                customDto.getOptionId()
+                        ).orElseThrow(()->new RuntimeException("Customization option is not available for product: " + product.getProductName()));
+
+                        CustomizationOptionEntity option = productCustomization.getCustomizationOption();
+
+                        // Use database price
+                        BigDecimal extraPrice =  productCustomization.getExtraPrice();
+                        if (extraPrice == null) {
+                            extraPrice = BigDecimal.ZERO;
+                        }
+
+                        customizationTotal += extraPrice.doubleValue();
+
+                        // Create order customization
+                        OrderItemCustomizationEntity orderCustomization = new OrderItemCustomizationEntity();
+
+                        orderCustomization.setOrderItem(orderItem);
+
+                        orderCustomization.setOption(option);
+
+                        orderCustomization.setSelectedValue(customDto.getValue());
+
+                        orderCustomization.setExtraPrice(extraPrice);
+
+                        // Reference image
+
+                        if (customDto.getReferenceImage() != null && !customDto.getReferenceImage().isEmpty()){
+                            try {
+                                byte[] imageBytes = Base64.getDecoder().decode(customDto.getReferenceImage());
+
+                                orderCustomization.setReferenceImage(imageBytes);
+                            }
+                            catch (IllegalArgumentException e) {
+                                throw new RuntimeException("Invalid customization reference image.");
+                            }
+                        }
+                        customizationEntities.add(orderCustomization);
+                    }
+                }
+
+                // Final item price
+                double finalUnitPrice = basePrice + customizationTotal;
+
+                long unitPrice = Math.round(finalUnitPrice);
+
+                long subtotal = unitPrice * itemDto.getQuantity();
+
+                orderItem.setPrice(unitPrice);
+
+                orderItem.setCustomizations(customizationEntities);
+
+                orderItems.add(orderItem);
+
+                calculatedTotal += subtotal;
+
+                calculatedQuantity += itemDto.getQuantity();
+            }
+
+            // 6. Set order totals
+            order.setTotalAmount(calculatedTotal);
+            order.setQuantity(calculatedQuantity);
+            order.setOrderItems(orderItems);
+
+            // 7. Save order
+            OrderEntity savedOrder = orderRepository.save(order);
+
+            // 8. Process payment
+            if (existingPayment != null) {
+
+                existingPayment.setOrder(savedOrder);
+                existingPayment.setPaymentMethod("CARD");
+                existingPayment.setPaymentStatus("PAID");
+                existingPayment.setAmount((double) calculatedTotal);
+
+                paymentRepository.save(existingPayment);
+
+            }
+            else {
+                PaymentEntity payment = new PaymentEntity();
+
+                payment.setOrder(savedOrder);
+                payment.setPaymentMethod(dto.getPaymentMethod().toUpperCase());
+                if ("CASH".equalsIgnoreCase(dto.getPaymentMethod())) {
+
+                    payment.setPaymentStatus("PAID");
+                    payment.setGatewayName("Cash");
+
+                }
+                else {
+                    payment.setPaymentStatus("PENDING");
+                }
+
+                payment.setAmount((double) calculatedTotal);
+
+                payment.setTransactionId(null);
+
+                payment.setPaymentDate(LocalDate.now());
+
+                paymentRepository.save(payment);
+            }
+
+            // 9. Notification
+            String message =
+                    "A new walk-in order has been placed. " +
+                            "Order ID: " + savedOrder.getOrderId() +
+                            ", Customer: " + savedOrder.getCustomerName() +
+                            ", Tracking ID: " + savedOrder.getTrackingId();
+
+
+            notificationService.notifyAdmin(
+                    "New Walk-in Order",
+                    message,
+                    "ORDERS"
+            );
+
+            // 10. Return order
+            WalkInOrderDto response = new WalkInOrderDto();
+
+            response.setCustomerName(savedOrder.getCustomerName());
+
+            response.setPhone(savedOrder.getPhone());
+
+            response.setOrderType(savedOrder.getOrderType());
+
+            response.setPaymentMethod(savedOrder.getPaymentMethod());
+
+            response.setPaymentId(savedOrder.getPayment() != null ? savedOrder.getPayment().getPaymentId() : null);
+
+            response.setNotes(savedOrder.getNotes());
+
+            response.setTotalAmount(savedOrder.getTotalAmount());
+
+            response.setQuantity(savedOrder.getQuantity());
+
+            return response;
+
+        }
+        catch (Exception e){
+            throw new AppException("Walk-in order creation failed: " + e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

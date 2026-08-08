@@ -53,10 +53,14 @@ public class OrderEntity {
     private String variantType;
     private Integer variantValue;
 
+    private String orderType;
+    @Lob
+    private String notes;
+
     public OrderEntity() {
     }
 
-    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, Boolean inventoryReduced, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment, CustomerEntity customer, String variantType, Integer variantValue) {
+    public OrderEntity(Long orderId, String customerName, String phone, String email, String address, String city, Date orderDate, Date deliveryDate, Long totalAmount, Long quantity, String paymentMethod, String trackingId, String status, Boolean inventoryReduced, String sessionId, List<CartItemsEntity> cartItems, List<OrderItemEntity> orderItems, PaymentEntity payment, CustomerEntity customer, String variantType, Integer variantValue, String orderType, String notes) {
         this.orderId = orderId;
         this.customerName = customerName;
         this.phone = phone;
@@ -78,6 +82,8 @@ public class OrderEntity {
         this.customer = customer;
         this.variantType = variantType;
         this.variantValue = variantValue;
+        this.orderType = orderType;
+        this.notes = notes;
     }
 
     public Long getOrderId() {
@@ -246,5 +252,21 @@ public class OrderEntity {
 
     public void setVariantValue(Integer variantValue) {
         this.variantValue = variantValue;
+    }
+
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }

@@ -23,17 +23,25 @@ public class StockTransactionEntity {
     private String reason;
     private LocalDate transactionDate;
 
+    // StockTransactionEntity.java
+
+    // REMOVE cascade = CascadeType.ALL
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private EmployeeEntity employee;
+
 
     public StockTransactionEntity() {
     }
 
-    public StockTransactionEntity(Long transactionId, StockEntity stock, TransactionType transactionType, Double quantity, String reason, LocalDate transactionDate) {
+    public StockTransactionEntity(Long transactionId, StockEntity stock, TransactionType transactionType, Double quantity, String reason, LocalDate transactionDate, EmployeeEntity employee) {
         this.transactionId = transactionId;
         this.stock = stock;
         this.transactionType = transactionType;
         this.quantity = quantity;
         this.reason = reason;
         this.transactionDate = transactionDate;
+        this.employee = employee;
     }
 
     public Long getTransactionId() {
@@ -82,5 +90,13 @@ public class StockTransactionEntity {
 
     public void setTransactionDate(LocalDate transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    public EmployeeEntity getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(EmployeeEntity employee) {
+        this.employee = employee;
     }
 }

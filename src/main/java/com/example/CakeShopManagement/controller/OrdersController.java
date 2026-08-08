@@ -2,7 +2,9 @@ package com.example.CakeShopManagement.controller;
 
 import com.example.CakeShopManagement.dto.OrderHistoryDto;
 import com.example.CakeShopManagement.dto.SalesReportDto;
+import com.example.CakeShopManagement.dto.WalkInOrderDto;
 import com.example.CakeShopManagement.service.OrderService;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,11 @@ public class OrdersController {
 
     public OrdersController(OrderService orderService) {
         this.orderService = orderService;
+    }
+
+    @PostMapping("/create-walk-in-order")
+    public ResponseEntity<WalkInOrderDto> createWalkInOrder(@RequestBody WalkInOrderDto walkInOrderDto) {
+        return ResponseEntity.ok(orderService.createWalkInOrder(walkInOrderDto));
     }
 
     @GetMapping("/get-orders")
