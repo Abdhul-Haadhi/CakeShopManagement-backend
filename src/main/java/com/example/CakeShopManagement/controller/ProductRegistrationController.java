@@ -1,5 +1,6 @@
 package com.example.CakeShopManagement.controller;
 
+import com.example.CakeShopManagement.dto.ProductReportDto;
 import com.example.CakeShopManagement.dto.ProductVariantDto;
 import com.example.CakeShopManagement.dto.ProductsDto;
 import com.example.CakeShopManagement.repository.ProductRegistrationRepository;
@@ -111,6 +112,12 @@ public class ProductRegistrationController {
 
         return ResponseEntity.ok(productRegistrationService.getProductVariants(id));
 
+    }
+
+    @GetMapping("/product-report")
+    public ResponseEntity<List<ProductReportDto>> getProductReport(@RequestParam(required = false) Long categoryId) {
+        List<ProductReportDto> report = productRegistrationService.getProductReport(categoryId);
+        return ResponseEntity.ok(report);
     }
 
 //    @PutMapping("/product/{productId}")

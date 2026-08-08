@@ -82,6 +82,9 @@ public class InventoryConsumptionServiceImpl implements InventoryConsumptionServ
 
             notificationRepository.save(alert);
 
+            System.out.println("DEBUG: Low stock condition met for " + inventory.getItemName());
+            System.out.println("DEBUG: Sending WebSocket message to /topic/admin/notifications");
+
             messagingTemplate.convertAndSend("/topic/admin/notifications", alert);
         }
     }

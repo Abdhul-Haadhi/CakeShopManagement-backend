@@ -375,6 +375,24 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toOrderHistoryDto(updatedOrder);
     }
 
+    public OrderHistoryDto cancelOrder(Long orderId){
+        OrderEntity order = orderRepository.findById(orderId).orElseThrow(()->new RuntimeException("Order not found"));
+
+        if("BAKING".equals(order.getStatus()) || "OUT FOR DELIVERY".equals(order.getStatus()) || "DELIVERED".equals(order.getStatus())){
+            throw new RuntimeException("Order cannot be cancelled as preparation has already started.");
+        }
+        if ("CANCELLED".equals(order.getStatus())){
+            throw new RuntimeException("Order is already cancelled.");
+        }
+        order.setStatus("CANCELLED");
+        OrderEntity updatedOrder = orderRepository.save(order);
+
+        String message = "Order #" + updatedOrder.getOrderId() + " (Tracking ID: " + updatedOrder.getTrackingId() + ") was cancelled by the customer.";
+        notificationService.notifyAdmin("Order Cancelled", message, "ORDERS");
+
+        return orderMapper.toOrderHistoryDto(updatedOrder);
+    }
+
     private boolean isValidTransition(String current, String next) {
 
         switch (current) {

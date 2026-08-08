@@ -42,6 +42,8 @@ public class InventoryServiceImpl implements InventoryService {
         InventoryEntity entity = inventoryMapper.toEntity(dto);
         entity.setItemSku(generateNextSku());
         entity.setCurrentQuantity(0.0);
+        entity.setIsScalable(dto.getIsScalable() != null ? dto.getIsScalable() : true);
+
         InventoryEntity saved = inventoryRepository.save(entity);
 
         return inventoryMapper.toDto(saved);
@@ -185,6 +187,7 @@ public class InventoryServiceImpl implements InventoryService {
         entity.setCategory(dto.getCategory());
         entity.setUnit(dto.getUnit());
         entity.setReorderLevel(dto.getReorderLevel());
+        entity.setIsScalable(dto.getIsScalable() != null ? dto.getIsScalable() : true);
 
         return inventoryMapper.toDto(inventoryRepository.save(entity));
     }

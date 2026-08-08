@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.service;
 
 import com.example.CakeShopManagement.dto.EmployeeDto;
+import com.example.CakeShopManagement.dto.EmployeeReportDto;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface EmployeeService {
     boolean deleteEmployee(Long employeeId);
 
     EmployeeDto getEmployeeById(Long employeeId);
+
+    List<EmployeeReportDto> getEmployeeReport(Long roleId, Boolean activeOnly);
 }

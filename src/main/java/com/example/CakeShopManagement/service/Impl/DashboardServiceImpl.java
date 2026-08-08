@@ -40,7 +40,7 @@ public class DashboardServiceImpl implements DashboardService {
         dto.setAvailableProducts(repository.getAvailableProducts());
         dto.setLowStockCount(repository.getLowStockCount());
         dto.setExpiringItemsCount(stockRepository.getExpiringItemsCount(today,today.plusDays(7)));
-        dto.setExpiredItemsCount(stockRepository.getExpiredItemsCount(today,today.minusDays(30)));
+        dto.setExpiredItemsCount(stockRepository.getExpiredItemsCount(today));
 //        dto.setRevenueChart(repository.getRevenueChart(today.minusDays(30)));
         Date startDate = Date.from(today.minusDays(30)
                         .atStartOfDay(ZoneId.systemDefault())

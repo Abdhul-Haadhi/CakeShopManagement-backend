@@ -1,32 +1,42 @@
 package com.example.CakeShopManagement.service.Impl;
 
+import com.example.CakeShopManagement.dto.InventoryDto;
 import com.example.CakeShopManagement.dto.StockDto;
 import com.example.CakeShopManagement.dto.StockTransactionDto;
 import com.example.CakeShopManagement.dto.StockTransactionReportDto;
 import com.example.CakeShopManagement.entity.InventoryEntity;
+import com.example.CakeShopManagement.entity.NotificationEntity;
 import com.example.CakeShopManagement.entity.StockEntity;
 import com.example.CakeShopManagement.entity.StockTransactionEntity;
 import com.example.CakeShopManagement.enums.TransactionType;
 import com.example.CakeShopManagement.repository.InventoryRepository;
+import com.example.CakeShopManagement.repository.NotificationRepository;
 import com.example.CakeShopManagement.repository.StockRepository;
 import com.example.CakeShopManagement.repository.StockTransactionRepository;
 import com.example.CakeShopManagement.service.StockService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@Transactional
 public class StockServiceImpl implements StockService {
 
     private final StockRepository stockRepository;
     private final InventoryRepository inventoryRepository;
     private final StockTransactionRepository stockTransactionRepository;
+    private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public StockServiceImpl(StockRepository stockRepository, InventoryRepository inventoryRepository, StockTransactionRepository stockTransactionRepository) {
+    public StockServiceImpl(StockRepository stockRepository, InventoryRepository inventoryRepository, StockTransactionRepository stockTransactionRepository, NotificationRepository notificationRepository, SimpMessagingTemplate messagingTemplate) {
         this.stockRepository = stockRepository;
         this.inventoryRepository = inventoryRepository;
         this.stockTransactionRepository = stockTransactionRepository;
+        this.notificationRepository = notificationRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Override
@@ -112,37 +122,115 @@ public class StockServiceImpl implements StockService {
 
     }
 
+//    @Override
+//    public StockDto deductStock(Long stockId, Double quantity, String reason){
+//        StockEntity stock = stockRepository.findById(stockId).orElseThrow(()->new RuntimeException("Stock batch not found"));
+//
+//        if(quantity <= 0){
+//            throw new RuntimeException("Invalid deduction quantity");
+//        }
+//        if(stock.getRemainingQuantity() < quantity){
+//            throw new RuntimeException("Insufficient stock. Remaining quantity: " + stock.getRemainingQuantity());
+//        }
+//        if(stock.getExpiryDate().isBefore(LocalDate.now())){
+//            throw new RuntimeException("Item expired on " + stock.getExpiryDate());
+//        }
+//
+//        stock.setRemainingQuantity(stock.getRemainingQuantity() - quantity);
+////        Double deducted = stock.getQuantityDeducted() == null ? 0.0 : stock.getQuantityDeducted();
+////        stock.setQuantityDeducted(deducted + quantity);
+////        stock.setDeductionReason(reason);
+//
+//        stockRepository.save(stock);
+//
+//        StockTransactionEntity transaction = new StockTransactionEntity();
+//        transaction.setStock(stock);
+//        transaction.setTransactionType(TransactionType.OUT);
+//        transaction.setQuantity(quantity);
+//        transaction.setReason(reason);
+//        transaction.setTransactionDate(LocalDate.now());
+//        stockTransactionRepository.save(transaction);
+//
+//        InventoryEntity inventory = stock.getInventory();
+//        inventory.setCurrentQuantity(inventory.getCurrentQuantity() - quantity);
+//
+//        inventoryRepository.save(inventory);
+//        return convertToDto(stock);
+//    }
+
+
     @Override
-    public StockDto deductStock(Long stockId, Double quantity, String reason){
-        StockEntity stock = stockRepository.findById(stockId).orElseThrow(()->new RuntimeException("Stock batch not found"));
+    @Transactional
+    public StockDto deductStock(Long stockId, Double quantity, String reason) {
+        // 1. Fetch the specific stock batch by stockId
+        StockEntity stock = stockRepository.findById(stockId)
+                .orElseThrow(() -> new RuntimeException("Stock batch not found with ID: " + stockId));
 
-        if(quantity <= 0){
-            throw new RuntimeException("Invalid deduction quantity");
-        }
-        if(stock.getRemainingQuantity() < quantity){
-            throw new RuntimeException("Invalid deduction quantity");
-        }
-
-        stock.setRemainingQuantity(stock.getRemainingQuantity() - quantity);
-//        Double deducted = stock.getQuantityDeducted() == null ? 0.0 : stock.getQuantityDeducted();
-//        stock.setQuantityDeducted(deducted + quantity);
-//        stock.setDeductionReason(reason);
-
-        stockRepository.save(stock);
-
-        StockTransactionEntity transaction = new StockTransactionEntity();
-        transaction.setStock(stock);
-        transaction.setTransactionType(TransactionType.OUT);
-        transaction.setQuantity(quantity);
-        transaction.setReason(reason);
-        transaction.setTransactionDate(LocalDate.now());
-        stockTransactionRepository.save(transaction);
-
+        // 2. Fetch associated inventory item
         InventoryEntity inventory = stock.getInventory();
+
+        // 3. Check batch availability
+        if (stock.getRemainingQuantity() < quantity) {
+            throw new RuntimeException("Insufficient batch stock. Available: "
+                    + stock.getRemainingQuantity() + ", Requested: " + quantity);
+        }
+
+        // 4. Update batch & overall inventory quantities
+        stock.setRemainingQuantity(stock.getRemainingQuantity() - quantity);
         inventory.setCurrentQuantity(inventory.getCurrentQuantity() - quantity);
 
+        StockEntity updatedStock = stockRepository.save(stock);
         inventoryRepository.save(inventory);
-        return convertToDto(stock);
+
+        // -------------------------------------------------------------
+        // 5. TRIGGER NOTIFICATION: Stock Deducted Event
+        // -------------------------------------------------------------
+        NotificationEntity deductionAlert = new NotificationEntity();
+        deductionAlert.setTitle("Stock Deducted");
+        deductionAlert.setMessage(quantity + " units of '" + inventory.getItemName()
+                + "' were deducted. Remaining batch qty: " + updatedStock.getRemainingQuantity()
+                + (reason != null && !reason.isBlank() ? " (Reason: " + reason + ")" : ""));
+        deductionAlert.setModule("INVENTORY");
+        deductionAlert.setRecipientRole("ADMIN");
+        deductionAlert.setRead(false);
+        deductionAlert.setCreatedAt(LocalDate.now());
+
+        // Save for persistent historical unread lists
+        notificationRepository.save(deductionAlert);
+
+        // Broadcast real-time message to connected clients
+        messagingTemplate.convertAndSend("/topic/admin/notifications", deductionAlert);
+
+        // -------------------------------------------------------------
+        // 6. CHECK REORDER LEVEL: Trigger Low Stock Alert if needed
+        // -------------------------------------------------------------
+        if (inventory.getCurrentQuantity() <= inventory.getReorderLevel()) {
+            NotificationEntity lowStockAlert = new NotificationEntity();
+            lowStockAlert.setTitle("Low Stock Alert!");
+            lowStockAlert.setMessage(inventory.getItemName() + " is running critically low. Total remaining: " + inventory.getCurrentQuantity());
+            lowStockAlert.setModule("INVENTORY");
+            lowStockAlert.setRecipientRole("ADMIN");
+            lowStockAlert.setRead(false);
+            lowStockAlert.setCreatedAt(LocalDate.now());
+
+            notificationRepository.save(lowStockAlert);
+            messagingTemplate.convertAndSend("/topic/admin/notifications", lowStockAlert);
+        }
+
+        // 7. Map updated StockEntity to StockDto and return
+        return mapToDto(updatedStock);
+    }
+
+    private StockDto mapToDto(StockEntity stock) {
+        StockDto dto = new StockDto();
+        dto.setStockId(stock.getStockId());
+        dto.setBatchNumber(stock.getBatchNumber());
+//        dto.setQuantity(stock.getQuantity());
+        dto.setQuantityAdded(stock.getQuantityAdded());
+        dto.setRemainingQuantity(stock.getRemainingQuantity());
+        dto.setExpiryDate(stock.getExpiryDate());
+        dto.setInventoryId(stock.getInventory().getInventoryId());
+        return dto;
     }
 
     @Override

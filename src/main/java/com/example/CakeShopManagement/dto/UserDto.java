@@ -11,19 +11,22 @@ public class UserDto {
     private String email;
     private int contactNumber;
     private String address;
-    private UserRole userRole;
+//    private UserRole userRole;
+    private Long roleId;
+    private String roleName;
 
     public UserDto() {
     }
 
-    public UserDto(Long userId, String username, String password, String email, int contactNumber, String address, UserRole userRole) {
+    public UserDto(Long userId, String username, String password, String email, int contactNumber, String address, Long roleId, String roleName) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
         this.contactNumber = contactNumber;
         this.address = address;
-        this.userRole = userRole;
+        this.roleId = roleId;
+        this.roleName = roleName;
     }
 
     public Long getUserId() {
@@ -74,12 +77,20 @@ public class UserDto {
         this.address = address;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }
 

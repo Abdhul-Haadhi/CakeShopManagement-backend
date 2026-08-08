@@ -18,4 +18,6 @@ public interface OrderService {
     OrderHistoryDto updateOrderStatus(Long orderId, String status);
 
     SalesReportDto getSalesReport(LocalDate startDate, LocalDate endDate);
+
+    OrderHistoryDto cancelOrder(Long orderId);
 }

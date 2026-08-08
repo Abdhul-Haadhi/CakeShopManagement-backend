@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.service.Impl;
 
 import com.example.CakeShopManagement.dto.ProductCustomizationDto;
+import com.example.CakeShopManagement.dto.ProductReportDto;
 import com.example.CakeShopManagement.dto.ProductVariantDto;
 import com.example.CakeShopManagement.dto.ProductsDto;
 import com.example.CakeShopManagement.entity.*;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -205,6 +207,81 @@ public class ProductRegistrationServiceImpl implements ProductRegistrationServic
         return productRegistrationRepository.existsByProductSku(productSku);
 
     }
+
+
+    @Override
+    public List<ProductReportDto> getProductReport(Long categoryId) {
+        List<ProductEntity> products = productRegistrationRepository.findAll();
+
+        return products.stream()
+                .filter(p -> categoryId == null || (p.getCategoryEntity() != null && p.getCategoryEntity().getCategoryId().equals(categoryId)))
+                .map(product -> {
+                    ProductReportDto dto = new ProductReportDto();
+                    dto.setProductId(product.getProductId());
+                    dto.setProductSku(product.getProductSku());
+                    dto.setProductName(product.getProductName());
+
+                    if (product.getCategoryEntity() != null) {
+                        dto.setCategoryId(product.getCategoryEntity().getCategoryId());
+                        dto.setCategoryName(product.getCategoryEntity().getCategoryName());
+                    }
+
+                    dto.setActive(product.getActive());
+                    dto.setAddedDate(product.getAddedDate());
+
+                    List<ProductVariant> variants = product.getVariants();
+                    int variantCount = (variants != null) ? variants.size() : 0;
+                    dto.setVariantCount(variantCount);
+
+                    if (variants != null && !variants.isEmpty()) {
+                        // Map to ProductVariantDto instead of VariantDto
+                        List<ProductReportDto.ProductVariantDto> variantDtos = variants.stream()
+                                .map(v -> new ProductReportDto.ProductVariantDto(
+                                        v.getVariantId(),
+                                        v.getVariantType().name(),
+                                        v.getWeight() != null ? v.getWeight() + " g" : "N/A",
+                                        v.getPrice() != null ? v.getPrice() : 0.0,
+                                        v.getAvailable()
+                                ))
+                                .collect(Collectors.toList());
+
+                        dto.setVariants(variantDtos);
+
+                        double min = variants.stream().mapToDouble(v -> v.getPrice() != null ? v.getPrice() : 0.0).min().orElse(0.0);
+                        double max = variants.stream().mapToDouble(v -> v.getPrice() != null ? v.getPrice() : 0.0).max().orElse(0.0);
+
+                        dto.setMinPrice(min);
+                        dto.setMaxPrice(max);
+
+                        if (min == max) {
+                            dto.setPriceDisplay(String.format("Rs.%.2f", min));
+                        } else {
+                            dto.setPriceDisplay(String.format("Rs.%.2f - Rs.%.2f", min, max));
+                        }
+
+                        boolean hasAvailableVariant = variants.stream().anyMatch(v -> Boolean.TRUE.equals(v.getAvailable()));
+
+                        if (!Boolean.TRUE.equals(product.getActive())) {
+                            dto.setAvailabilityStatus("Inactive");
+                        } else if (hasAvailableVariant) {
+                            dto.setAvailabilityStatus("In Stock");
+                        } else {
+                            dto.setAvailabilityStatus("Out of Stock");
+                        }
+                    } else {
+                        dto.setVariants(Collections.emptyList());
+                        dto.setMinPrice(0.0);
+                        dto.setMaxPrice(0.0);
+                        dto.setPriceDisplay("N/A");
+                        dto.setAvailabilityStatus(Boolean.TRUE.equals(product.getActive()) ? "In Stock" : "Inactive");
+                    }
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+
 
     @Transactional
     @Override

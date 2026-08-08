@@ -19,13 +19,13 @@ import java.util.List;
 public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeRepository recipeRepository;
-    private final ProductRegistrationRepository productReposotory;
+    private final ProductRegistrationRepository productRepository;
     private final InventoryRepository inventoryRepository;
     private final ProductVariantRepository productVariantRepository;
 
-    public RecipeServiceImpl(RecipeRepository recipeRepository, ProductRegistrationRepository productReposotory, InventoryRepository inventoryRepository, ProductVariantRepository productVariantRepository) {
+    public RecipeServiceImpl(RecipeRepository recipeRepository, ProductRegistrationRepository productRepository, InventoryRepository inventoryRepository, ProductVariantRepository productVariantRepository) {
         this.recipeRepository = recipeRepository;
-        this.productReposotory = productReposotory;
+        this.productRepository = productRepository;
         this.inventoryRepository = inventoryRepository;
         this.productVariantRepository = productVariantRepository;
     }
@@ -53,7 +53,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public void saveRecipe(RecipeRequestDto dto){
-        ProductEntity product = productReposotory.findById(dto.getProductId()).orElseThrow();
+        ProductEntity product = productRepository.findById(dto.getProductId()).orElseThrow();
         ProductVariant variant = productVariantRepository.findById(dto.getVariantId()).orElseThrow();
 
         for(RecipeItemDto item : dto.getIngredients()){

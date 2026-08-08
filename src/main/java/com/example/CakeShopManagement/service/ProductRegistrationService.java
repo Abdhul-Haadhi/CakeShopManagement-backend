@@ -1,5 +1,6 @@
 package com.example.CakeShopManagement.service;
 
+import com.example.CakeShopManagement.dto.ProductReportDto;
 import com.example.CakeShopManagement.dto.ProductVariantDto;
 import com.example.CakeShopManagement.dto.ProductsDto;
 
@@ -22,6 +23,8 @@ public interface ProductRegistrationService {
     ProductsDto getProductById(Long productId);
 
     List<ProductVariantDto> getProductVariants(Long productId);
+
+    List<ProductReportDto> getProductReport(Long categoryId);
 
     ProductsDto updateProduct(Long productId, ProductsDto productsDto, String customizations) throws IOException;
 

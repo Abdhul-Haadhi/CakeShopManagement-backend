@@ -26,15 +26,19 @@ public interface StockRepository extends JpaRepository<StockEntity,Long> {
     @Query("""
     SELECT count (s)
     from StockEntity s
-    where s.remainingQuantity > 0 and s.expiryDate BETWEEN :today and :expiryDate
+    where s.expiryDate is not null
+    AND s.expiryDate <= :expiryDate
+    AND s.remainingQuantity > 0
     """)
     Long getExpiringItemsCount(LocalDate today, LocalDate expiryDate);
 
 
     @Query("""
-select count (s)
-from StockEntity s
-where s.remainingQuantity > 0 and s.expiryDate between :today and :expiryDate
-""")
-    Long getExpiredItemsCount(LocalDate today, LocalDate expiryDate);
+    SELECT count (s)
+        from StockEntity s
+        where s.expiryDate is not null
+        AND s.expiryDate < :today
+        AND s.remainingQuantity > 0
+    """)
+    Long getExpiredItemsCount(LocalDate today);
 }

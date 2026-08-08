@@ -25,10 +25,14 @@ public class EmployeeEntity {
     private UserEntity user;
 //    private String password;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
+
     public EmployeeEntity() {
     }
 
-    public EmployeeEntity(Long employeeId, String employeeName, String email, String phone, String address, LocalDate joinDate, UserEntity user) {
+    public EmployeeEntity(Long employeeId, String employeeName, String email, String phone, String address, LocalDate joinDate, UserEntity user, RoleEntity role) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.email = email;
@@ -36,6 +40,7 @@ public class EmployeeEntity {
         this.address = address;
         this.joinDate = joinDate;
         this.user = user;
+        this.role = role;
     }
 
     public Long getEmployeeId() {
@@ -92,5 +97,13 @@ public class EmployeeEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public RoleEntity getRole() {
+        return role;
+    }
+
+    public void setRole(RoleEntity role) {
+        this.role = role;
     }
 }

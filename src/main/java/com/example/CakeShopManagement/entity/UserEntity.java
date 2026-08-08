@@ -17,12 +17,15 @@ public class UserEntity {
     private String email;
 //    private int contactNumber;
 //    private String address;
-    private UserRole role;
+//    private UserRole role;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
 
     public UserEntity() {
     }
 
-    public UserEntity(long userId, String username, String password, String email, UserRole role) {
+    public UserEntity(long userId, String username, String password, String email, RoleEntity role) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -62,11 +65,11 @@ public class UserEntity {
         this.email = email;
     }
 
-    public UserRole getRole() {
+    public RoleEntity getRole() {
         return role;
     }
 
-    public void setRole(UserRole role) {
+    public void setRole(RoleEntity role) {
         this.role = role;
     }
 }

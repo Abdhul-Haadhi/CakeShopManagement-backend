@@ -17,11 +17,13 @@ public class EmployeeDto {
     private String address;
     private LocalDate joinDate;
     private String password;
+    private Long roleId;
+    private String roleName;
 
     public EmployeeDto() {
     }
 
-    public EmployeeDto(Long employeeId, String employeeName, String userName, String email, String phone, String address, LocalDate joinDate, String password) {
+    public EmployeeDto(Long employeeId, String employeeName, String userName, String email, String phone, String address, LocalDate joinDate, String password, Long roleId, String roleName) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.userName = userName;
@@ -30,6 +32,8 @@ public class EmployeeDto {
         this.address = address;
         this.joinDate = joinDate;
         this.password = password;
+        this.roleId = roleId;
+        this.roleName = roleName;
     }
 
     public Long getEmployeeId() {
@@ -94,5 +98,21 @@ public class EmployeeDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }

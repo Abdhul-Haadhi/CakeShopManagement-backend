@@ -44,4 +44,9 @@ public class PlaceOrderController {
         return ResponseEntity.ok(orderService.getOrders(customerId, sessionId));
     }
 
+    @PutMapping("/orders/{orderId}/cancel")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.cancelOrder(orderId));
+    }
+
 }

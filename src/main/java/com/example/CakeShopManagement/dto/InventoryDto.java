@@ -15,11 +15,12 @@ public class InventoryDto {
     private Double reorderLevel;
     private Double currentQuantity;
     private String expiryStatus;
+    private Boolean isScalable = true;
 
     public InventoryDto() {
     }
 
-    public InventoryDto(Long inventoryId, String itemSku, String itemName, InventoryCategory category, InventoryUnit unit, Double reorderLevel, Double currentQuantity, String expiryStatus) {
+    public InventoryDto(Long inventoryId, String itemSku, String itemName, InventoryCategory category, InventoryUnit unit, Double reorderLevel, Double currentQuantity, String expiryStatus, Boolean isScalable) {
         this.inventoryId = inventoryId;
         this.itemSku = itemSku;
         this.itemName = itemName;
@@ -28,6 +29,7 @@ public class InventoryDto {
         this.reorderLevel = reorderLevel;
         this.currentQuantity = currentQuantity;
         this.expiryStatus = expiryStatus;
+        this.isScalable = isScalable;
     }
 
     public Long getInventoryId() {
@@ -92,5 +94,13 @@ public class InventoryDto {
 
     public void setExpiryStatus(String expiryStatus) {
         this.expiryStatus = expiryStatus;
+    }
+
+    public Boolean getIsScalable() {
+        return isScalable;
+    }
+
+    public void setIsScalable(Boolean scalable) {
+        isScalable = scalable;
     }
 }

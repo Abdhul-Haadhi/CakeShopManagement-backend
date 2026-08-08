@@ -33,11 +33,13 @@ public class InventoryEntity {
     @OneToMany(mappedBy = "inventory", fetch = FetchType.LAZY)
     private List<StockEntity> stocks;
 
+    @Column(nullable = false)
+    private Boolean isScalable = true;
 
     public InventoryEntity() {
     }
 
-    public InventoryEntity(Long inventoryId, String itemSku, String itemName, InventoryCategory category, InventoryUnit unit, Double reorderLevel, Double currentQuantity, List<StockEntity> stocks) {
+    public InventoryEntity(Long inventoryId, String itemSku, String itemName, InventoryCategory category, InventoryUnit unit, Double reorderLevel, Double currentQuantity, List<StockEntity> stocks, Boolean isScalable) {
         this.inventoryId = inventoryId;
         this.itemSku = itemSku;
         this.itemName = itemName;
@@ -46,6 +48,7 @@ public class InventoryEntity {
         this.reorderLevel = reorderLevel;
         this.currentQuantity = currentQuantity;
         this.stocks = stocks;
+        this.isScalable = isScalable;
     }
 
     public Long getInventoryId() {
@@ -110,5 +113,13 @@ public class InventoryEntity {
 
     public void setStocks(List<StockEntity> stocks) {
         this.stocks = stocks;
+    }
+
+    public Boolean getIsScalable() {
+        return isScalable;
+    }
+
+    public void setIsScalable(Boolean scalable) {
+        isScalable = scalable;
     }
 }

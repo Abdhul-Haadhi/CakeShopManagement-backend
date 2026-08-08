@@ -2,6 +2,7 @@ package com.example.CakeShopManagement.controller;
 
 import com.example.CakeShopManagement.dto.*;
 import com.example.CakeShopManagement.entity.EmployeeEntity;
+import com.example.CakeShopManagement.entity.PermissionEntity;
 import com.example.CakeShopManagement.entity.UserEntity;
 import com.example.CakeShopManagement.repository.EmployeeRepository;
 import com.example.CakeShopManagement.repository.UserRepository;
@@ -77,7 +78,8 @@ public class AuthController {
                     .put("userId", optionalUser.get().getUserId())
                     .put("employeeId",employee.isPresent() ? employee.get().getEmployeeId() : null)
                     .put("email", optionalUser.get().getEmail())
-                    .put("role", optionalUser.get().getRole())
+                    .put("role", optionalUser.get().getRole().getRoleName())
+                    .put("permissions", optionalUser.get().getRole().getPermissions().stream().map(PermissionEntity::getPermissionName).toList())
                     .toString()
             );
 

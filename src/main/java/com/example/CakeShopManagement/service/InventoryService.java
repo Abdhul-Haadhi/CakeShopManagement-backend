@@ -18,7 +18,7 @@ public interface InventoryService {
 
     List<InventoryDto> getAllItems();
 
-    public List<InventoryReportDto> getInventoryBatchReport();
+    List<InventoryReportDto> getInventoryBatchReport();
     List<InventorySummaryReportDto> getInventorySummaryReport();
 
 //    boolean getItemBySku(String itemSku);

@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -44,6 +45,33 @@ public class WebSecurityConfiguration {
         return source;
     }
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .csrf((csrf)->csrf.disable())
+//                .cors(cors -> {})
+//                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+//                .authorizeHttpRequests((auth)->auth
+//                        .requestMatchers("/authenticate","/sign-up","/order/**","/api/public/**","/api/customer/**","/ws/**").permitAll()
+//
+////                        Admin only
+//                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN","EMPLOYEE")
+//
+////                        Admin + Employee
+//                        .requestMatchers("/api/employee/**").hasAnyRole("ADMIN","EMPLOYEE")
+////                        .requestMatchers("/customer/**").hasAnyRole("ADMIN","EMPLOYEE")
+//
+////                        any logged user
+//                        .anyRequest().authenticated()
+//                )
+//                .sessionManagement((session)->session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                )
+//                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+//                .build();
+//
+//    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -53,14 +81,13 @@ public class WebSecurityConfiguration {
                 .authorizeHttpRequests((auth)->auth
                         .requestMatchers("/authenticate","/sign-up","/order/**","/api/public/**","/api/customer/**","/ws/**").permitAll()
 
-//                        Admin only
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Remove the hardcoded .hasAnyRole("ADMIN","EMPLOYEE")
+                        // Allow any authenticated user to access these, relying on the
+                        // frontend permissions or method-level @PreAuthorize for security
+                        .requestMatchers("/api/admin/**").authenticated()
+                        .requestMatchers("/api/employee/**").authenticated()
 
-//                        Admin + Employee
-                        .requestMatchers("/api/employee/**").hasAnyRole("ADMIN","EMPLOYEE")
-//                        .requestMatchers("/customer/**").hasAnyRole("ADMIN","EMPLOYEE")
-
-//                        any logged user
+                        // any logged user
                         .anyRequest().authenticated()
                 )
                 .sessionManagement((session)->session
@@ -68,8 +95,31 @@ public class WebSecurityConfiguration {
                 )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
     }
+
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .csrf((csrf) -> csrf.disable())
+//                .cors(cors -> {})
+//                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+//                .authorizeHttpRequests((auth) -> auth
+//                        .requestMatchers("/authenticate", "/sign-up", "/order/**", "/api/public/**", "/api/customer/**", "/ws/**").permitAll()
+//
+//                        // READ-ONLY: Allow Employees to view data (GET requests)
+//                        .requestMatchers(HttpMethod.GET, "/api/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
+//
+//                        // WRITE/MODIFY: Restrict CREATE, EDIT, and DELETE requests strictly to ADMIN
+//                        .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.DELETE, "/api/admin/**").hasRole("ADMIN")
+//
+//                        .anyRequest().authenticated()
+//                )
+//                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+//                .build();
+//    }
 
 
     @Bean

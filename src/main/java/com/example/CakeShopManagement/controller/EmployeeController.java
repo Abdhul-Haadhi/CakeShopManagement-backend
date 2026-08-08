@@ -1,6 +1,7 @@
 package com.example.CakeShopManagement.controller;
 
 import com.example.CakeShopManagement.dto.EmployeeDto;
+import com.example.CakeShopManagement.dto.EmployeeReportDto;
 import com.example.CakeShopManagement.exceptions.AppException;
 import com.example.CakeShopManagement.service.EmployeeService;
 import com.example.CakeShopManagement.service.Impl.EmployeeServiceImpl;
@@ -53,7 +54,7 @@ public class EmployeeController {
     public ResponseEntity<?> createEmployeeLogin(@RequestBody EmployeeDto employeeDto) {
         try {
             employeeServiceImpl.createEmployeeLogin(employeeDto);
-            return ResponseEntity.ok("Employee account already exists");
+            return ResponseEntity.ok("Employee login created successfully");
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -74,6 +75,18 @@ public class EmployeeController {
             throw new AppException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/employee-report")
+    public ResponseEntity<List<EmployeeReportDto>> getEmployeeReport(@RequestParam(required = false) Long roleId, @RequestParam(required = false, defaultValue = "false") Boolean activeOnly){
+        try {
+            List<EmployeeReportDto> report = employeeService.getEmployeeReport(roleId, activeOnly);
+            return ResponseEntity.ok(report);
+        }
+        catch (Exception e) {
+            throw new AppException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 //    @GetMapping("/employee/{employeeId}")
 //    public ResponseEntity<?> getEmployeeById(@PathVariable("employeeId") Long employeeId){

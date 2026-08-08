@@ -5,9 +5,11 @@ import com.example.CakeShopManagement.dto.SignupRequest;
 import com.example.CakeShopManagement.dto.UpdateProfileDto;
 import com.example.CakeShopManagement.dto.UserDto;
 import com.example.CakeShopManagement.entity.EmployeeEntity;
+import com.example.CakeShopManagement.entity.RoleEntity;
 import com.example.CakeShopManagement.entity.UserEntity;
 import com.example.CakeShopManagement.enums.OrderStatus;
 import com.example.CakeShopManagement.enums.UserRole;
+import com.example.CakeShopManagement.repository.RoleRepository;
 import com.example.CakeShopManagement.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,16 @@ import java.util.Optional;
 
 @Service
 public class AuthServiceImpl implements AuthService{
-    @Autowired
-    private UserRepository userRepository;
 
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+    }
 
 
 //    @Autowired
@@ -35,7 +42,9 @@ public class AuthServiceImpl implements AuthService{
         userEntity.setEmail(signupRequest.getEmail());
         userEntity.setUsername(signupRequest.getUsername());
         userEntity.setPassword(new BCryptPasswordEncoder().encode(signupRequest.getPassword()));
-        userEntity.setRole(UserRole.CUSTOMER);
+//        userEntity.setRole(UserRole.CUSTOMER);
+        RoleEntity customerRole = roleRepository.findByRoleName("CUSTOMER").orElseThrow(() -> new RuntimeException("Customer Role Not Found"));
+        userEntity.setRole(customerRole);
         UserEntity createdUser = userRepository.save(userEntity);
 
 
@@ -60,22 +69,43 @@ public class AuthServiceImpl implements AuthService{
         return userRepository.findFirstByEmail(email).isPresent();
     }
 
+//    @PostConstruct
+//    public void createAdminAccount(){
+//        Optional<UserEntity> adminAccount = userRepository.findFirstByRole_RoleName("ADMIN");
+//        if(adminAccount.isEmpty()){
+//            UserEntity userEntity = new UserEntity();
+//            userEntity.setEmail("admin@test.com");
+//            userEntity.setUsername("admin");
+//            RoleEntity adminRole = roleRepository.findByRoleName("ADMIN").orElseThrow(()->new RuntimeException("Admin role not found"));
+//            userEntity.setRole(adminRole);
+//            userEntity.setPassword(new BCryptPasswordEncoder().encode("Admin"));
+//            userRepository.save(userEntity);
+//        }
+//
+//    }
+
     @PostConstruct
     public void createAdminAccount(){
-        UserEntity adminAccount = userRepository.findByRole(UserRole.ADMIN);
-        if(null == adminAccount){
+        RoleEntity adminRole = roleRepository.findByRoleName("ADMIN").orElseThrow(() -> new RuntimeException("Admin Role Not Found"));
+
+        if(userRepository.findFirstByRole_RoleName("ADMIN").isEmpty()){
             UserEntity userEntity = new UserEntity();
+
             userEntity.setEmail("admin@test.com");
             userEntity.setUsername("admin");
-            userEntity.setRole(UserRole.ADMIN);
+            userEntity.setRole(adminRole);
             userEntity.setPassword(new BCryptPasswordEncoder().encode("Admin"));
-            userRepository.save(userEntity);
-        }
 
+            userRepository.save(userEntity);
+            System.out.println("Default admin account created");
+        }
+        else {
+            System.out.println("Admin account already exists");
+        }
     }
 
     public void updateAdminProfile(UpdateProfileDto updateProfileDto){
-        UserEntity admin = userRepository.findByRole(UserRole.ADMIN);
+        UserEntity admin = userRepository.findFirstByRole_RoleName("ADMIN").orElseThrow(() -> new RuntimeException("Admin not found"));
 
         if(admin != null){
             if(new BCryptPasswordEncoder().matches(updateProfileDto.getCurrentPassword(), admin.getPassword())){
